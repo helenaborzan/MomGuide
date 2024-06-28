@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">PregnancyHelper</string>
+
+    <string name="loginAndRegistrationTitle">DOBRO DOŠLI</string>
+    <string name="loginAndRegistrationDescription">Prijavite se ili registrirajte kako biste započeli
+        s korištenjem aplikacije.</string>
+    <string name="loginButtonText">Prijava</string>
+    <string name="registerButtonText">Registracija</string>
+    <string name="emailLabel">Email</string>
+    <string name="passwordLabel">Lozinka</string>
+    <string name="login">Prijavi me</string>
+    <string name="tryAgainError">Pokušajte ponovno</string>
+    <string name="emailError">Unesite ispravan e-mail</string>
+    <string name="emptyPasswordError">Lozinka ne smije biti prazna</string>
+    <string name="error">Pogreška</string>
+    <string name="ok">OK</string>
+    <string name="authenticationError">Netočan e-mail ili lozinka. Pokušajte ponovno.</string>
+    <string name="repeatPassword">Ponovite lozinku</string>
+    <string name="passwordError">Lozinka treba sadržavati barem 6 znakova uključujući jedan broj, jedno malo slovo i jedno veliko slovo.</string>
+    <string name="repeatPasswordError">Lozinke nisu iste. Pokušajte ponovno.</string>
+    <string name="registrationError">Registracija nije uspjela. Molimo pokušajte ponovno.</string>
+    <string name="register">Registriraj me</string>
+
+    <string name="chooseCategory">Odaberite</string>
+    <string name="pregnancyCategory">Trudnoća</string>
+    <string name="newbornsCategory">Novorođenčad</string>
+
+    <string name="notificationIconDescription">Obavijesti</string>
+    <string name="profileIconDescription">Profil</string>
+    <string name="recomendations">Preporuke</string>
+    <string name="breastfeedingTitle">Dojenje</string>
+    <string name="growthAndDevelopmentTitle">Rast i razvoj djeteta</string>
+    <string name="postPartumDepressionTitle">Postporođajna depresija</string>
+    <string name="growthAndDevelopmentButtonLabel">Provjerite rast i razvoj</string>
+    <string name="fillTheQuestionnaireLabel">Ispunite upitnik</string>
+    <string name="emptyQuestionnaireResults">Još nema rezultata. Ispunite anketu.</string>
+    <string name="moreIconDescription">Više</string>
+
+    <string name="positiveEPDStest">Vrlo je vjerojatno da patite od postporođajne depresije. Savjetujemo Vam da potražite <b>pomoć liječnika</b></string>
+    <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>
+    <string name="result">Rezultat</string>
+    <string name="questionnaireErrorMessage">Morate odgovoriti na sva pitanja.</string>
+</resources>

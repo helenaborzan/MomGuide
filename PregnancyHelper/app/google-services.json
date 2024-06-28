@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "790291279794",
+    "project_id": "pregnancy-helper-646e7",
+    "storage_bucket": "pregnancy-helper-646e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790291279794:android:fa83812edc5335f1cebeab",
+        "android_client_info": {
+          "package_name": "hr.ferit.helenaborzan.pregnancyhelper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0VW7CnOCZOmJf6l7BCnPo5er0jzWxL7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
