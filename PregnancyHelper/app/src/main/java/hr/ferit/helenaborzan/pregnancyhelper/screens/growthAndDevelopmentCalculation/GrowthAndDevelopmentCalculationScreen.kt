@@ -1,0 +1,256 @@
+package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopmentCalculation
+
+
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+
+@Composable
+fun GrowthAndDevelopmentScreen(
+    viewModel : GrowthAndDevelopmentCalculationViewModel = hiltViewModel(),
+    navController: NavController
+) {
+    val uiState by viewModel.uiState
+    val showResults by viewModel.showResults
+    Column (modifier = Modifier.background(color = DirtyWhite)) {
+        LazyColumn() {
+            item {
+                GoBackIconBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .weight(0.1f)
+                        .clickable { navController.popBackStack() }
+                )
+                InputSection(uiState = uiState, viewModel = viewModel)
+                if(showResults){
+                    ResultSection(uiState = uiState)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun InputSection(
+    uiState : GrowthAndDevelopmentCalculationUiState,
+    viewModel: GrowthAndDevelopmentCalculationViewModel
+){
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .border(width = 1.dp, color = DarkGray)
+    ){
+        RadioButtonInput(uiState = uiState)
+        LabeledTextField(
+            labelId = R.string.heightInputLabel,
+            unitId = R.string.cmLabel,
+            value = uiState.growthAndDevelopmentInfo.length.toString(),
+            onValueChange = viewModel::onHeightChange,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
+        )
+        LabeledTextField(
+            labelId = R.string.weightInputLabel,
+            unitId = R.string.kgLabel,
+            value = uiState.growthAndDevelopmentInfo.weight.toString(),
+            onValueChange = viewModel::onWeightChange,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
+        )
+        LabeledTextField(
+            labelId = R.string.ageInputLabel,
+            unitId = R.string.monthsLabel,
+            value = uiState.growthAndDevelopmentInfo.age.toString(),
+            onValueChange = viewModel::onAgeChange,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
+        )
+        LabeledTextField(
+            labelId = R.string.headCircumferenceLabel,
+            unitId = R.string.cmLabel,
+            value = uiState.growthAndDevelopmentInfo.headCircumference.toString(),
+            onValueChange = viewModel::onHeadCircumferenceChange,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            )
+        )
+        CalculationLabel(viewModel = viewModel, uiState = uiState)
+    }
+}
+
+@Composable
+fun RadioButtonInput(
+    uiState : GrowthAndDevelopmentCalculationUiState,
+    viewModel: GrowthAndDevelopmentCalculationViewModel = hiltViewModel()
+){
+        var selectedSex by remember { mutableStateOf("") }
+        Column (modifier = Modifier.padding(16.dp)){
+        Text(
+            text = stringResource(id = R.string.chooseSexLabel),
+            style = TextStyle(color = DarkGray, fontSize = 16.sp)
+        )
+        Row (){
+            RadioButtonWithLabel(
+                labelId = R.string.maleLabel,
+                isSelected = selectedSex == "male",
+                onCheckedChange = {
+                    selectedSex = "male"
+                    viewModel.onSexChange(selectedSex)
+                }
+            )
+            RadioButtonWithLabel(labelId = R.string.femaleLabel,
+                isSelected = selectedSex == "female",
+                onCheckedChange = {
+                    selectedSex = "female"
+                    viewModel.onSexChange(selectedSex)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun RadioButtonWithLabel(
+    @StringRes labelId: Int,
+    isSelected : Boolean,
+    onCheckedChange: (Boolean) -> Unit
+){
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        AnswerRadioButton(isSelected = isSelected, onCheckedChange = onCheckedChange)
+        Text(
+            text = stringResource(id = labelId),
+            style = TextStyle(color = Color.Black, fontSize = 14.sp)
+        )
+    }
+}
+
+@Composable
+fun CalculationLabel(viewModel: GrowthAndDevelopmentCalculationViewModel, uiState: GrowthAndDevelopmentCalculationUiState) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(16.dp)
+            .clickable { viewModel.onCalculatePercentilesClick() }
+    ){
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_calculate_24),
+            contentDescription = null,
+            tint = DarkGray
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(id = R.string.calculateGrowthPercentiles),
+            style = TextStyle(
+                color = Color.Black,
+                fontSize = 16.sp,
+                textDecoration = TextDecoration.Underline
+            )
+        )
+    }
+}
+
+@Composable
+fun ResultSection(uiState: GrowthAndDevelopmentCalculationUiState) {
+    Column(
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+    ) {
+        PercentileResult(
+            percentileType = R.string.lengthForAgePercentile,
+            percentileValue = uiState.growthAndDevelopmentPercentiles.lengthForAgePercentile
+        )
+        PercentileResult(
+            percentileType = R.string.weightForAgePercentile,
+            percentileValue = uiState.growthAndDevelopmentPercentiles.weightForAgePercentile
+        )
+        PercentileResult(
+            percentileType = R.string.weightForLengthPercentile,
+            percentileValue = uiState.growthAndDevelopmentPercentiles.weightForLengthPercentile
+        )
+        PercentileResult(
+            percentileType = R.string.headCircumferenceForAgePercentile,
+            percentileValue = uiState.growthAndDevelopmentPercentiles.headCircumferenceForAgePercentile
+        )
+    }
+}
+
+
+@Composable
+fun PercentileResult(
+    @StringRes percentileType : Int,
+    percentileValue : Double,
+    viewModel : GrowthAndDevelopmentCalculationViewModel = hiltViewModel()
+){
+    Column(modifier = Modifier.padding(horizontal = 0.dp, vertical = 12.dp)){
+        Text(
+            text = stringResource(id = percentileType),
+            style = TextStyle(
+                fontSize = 18.sp,
+                color = if(viewModel.isPercentileInNormalLimits(percentileValue)) Color.Green
+                else Color.Red
+            )
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = stringResource(id = viewModel.getPercentileInterpretationResource(percentileValue)),
+            style = TextStyle(color = Color.Black, fontSize = 14.sp)
+        )
+    }
+}
+
+
+
+

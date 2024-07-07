@@ -1,7 +1,8 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model
 
+import com.google.firebase.Timestamp
+
 data class GrowthAndDevelopmentResult(
-    val length : Double = 0.0,
-    val weight : Double = 0.0,
-    val result : Double = 0.0
+    val growthAndDevelopmentInfo: GrowthAndDevelopmentInfo = GrowthAndDevelopmentInfo(),
+    val growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles = GrowthAndDevelopmentPercentiles()
 )

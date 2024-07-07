@@ -1,6 +1,5 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome
 
-import android.graphics.PointF.length
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -35,32 +33,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
-import com.google.type.Date
-import com.google.type.DateTime
 import hr.ferit.helenaborzan.pregnancyhelper.R
-import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
-import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-import okhttp3.internal.notify
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Locale
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -72,6 +59,9 @@ fun NewbornHomeScreen(
     val questionnaireResults = remember(newbornInfo) {
         newbornInfo.flatMap { it.questionnaireResults }
     }
+    val growthAndDevelopmentResults = remember(newbornInfo) {
+        newbornInfo.flatMap { it.growthAndDevelopmentResults }
+    }
     LazyColumn(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
@@ -82,7 +72,7 @@ fun NewbornHomeScreen(
         IconBar()
         Recomendations()
         BreastfeedingSection()
-        GrowthAndDevelopmentSection()
+        GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
         PostPartumQuestionnaireSection(
             navController = navController,
             questionnaireResults = questionnaireResults
@@ -163,7 +153,9 @@ fun BreastfeedingSection() {
 }
 
 @Composable
-fun GrowthAndDevelopmentSection() {
+fun GrowthAndDevelopmentSection(
+    navController: NavController,
+    growthAndDevelopmentResults: List<GrowthAndDevelopmentResult>) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -181,16 +173,24 @@ fun GrowthAndDevelopmentSection() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Još nema rezultata.",
-                style = TextStyle(color = DarkGray, fontSize = 14.sp),
-                modifier = Modifier
-                    .padding(4.dp)
-                    .weight(2f)
-            )
+            Row (modifier = Modifier.weight(2f)){
+                Text(
+                    text = if (growthAndDevelopmentResults.isNotEmpty()) stringResource(id = R.string.seeAllGrowthAndDevelopmentResults)
+                    else stringResource(id = R.string.noGrowthAndDevelopmentResults),
+                    style = TextStyle(color = DarkGray, fontSize = 14.sp),
+                    modifier = Modifier
+                        .padding(4.dp)
+                )
+                if (growthAndDevelopmentResults.isNotEmpty()) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                        contentDescription = null
+                    )
+                }
+            }
             GrowthAndDevelopmentButton(
                 text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
-                onClick = {},
+                onClick = { navController.navigate(Screen.GrowthAndDevelopmentScreen.route) },
                 modifier = Modifier.weight(1f)
             )
                 
@@ -253,7 +253,7 @@ fun PostPartumQuestionnaireSection(
                 text = stringResource(id = R.string.fillTheQuestionnaireLabel),
                 style = TextStyle(color = Pink, fontSize = 16.sp, textDecoration = TextDecoration.Underline),
                 modifier = Modifier
-                    .padding(start = 4.dp, top = 8.dp, bottom = 8.dp, end= 8.dp)
+                    .padding(start = 4.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                     .clickable { navController.navigate(Screen.QuestionnaireScreen.route) }
             )
            showQuestionnaireResult(

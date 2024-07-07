@@ -35,9 +35,30 @@
     <string name="fillTheQuestionnaireLabel">Ispunite upitnik</string>
     <string name="emptyQuestionnaireResults">Još nema rezultata. Ispunite anketu.</string>
     <string name="moreIconDescription">Više</string>
+    <string name="seeAllGrowthAndDevelopmentResults">Vidi sve rezultate</string>
+    <string name="noGrowthAndDevelopmentResults">Još nema rezultata</string>
 
     <string name="positiveEPDStest">Vrlo je vjerojatno da patite od postporođajne depresije. Savjetujemo Vam da potražite <b>pomoć liječnika</b></string>
     <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>
     <string name="result">Rezultat</string>
     <string name="questionnaireErrorMessage">Morate odgovoriti na sva pitanja.</string>
+
+    <string name="chooseSexLabel">Odaberite <b>spol</b> djeteta</string>
+    <string name="maleLabel">muško</string>
+    <string name="femaleLabel">žensko</string>
+    <string name="heightInputLabel">Unesite djetetovu <b>visinu</b></string>
+    <string name="weightInputLabel">Unesite djetetovu <b>težinu</b></string>
+    <string name="ageInputLabel">Unesite djetetovu <b>dob</b></string>
+    <string name="headCircumferenceLabel">Unesite opseg glave djeteta</string>
+    <string name="calculateGrowthPercentiles">Izračunaj percentile rasta</string>
+    <string name="cmLabel">cm</string>
+    <string name="kgLabel">kg</string>
+    <string name="monthsLabel">mjeseci</string>
+    <string name="lengthForAgePercentile">Percentil visine za dob</string>
+    <string name="weightForAgePercentile">Percentil težine za dob</string>
+    <string name="weightForLengthPercentile">Percentil težine za visinu</string>
+    <string name="headCircumferenceForAgePercentile">Percentil opsega glave za dob</string>
+    <string name="normalPercentileValue">Vrijednost percentila je u normalnim granicama.</string>
+    <string name="abnormalPercentilaValue">Vrijednost percentila nije u normalnim granicama. Preporuča se da se obratite liječniku.</string>
+
 </resources>

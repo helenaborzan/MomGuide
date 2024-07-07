@@ -91,6 +91,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.fragment:fragment-ktx:1.7.1")
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 }
 
 

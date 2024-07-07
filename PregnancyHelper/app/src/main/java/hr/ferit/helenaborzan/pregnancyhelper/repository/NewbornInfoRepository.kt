@@ -8,6 +8,8 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
+import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
@@ -85,5 +87,23 @@ class NewbornInfoRepository @Inject constructor(
             val documentReference = newbornInfoCollection.document(documentId)
             documentReference.update("questionnaireResults", FieldValue.arrayUnion(newResult)).await()
         }
+    }
+
+    suspend fun addGrowthAndDevelopmentResult(growthAndDevelopmentInfo: GrowthAndDevelopmentInfo, growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles ){
+        val userId = accountService.currentUserId
+        val querySnapshot = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+            val newResult = hashMapOf(
+                "growthAndDevelopmentInfo" to growthAndDevelopmentInfo,
+                "growthAndDevelopmentPercentiles" to growthAndDevelopmentPercentiles
+            )
+
+            val documentReference = newbornInfoCollection.document(documentId)
+            documentReference.update("growthAndDevelopmentResults", FieldValue.arrayUnion(newResult)).await()
+        }
+
     }
 }

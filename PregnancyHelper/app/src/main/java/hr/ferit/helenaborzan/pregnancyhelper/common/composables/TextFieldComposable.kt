@@ -7,9 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -26,7 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -138,15 +142,52 @@ fun PasswordTextField(
                         painter = if (isPasswordVisible) painterResource(R.drawable.baseline_visibility_off_24)
                         else painterResource(R.drawable.baseline_visibility_24),
                         contentDescription = null,
-                        modifier = Modifier.clickable {
-                            isPasswordVisible = !isPasswordVisible
-                        }
+                        modifier = Modifier
+                            .clickable {
+                                isPasswordVisible = !isPasswordVisible
+                            }
                             .padding(4.dp)
                     )
                 }
             }
         }
     }
+}
 
+@Composable
+fun LabeledTextField(
+    labelId: Int,
+    unitId : Int,
+    value : String,
+    onValueChange : (String) -> Unit,
+    keyboardOptions: KeyboardOptions
+) {
+    Column(modifier = Modifier
+        .border(width = 0.dp, color = Color.Transparent)
+        .padding(16.dp)) {
+        Text(
+            text = stringResource(id = labelId),
+            style = TextStyle(color = DarkGray, fontSize = 16.sp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                textStyle = TextStyle(color = DarkGray, fontSize = 16.sp),
+                keyboardOptions = keyboardOptions,
+                modifier = Modifier
+                    .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(2.dp))
+                    .background(color = Color.White)
+            ) {
+                it.invoke()
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(id = unitId),
+                style = TextStyle(color = Color.Black, fontSize = 16.sp)
+            )
+        }
+    }
 }
 
