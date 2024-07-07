@@ -60,7 +60,8 @@ fun QuestionnaireScreen(
         GoBackIconBar(modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp)
-            .weight(0.1f))
+            .weight(0.1f)
+        )
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,58 +81,18 @@ fun QuestionnaireScreen(
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.15f)
-                .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ){
-            BasicButton(
-                text = "Podnesi",
-                onClick = { viewModel.onSubmitQuestionnaire() },
-                borderColor = Pink,
-                containerColor = Color.White,
-                modifier = Modifier
-                    .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
-                    .size(width = 120.dp, height = 36.dp)
-            )
-        }
+        SubmitQuestionnaireButton(viewModel = viewModel, modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.15f)
+            .padding(horizontal = 24.dp)
+        )
     }
     LaunchedEffect(Unit) {
         viewModel.getQuestionnaire()
     }
-    uiState.resultMessageResource?.let { it ->
-        AlertDialog(
-            onDismissRequest = { navController.navigate(Screen.NewbornHomeScreen.route)},
-            title = { Text(stringResource(id =  R.string.result)) },
-            text = { Text(stringResource(id = it)) },
-            confirmButton = {
-                Button(
-                    onClick = { navController.navigate(Screen.NewbornHomeScreen.route) },
-                    colors = ButtonDefaults.buttonColors(Pink)
-                ) {
-                    Text(stringResource(id = R.string.ok))
-                }
-            }
-        )
-    }
-    uiState.errorMessageResource?.let { it ->
-        AlertDialog(
-            onDismissRequest = {viewModel.clearError()},
-            title = { Text(stringResource(id =  R.string.error)) },
-            text = { Text(stringResource(id = it)) },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.clearError() },
-                    colors = ButtonDefaults.buttonColors(Pink)
-                ) {
-                    Text(stringResource(id = R.string.ok))
-                }
-            }
-        )
-    }
+    ResultDialog(uiState = uiState, navController = navController)
+    ErrorDialog(uiState = uiState, viewModel = viewModel)
+
 
 }
 
@@ -172,6 +133,64 @@ fun QandACard(
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : QuestionnaireViewModel) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        BasicButton(
+            text = "Podnesi",
+            onClick = { viewModel.onSubmitQuestionnaire() },
+            borderColor = Pink,
+            containerColor = Color.White,
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .size(width = 120.dp, height = 36.dp)
+        )
+    }
+}
+
+@Composable
+fun ResultDialog(uiState : QuestionnaireUiState, navController : NavController) {
+    uiState.resultMessageResource?.let { it ->
+        AlertDialog(
+            onDismissRequest = { navController.navigate(Screen.NewbornHomeScreen.route)},
+            title = { Text(stringResource(id =  R.string.result)) },
+            text = { Text(stringResource(id = it)) },
+            confirmButton = {
+                Button(
+                    onClick = { navController.navigate(Screen.NewbornHomeScreen.route) },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ErrorDialog(uiState: QuestionnaireUiState, viewModel: QuestionnaireViewModel) {
+    uiState.errorMessageResource?.let { it ->
+        AlertDialog(
+            onDismissRequest = {viewModel.clearError()},
+            title = { Text(stringResource(id =  R.string.error)) },
+            text = { Text(stringResource(id = it)) },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.clearError() },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
     }
 }
 

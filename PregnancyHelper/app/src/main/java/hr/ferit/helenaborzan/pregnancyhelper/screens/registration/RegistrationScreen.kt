@@ -58,18 +58,9 @@ fun RegistrationScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.75f),
-            contentAlignment = Alignment.TopCenter
-        ){
-            Text(
-                text = stringResource(id = R.string.loginButtonText),
-                style = TextStyle(color = DarkGray, fontSize = 28.sp, fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(vertical = 28.dp)
-            )
-        }
+        TitleBar(modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.75f))
         Column (
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,47 +70,7 @@ fun RegistrationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Column (
-                modifier = Modifier.weight(2f),
-                verticalArrangement = Arrangement.Center
-            ){
-                EmailTextField(
-                    label = stringResource(id = R.string.emailLabel),
-                    value = uiState.email,
-                    icon = R.drawable.baseline_email_24,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusRequester.requestFocus()
-                    }),
-                    onValueChange = viewModel::onEmailChange
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                PasswordTextField(
-                    label = stringResource(id = R.string.passwordLabel),
-                    value = uiState.password,
-                    icon = R.drawable.baseline_lock_24,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {}),
-                    onValueChange = viewModel::onPasswordChange,
-                    modifier = Modifier.focusRequester(focusRequester)
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                PasswordTextField(
-                    label = stringResource(R.string.repeatPassword),
-                    value = uiState.repeatPassword,
-                    icon = R.drawable.baseline_lock_24,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {}),
-                    onValueChange = viewModel::onRepeatPasswordChange,
-                    modifier = Modifier.focusRequester(focusRequester)
-                )
-            }
+            UserInfoInput(modifier = Modifier.weight(2f), viewModel = viewModel, uiState = uiState)
             Column (modifier = Modifier.weight(1f)){
                 ButtonWithGradient(text = stringResource(id = R.string.register), onClick = {
                     viewModel.onSignUpClick()
@@ -133,6 +84,74 @@ fun RegistrationScreen(
         }
 
     }
+    RegistrationErrorDialog(uiState = uiState, viewModel = viewModel)
+}
+
+@Composable
+fun TitleBar(modifier : Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.TopCenter
+    ){
+        Text(
+            text = stringResource(id = R.string.loginButtonText),
+            style = TextStyle(color = DarkGray, fontSize = 28.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(vertical = 28.dp)
+        )
+    }
+}
+
+@Composable
+fun UserInfoInput(
+    modifier : Modifier = Modifier,
+    viewModel: RegistrationViewModel,
+    uiState : RegistrationUiState) {
+    val focusRequester = remember { FocusRequester() }
+    Column (
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center
+    ){
+        EmailTextField(
+            label = stringResource(id = R.string.emailLabel),
+            value = uiState.email,
+            icon = R.drawable.baseline_email_24,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusRequester.requestFocus()
+            }),
+            onValueChange = viewModel::onEmailChange
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        PasswordTextField(
+            label = stringResource(id = R.string.passwordLabel),
+            value = uiState.password,
+            icon = R.drawable.baseline_lock_24,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onDone = {}),
+            onValueChange = viewModel::onPasswordChange,
+            modifier = Modifier.focusRequester(focusRequester)
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        PasswordTextField(
+            label = stringResource(R.string.repeatPassword),
+            value = uiState.repeatPassword,
+            icon = R.drawable.baseline_lock_24,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {}),
+            onValueChange = viewModel::onRepeatPasswordChange,
+            modifier = Modifier.focusRequester(focusRequester)
+        )
+    }
+}
+
+@Composable
+fun RegistrationErrorDialog(uiState : RegistrationUiState, viewModel: RegistrationViewModel) {
     uiState.errorMessage?.let { messageId ->
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },

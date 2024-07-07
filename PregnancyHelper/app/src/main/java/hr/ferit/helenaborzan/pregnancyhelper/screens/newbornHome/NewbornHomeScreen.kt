@@ -173,31 +173,37 @@ fun GrowthAndDevelopmentSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row (modifier = Modifier.weight(2f)){
-                Text(
-                    text = if (growthAndDevelopmentResults.isNotEmpty()) stringResource(id = R.string.seeAllGrowthAndDevelopmentResults)
-                    else stringResource(id = R.string.noGrowthAndDevelopmentResults),
-                    style = TextStyle(color = DarkGray, fontSize = 14.sp),
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-                if (growthAndDevelopmentResults.isNotEmpty()) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                        contentDescription = null
-                    )
-                }
-            }
+            GrowthAndDevelopmentResult(
+                modifier = Modifier.weight(2f),
+                growthAndDevelopmentResults = growthAndDevelopmentResults
+            )
             GrowthAndDevelopmentButton(
                 text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
                 onClick = { navController.navigate(Screen.GrowthAndDevelopmentScreen.route) },
                 modifier = Modifier.weight(1f)
             )
-                
+        }
+    }
+}
 
-
-
-
+@Composable
+fun GrowthAndDevelopmentResult(
+    modifier : Modifier = Modifier,
+    growthAndDevelopmentResults : List<GrowthAndDevelopmentResult>
+){
+    Row (modifier = modifier){
+        Text(
+            text = if (growthAndDevelopmentResults.isNotEmpty()) stringResource(id = R.string.seeAllGrowthAndDevelopmentResults)
+            else stringResource(id = R.string.noGrowthAndDevelopmentResults),
+            style = TextStyle(color = DarkGray, fontSize = 14.sp),
+            modifier = Modifier
+                .padding(4.dp)
+        )
+        if (growthAndDevelopmentResults.isNotEmpty()) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                contentDescription = null
+            )
         }
     }
 }
@@ -314,4 +320,6 @@ fun showAllQuestionnaireResults(questionnaireResult: List<QuestionnaireResult>) 
             resultMessage = questionnaireResult[i].resultMessage)
     }
 }
+
+
 
