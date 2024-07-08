@@ -5,10 +5,14 @@ import android.provider.ContactsContract.CommonDataKinds.Email
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,11 +87,13 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            UserInfoInput(modifier = Modifier.weight(2f),uiState = uiState, viewModel = viewModel)
-            Column (modifier = Modifier.weight(1f)){
+            UserInfoInput(modifier = Modifier.weight(2f),uiState = uiState, viewModel = viewModel, navController = navController)
+            Column (modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally){
                 ButtonWithGradient(text = stringResource(id = R.string.login), onClick = {
                     viewModel.onLoginClick()
-                }
+                    }
                 )
             }
             LaunchedEffect(viewModel.uiState.value.isLoginSuccessful) {
@@ -97,21 +104,7 @@ fun LoginScreen(
         }
 
     }
-    uiState.errorMessage?.let { messageId ->
-        AlertDialog(
-            onDismissRequest = { viewModel.clearError() },
-            title = { Text(stringResource(id = R.string.error)) },
-            text = { Text(stringResource(id = messageId)) },
-            confirmButton = {
-                Button(
-                    onClick = { viewModel.clearError() },
-                    colors = ButtonDefaults.buttonColors(Pink)
-                ) {
-                    Text(stringResource(id = R.string.ok))
-                }
-            }
-        )
-    }
+    LoginErrorDialog(viewModel = viewModel, uiState = uiState)
 }
 
 @Composable
@@ -123,7 +116,7 @@ fun TitleBar(modifier : Modifier = Modifier) {
         Text(
             text = stringResource(id = R.string.loginButtonText),
             style = TextStyle(color = DarkGray, fontSize = 28.sp, fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(vertical = 28.dp)
+            modifier = Modifier.padding(vertical = 32.dp)
         )
     }
 }
@@ -132,7 +125,8 @@ fun TitleBar(modifier : Modifier = Modifier) {
 fun UserInfoInput(
     modifier : Modifier = Modifier,
     uiState : LoginUiState,
-    viewModel : LoginViewModel
+    viewModel : LoginViewModel,
+    navController: NavController
 ) {
     val focusRequester = remember { FocusRequester() }
     Column (
@@ -163,8 +157,51 @@ fun UserInfoInput(
             onValueChange = viewModel::onPasswordChange,
             modifier = Modifier.focusRequester(focusRequester)
         )
+        UserHasNoAccount(navController = navController)
     }
 }
+
+@Composable
+fun UserHasNoAccount(navController: NavController) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(id = R.string.goToRegistration),
+            style = TextStyle(
+                color = DarkGray,
+                fontSize = 14.sp,
+                textDecoration = TextDecoration.Underline
+            ),
+            modifier = Modifier
+                .padding(24.dp)
+                .align(Alignment.Center)
+                .clickable { navController.navigate(Screen.RegistrationScreen.route) }
+        )
+    }
+}
+
+@Composable
+fun LoginErrorDialog(
+    viewModel : LoginViewModel,
+    uiState : LoginUiState
+) {
+    uiState.errorMessage?.let { messageId ->
+        AlertDialog(
+            onDismissRequest = { viewModel.clearError() },
+            title = { Text(stringResource(id = R.string.error)) },
+            text = { Text(stringResource(id = messageId)) },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.clearError() },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
+    }
+}
+
+
 
 
 

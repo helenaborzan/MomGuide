@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,7 +61,8 @@ fun QuestionnaireScreen(
         GoBackIconBar(modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp)
-            .weight(0.1f)
+            .weight(0.1f),
+            navController = navController
         )
         LazyColumn(
             modifier = Modifier

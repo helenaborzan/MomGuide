@@ -1,6 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.registration
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,10 +31,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ButtonWithGradient
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.EmailTextField
@@ -70,8 +73,10 @@ fun RegistrationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            UserInfoInput(modifier = Modifier.weight(2f), viewModel = viewModel, uiState = uiState)
-            Column (modifier = Modifier.weight(1f)){
+            UserInfoInput(modifier = Modifier.weight(2f), viewModel = viewModel, uiState = uiState, navController = navController)
+            Column (modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally){
                 ButtonWithGradient(text = stringResource(id = R.string.register), onClick = {
                     viewModel.onSignUpClick()
                 })
@@ -94,7 +99,7 @@ fun TitleBar(modifier : Modifier = Modifier) {
         contentAlignment = Alignment.TopCenter
     ){
         Text(
-            text = stringResource(id = R.string.loginButtonText),
+            text = stringResource(id = R.string.registerButtonText),
             style = TextStyle(color = DarkGray, fontSize = 28.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(vertical = 28.dp)
         )
@@ -105,7 +110,9 @@ fun TitleBar(modifier : Modifier = Modifier) {
 fun UserInfoInput(
     modifier : Modifier = Modifier,
     viewModel: RegistrationViewModel,
-    uiState : RegistrationUiState) {
+    uiState : RegistrationUiState,
+    navController: NavController
+) {
     val focusRequester = remember { FocusRequester() }
     Column (
         modifier = modifier,
@@ -147,7 +154,28 @@ fun UserInfoInput(
             onValueChange = viewModel::onRepeatPasswordChange,
             modifier = Modifier.focusRequester(focusRequester)
         )
+        UserAlreadyHasAccount(navController = navController)
     }
+}
+
+@Composable
+fun UserAlreadyHasAccount(navController : NavController) {
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(id = R.string.goToLogin),
+            style = TextStyle(
+                color = DarkGray,
+                fontSize = 14.sp,
+                textDecoration = TextDecoration.Underline
+            ),
+            modifier = Modifier
+                .padding(24.dp)
+                .align(Alignment.Center)
+                .clickable { navController.navigate(Screen.LoginScreen.route) }
+        )
+    }
+
 }
 
 @Composable

@@ -20,6 +20,8 @@
     <string name="repeatPasswordError">Lozinke nisu iste. Pokušajte ponovno.</string>
     <string name="registrationError">Registracija nije uspjela. Molimo pokušajte ponovno.</string>
     <string name="register">Registriraj me</string>
+    <string name="goToRegistration">Nemate račun? Idite na registraciju.</string>
+    <string name="goToLogin">Već imate račun? Idite na prijavu.</string>
 
     <string name="chooseCategory">Odaberite</string>
     <string name="pregnancyCategory">Trudnoća</string>
@@ -34,7 +36,8 @@
     <string name="growthAndDevelopmentButtonLabel">Provjerite rast i razvoj</string>
     <string name="fillTheQuestionnaireLabel">Ispunite upitnik</string>
     <string name="emptyQuestionnaireResults">Još nema rezultata. Ispunite anketu.</string>
-    <string name="moreIconDescription">Više</string>
+    <string name="moreIconDescription">Vidi više</string>
+    <string name="lessIconDescription">Vidi manje</string>
     <string name="seeAllGrowthAndDevelopmentResults">Vidi sve rezultate</string>
     <string name="noGrowthAndDevelopmentResults">Još nema rezultata</string>
 

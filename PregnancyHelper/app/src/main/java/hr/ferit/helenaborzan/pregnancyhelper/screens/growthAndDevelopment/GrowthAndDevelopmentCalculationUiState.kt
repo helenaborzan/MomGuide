@@ -1,4 +1,4 @@
-package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopmentCalculation
+package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles

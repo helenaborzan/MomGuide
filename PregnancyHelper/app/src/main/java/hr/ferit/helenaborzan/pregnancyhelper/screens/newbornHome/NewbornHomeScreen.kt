@@ -175,11 +175,12 @@ fun GrowthAndDevelopmentSection(
         ) {
             GrowthAndDevelopmentResult(
                 modifier = Modifier.weight(2f),
-                growthAndDevelopmentResults = growthAndDevelopmentResults
+                growthAndDevelopmentResults = growthAndDevelopmentResults,
+                navController = navController
             )
             GrowthAndDevelopmentButton(
                 text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
-                onClick = { navController.navigate(Screen.GrowthAndDevelopmentScreen.route) },
+                onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -189,7 +190,8 @@ fun GrowthAndDevelopmentSection(
 @Composable
 fun GrowthAndDevelopmentResult(
     modifier : Modifier = Modifier,
-    growthAndDevelopmentResults : List<GrowthAndDevelopmentResult>
+    growthAndDevelopmentResults : List<GrowthAndDevelopmentResult>,
+    navController: NavController
 ){
     Row (modifier = modifier){
         Text(
@@ -202,7 +204,8 @@ fun GrowthAndDevelopmentResult(
         if (growthAndDevelopmentResults.isNotEmpty()) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                contentDescription = null
+                contentDescription = null,
+                modifier = Modifier.clickable { navController.navigate(Screen.GrowthAndDevelopmentResultsScreen.route) }
             )
         }
     }

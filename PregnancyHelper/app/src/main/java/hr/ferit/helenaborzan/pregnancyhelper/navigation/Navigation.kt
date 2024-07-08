@@ -7,7 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory.ChooseCategoryScreen
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopmentCalculation.GrowthAndDevelopmentScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
@@ -39,8 +40,11 @@ fun NavigationController() {
         composable(Screen.QuestionnaireScreen.route){
             QuestionnaireScreen(navController = navController)
         }
-        composable(Screen.GrowthAndDevelopmentScreen.route){
-            GrowthAndDevelopmentScreen(navController = navController)
+        composable(Screen.GrowthAndDevelopmentCalculationScreen.route){
+            GrowthAndDevelopmentCalculationScreen(navController = navController)
+        }
+        composable(Screen.GrowthAndDevelopmentResultsScreen.route){
+            GrowthAndDevelopmentResultsScreen(navController = navController)
         }
 
     }

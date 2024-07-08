@@ -1,4 +1,4 @@
-package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopmentCalculation
+package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
 
 
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,12 +44,13 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
+import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.showAllQuestionnaireResults
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 
 @Composable
-fun GrowthAndDevelopmentScreen(
-    viewModel : GrowthAndDevelopmentCalculationViewModel = hiltViewModel(),
+fun GrowthAndDevelopmentCalculationScreen(
+    viewModel : GrowthAndDevelopmentViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val uiState by viewModel.uiState
@@ -59,12 +62,12 @@ fun GrowthAndDevelopmentScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp)
-                        .weight(0.1f)
-                        .clickable { navController.popBackStack() }
+                        .weight(0.1f),
+                    navController = navController
                 )
                 InputSection(uiState = uiState, viewModel = viewModel)
                 if(showResults){
-                    ResultSection(uiState = uiState)
+                    PercentileResultSection(uiState = uiState)
                 }
             }
         }
@@ -74,7 +77,7 @@ fun GrowthAndDevelopmentScreen(
 @Composable
 fun InputSection(
     uiState : GrowthAndDevelopmentCalculationUiState,
-    viewModel: GrowthAndDevelopmentCalculationViewModel
+    viewModel: GrowthAndDevelopmentViewModel
 ){
     Column (
         modifier = Modifier
@@ -131,7 +134,7 @@ fun InputSection(
 @Composable
 fun RadioButtonInput(
     uiState : GrowthAndDevelopmentCalculationUiState,
-    viewModel: GrowthAndDevelopmentCalculationViewModel = hiltViewModel()
+    viewModel: GrowthAndDevelopmentViewModel = hiltViewModel()
 ){
         var selectedSex by remember { mutableStateOf("") }
         Column (modifier = Modifier.padding(16.dp)){
@@ -178,7 +181,7 @@ fun RadioButtonWithLabel(
 }
 
 @Composable
-fun CalculationLabel(viewModel: GrowthAndDevelopmentCalculationViewModel, uiState: GrowthAndDevelopmentCalculationUiState) {
+fun CalculationLabel(viewModel: GrowthAndDevelopmentViewModel, uiState: GrowthAndDevelopmentCalculationUiState) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -204,7 +207,7 @@ fun CalculationLabel(viewModel: GrowthAndDevelopmentCalculationViewModel, uiStat
 }
 
 @Composable
-fun ResultSection(uiState: GrowthAndDevelopmentCalculationUiState) {
+fun PercentileResultSection(uiState: GrowthAndDevelopmentCalculationUiState) {
     Column(
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
     ) {
@@ -232,21 +235,61 @@ fun ResultSection(uiState: GrowthAndDevelopmentCalculationUiState) {
 fun PercentileResult(
     @StringRes percentileType : Int,
     percentileValue : Double,
-    viewModel : GrowthAndDevelopmentCalculationViewModel = hiltViewModel()
-){
-    Column(modifier = Modifier.padding(horizontal = 0.dp, vertical = 12.dp)){
-        Text(
-            text = stringResource(id = percentileType),
-            style = TextStyle(
-                fontSize = 18.sp,
-                color = if(viewModel.isPercentileInNormalLimits(percentileValue)) Color.Green
-                else Color.Red
+    viewModel : GrowthAndDevelopmentViewModel = hiltViewModel()
+) {
+    Column(modifier = Modifier.padding(horizontal = 0.dp, vertical = 12.dp)) {
+        Row {
+            Text(
+                text = "${stringResource(id = percentileType)}:  ",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = Color.Black
+                )
             )
-        )
+            Text(
+                text = "$percentileValue",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    color = if (viewModel.isPercentileInNormalLimits(percentileValue)) Color.Green
+                    else Color.Red
+                )
+            )
+        }
         Spacer(modifier = Modifier.height(4.dp))
+        PercentileInterpretation(percentileType = percentileType, percentileValue = percentileValue)
+    }
+}
+
+@Composable
+fun PercentileInterpretation(
+    @StringRes percentileType : Int,
+    percentileValue : Double,
+    viewModel : GrowthAndDevelopmentViewModel = hiltViewModel()
+) {
+    var showInterpretation by remember {
+        mutableStateOf(false)
+    }
+    Row {
         Text(
-            text = stringResource(id = viewModel.getPercentileInterpretationResource(percentileValue)),
-            style = TextStyle(color = Color.Black, fontSize = 14.sp)
+            text = stringResource(id = viewModel.getPercentileResultResource(percentileValue)),
+            style = TextStyle(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            painter = if(!showInterpretation) painterResource(id = R.drawable.baseline_more_horiz_24)
+            else painterResource(id = R.drawable.baseline_expand_less_24),
+            contentDescription = if(!showInterpretation) stringResource(id = R.string.moreIconDescription)
+            else stringResource(id = R.string.lessIconDescription),
+            modifier = Modifier
+                .weight(0.2f)
+                .clickable { showInterpretation = !showInterpretation }
+        )
+    }
+    if (showInterpretation){
+        Text(
+            text = viewModel.getPercentileInterpretation(type = percentileType, percentileValue = percentileValue),
+            style = TextStyle(color = Color.Black, fontSize = 14.sp),
+            modifier = Modifier.padding(vertical = 8.dp)
         )
     }
 }

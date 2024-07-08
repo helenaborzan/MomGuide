@@ -52,19 +52,36 @@ fun LoginAndRegistrationScreen (
             .background(color = Color.White)
             .padding(20.dp)
     ) {
-        TitleBar()
-        Spacer(modifier = Modifier.height(40.dp))
-        Description()
-        Spacer(modifier = Modifier.height(40.dp))
-        Image(painterResource(id = R.drawable.pregnancy), contentDescription = null, modifier = Modifier.size(width = 220.dp, height = 220.dp))
-        Spacer(modifier = Modifier.height(60.dp))
-        BasicButton(text = stringResource(id = R.string.loginButtonText), onClick={
-            navController.navigate(Screen.LoginScreen.route)
-        })
-        Spacer(modifier = Modifier.height(20.dp))
-        ButtonWithGradient(text = stringResource(id = R.string.registerButtonText), onClick = {
-            navController.navigate(Screen.RegistrationScreen.route)
-        })
+        Column (modifier = Modifier.weight(0.2f)){
+            TitleBar()
+            Spacer(modifier = Modifier.height(32.dp))
+            Description()
+        }
+        Column (
+            modifier = Modifier.weight(0.4f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Image(
+                painterResource(id = R.drawable.pregnancy),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(32.dp)
+            )
+        }
+        Column (
+            modifier = Modifier.weight(0.2f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            BasicButton(text = stringResource(id = R.string.loginButtonText), onClick = {
+                navController.navigate(Screen.LoginScreen.route)
+            })
+            Spacer(modifier = Modifier.height(16.dp))
+            ButtonWithGradient(text = stringResource(id = R.string.registerButtonText), onClick = {
+                navController.navigate(Screen.RegistrationScreen.route)
+            })
+        }
 
     }
 }
@@ -77,7 +94,7 @@ fun TitleBar() {
     ){
         Text(
             text = stringResource(id = R.string.loginAndRegistrationTitle),
-            style = TextStyle(color = DarkGray, fontSize = 32.sp, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(color = DarkGray, fontSize = 36.sp, fontFamily = FontFamily.SansSerif)
         )
     }
 }
@@ -87,7 +104,7 @@ fun TitleBar() {
 fun Description(){
     Text(
         text = stringResource(id = R.string.loginAndRegistrationDescription),
-        style = TextStyle(color = Pink, fontSize=16.sp, fontFamily = FontFamily.SansSerif)
+        style = TextStyle(color = Pink, fontSize=20.sp, fontFamily = FontFamily.SansSerif)
     )
 }
 

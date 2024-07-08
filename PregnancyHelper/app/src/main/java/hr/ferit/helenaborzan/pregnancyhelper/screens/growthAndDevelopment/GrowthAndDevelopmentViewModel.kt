@@ -1,21 +1,28 @@
-package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopmentCalculation
+package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.PercentileCalculator
+import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GrowthAndDevelopmentCalculationViewModel @Inject constructor(
+class GrowthAndDevelopmentViewModel @Inject constructor(
     private val percentileCalculator: PercentileCalculator,
-    private val newbornInfoRepository: NewbornInfoRepository
+    private val newbornInfoRepository: NewbornInfoRepository,
+    private val resourceHelper: ResourceHelper
 ): ViewModel(){
     var uiState = mutableStateOf(GrowthAndDevelopmentCalculationUiState())
         private set
@@ -49,9 +56,9 @@ class GrowthAndDevelopmentCalculationViewModel @Inject constructor(
     fun onCalculatePercentilesClick(){
         calculatePercentiles()
 
-        val growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo
+        var growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo
         val growthAndDevelopmentPercentiles = uiState.value.growthAndDevelopmentPercentiles
-
+        growthAndDevelopmentInfo = growthAndDevelopmentInfo.copy(date = Timestamp.now())
         viewModelScope.launch {
             if(growthAndDevelopmentInfo!=null && growthAndDevelopmentPercentiles!=null) {
                 newbornInfoRepository.addGrowthAndDevelopmentResult(
@@ -78,10 +85,36 @@ class GrowthAndDevelopmentCalculationViewModel @Inject constructor(
         return percentileCalculator.isPercentileInNormalLimits(percentileValue)
     }
 
-    fun getPercentileInterpretationResource(percentileValue: Double) : Int{
+    fun getPercentileResultResource(percentileValue: Double) : Int{
         if(isPercentileInNormalLimits(percentileValue)){
             return R.string.normalPercentileValue
         }
         return R.string.abnormalPercentilaValue
     }
+
+    fun getLengthForAgePercentileInterpretation(percentileValue : Double) : String{
+        return "${percentileValue}% djece iste dobi je niže ili jednake visine kao i vaše dijete, dok je ${100-percentileValue}% djece iste dobi višlje od vašeg djeteta."
+    }
+    fun getWeightForAgePercentileInterpretation(percentileValue: Double) : String{
+        return "${percentileValue}% djece iste dobi ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${100-percentileValue}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+    }
+    fun getWeightForLengthPercentileInterpretation(percentileValue: Double) : String{
+        return "${percentileValue}% djece iste visine ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${100-percentileValue}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+    }
+    fun getHeadCircumFerenceForAgePercentileInterpretation(percentileValue: Double) : String{
+        return "${percentileValue}% djece iste dobi ima manji ili jednak opseg glave od Vašeg djeteta, dok ${100-percentileValue}% djece iste dobi ima veći opseg glave od Vašeg djeteta."
+    }
+
+    fun getPercentileInterpretation(type : Int, percentileValue: Double) : String{
+        val applicationContext = ApplicationContext()
+        when (resourceHelper.getStringFromResource(id = type)){
+            resourceHelper.getStringFromResource(id = R.string.lengthForAgePercentile) -> return getLengthForAgePercentileInterpretation(percentileValue)
+            resourceHelper.getStringFromResource(id = R.string.weightForAgePercentile) -> return getWeightForAgePercentileInterpretation(percentileValue)
+            resourceHelper.getStringFromResource(id = R.string.weightForLengthPercentile) -> return getWeightForLengthPercentileInterpretation(percentileValue)
+            resourceHelper.getStringFromResource(id = R.string.headCircumferenceForAgePercentile) -> return getHeadCircumFerenceForAgePercentileInterpretation(percentileValue)
+            else -> return ""
+        }
+    }
+
+
 }
