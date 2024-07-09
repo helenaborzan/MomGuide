@@ -4,6 +4,8 @@ import android.content.ContentValues
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,26 +30,27 @@ class NewbornInfoRepository @Inject constructor(
 ){
     private val newbornInfoCollection = firestore.collection("newbornInfo")
 
-    suspend fun getUsersNewbornInfo() : Flow<List<NewbornInfo>> = callbackFlow{
-        newbornInfoCollection
-            .whereEqualTo("userId", accountService.currentUserId)
-            .get()
-            .addOnSuccessListener { result ->
-                val newbornInfo = mutableListOf<NewbornInfo>()
-                for (data in result.documents) {
-                    val userNewbornInfo = data.toObject(NewbornInfo::class.java)
-                    if (userNewbornInfo != null) {
-                        userNewbornInfo.id = data.id
-                        newbornInfo.add(userNewbornInfo)
-                    }
+    fun getUsersNewbornInfo(): Flow<List<NewbornInfo>> = callbackFlow {
+        val userId = accountService.currentUserId
+        val listenerRegistration = newbornInfoCollection
+            .whereEqualTo("userId", userId)
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    close(exception)
+                    return@addSnapshotListener
                 }
-                trySend(newbornInfo)
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val newbornInfo = snapshot.documents.mapNotNull { document ->
+                        document.toObject(NewbornInfo::class.java)?.apply { id = document.id }
+                    }
+                    trySend(newbornInfo).isSuccess
+                } else {
+                    trySend(emptyList<NewbornInfo>()).isSuccess
+                }
             }
-            .addOnFailureListener { exception ->
-                Log.w(ContentValues.TAG, "Error getting documents: ", exception)
-                close(exception)
-            }
-        awaitClose()
+
+        awaitClose { listenerRegistration.remove() }
     }
 
     suspend fun ensureNewbornInfoDocument() {
@@ -105,5 +108,23 @@ class NewbornInfoRepository @Inject constructor(
             documentReference.update("growthAndDevelopmentResults", FieldValue.arrayUnion(newResult)).await()
         }
 
+    }
+
+    suspend fun deletePercentileResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult) {
+        val userId = accountService.currentUserId
+        val querySnapshot = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+
+            val resultToRemove = hashMapOf(
+                "growthAndDevelopmentInfo" to growthAndDevelopmentResult.growthAndDevelopmentInfo,
+                "growthAndDevelopmentPercentiles" to growthAndDevelopmentResult.growthAndDevelopmentPercentiles
+            )
+
+            val documentReference = newbornInfoCollection.document(documentId)
+            documentReference.update("growthAndDevelopmentResults", FieldValue.arrayRemove(resultToRemove)).await()
+        }
     }
 }

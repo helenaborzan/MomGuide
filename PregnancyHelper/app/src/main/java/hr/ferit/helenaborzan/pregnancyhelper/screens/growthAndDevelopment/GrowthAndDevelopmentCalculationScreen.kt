@@ -17,6 +17,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,8 +48,11 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButto
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.showAllQuestionnaireResults
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @Composable
 fun GrowthAndDevelopmentCalculationScreen(
@@ -72,6 +78,7 @@ fun GrowthAndDevelopmentCalculationScreen(
             }
         }
     }
+    ErrorDialog(uiState = uiState, viewModel = viewModel)
 }
 
 @Composable
@@ -187,7 +194,7 @@ fun CalculationLabel(viewModel: GrowthAndDevelopmentViewModel, uiState: GrowthAn
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(16.dp)
-            .clickable { viewModel.onCalculatePercentilesClick() }
+            .clickable { if (uiState.errorMessageResource == null) viewModel.onCalculatePercentilesClick() }
     ){
         Icon(
             painter = painterResource(id = R.drawable.baseline_calculate_24),
@@ -284,12 +291,36 @@ fun PercentileInterpretation(
                 .weight(0.2f)
                 .clickable { showInterpretation = !showInterpretation }
         )
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_delete_forever_24),
+            contentDescription = stringResource(id = R.string.deletePercentileResult),
+            tint = DarkGray
+        )
     }
     if (showInterpretation){
         Text(
             text = viewModel.getPercentileInterpretation(type = percentileType, percentileValue = percentileValue),
             style = TextStyle(color = Color.Black, fontSize = 14.sp),
             modifier = Modifier.padding(vertical = 8.dp)
+        )
+    }
+}
+
+@Composable
+fun ErrorDialog(uiState: GrowthAndDevelopmentCalculationUiState, viewModel: GrowthAndDevelopmentViewModel) {
+    uiState.errorMessageResource?.let { it ->
+        AlertDialog(
+            onDismissRequest = {viewModel.clearError()},
+            title = { Text(stringResource(id =  R.string.error)) },
+            text = { Text(stringResource(id = it)) },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.clearError() },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
         )
     }
 }

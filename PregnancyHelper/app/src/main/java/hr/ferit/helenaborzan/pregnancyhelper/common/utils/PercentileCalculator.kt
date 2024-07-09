@@ -13,13 +13,13 @@ class PercentileCalculator @Inject constructor(
 ) {
     fun <T>calculateZvalue(type : String, sex : String, searchCriteria : T, value : Int) : Double{
         val LMS_values = LMSTableRepository.getLMS(type = type, sex = sex, searchCriteria = searchCriteria)
-        if (LMS_values == null) {
-            throw IllegalArgumentException("LMS values are null or insufficient.")
+        if (LMS_values != null) {
+            val L = LMS_values[0]
+            val M = LMS_values[1]
+            val S = LMS_values[2]
+            return (pow((value / M), L) - 1) / (L * S)
         }
-        val L = LMS_values[0]
-        val M = LMS_values[1]
-        val S = LMS_values[2]
-        return (pow((value/M), L)-1)/(L*S)
+        return 0.0
     }
 
     fun <T>calculatePercentile(type : String, sex : String, searchCriteria : T, value : Int) : Double{

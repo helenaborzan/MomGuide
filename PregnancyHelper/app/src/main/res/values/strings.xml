@@ -22,6 +22,9 @@
     <string name="register">Registriraj me</string>
     <string name="goToRegistration">Nemate račun? Idite na registraciju.</string>
     <string name="goToLogin">Već imate račun? Idite na prijavu.</string>
+    <string name="signOut">Odjava</string>
+    <string name="signOutError">Greška prilikom odjave. Pokuštajte ponovno.</string>
+    <string name="succesfulSignOut">Uspješno ste se odjavili.</string>
 
     <string name="chooseCategory">Odaberite</string>
     <string name="pregnancyCategory">Trudnoća</string>
@@ -63,5 +66,14 @@
     <string name="headCircumferenceForAgePercentile">Percentil opsega glave za dob</string>
     <string name="normalPercentileValue">Vrijednost percentila je u normalnim granicama.</string>
     <string name="abnormalPercentilaValue">Vrijednost percentila nije u normalnim granicama. Preporuča se da se obratite liječniku.</string>
-
+    <string name="deletePercentileResult">Obriši prijašni rezultat percentila rasta</string>
+    <string name="deleteCheck">Potvrda brisanja</string>
+    <string name="deleteCheckQuestion">Jeste li sigurni da želite obrisati podatke?</string>
+    <string name="yes">Da</string>
+    <string name="no">Ne</string>
+    <string name="sexNotChecked">Morate odabrati spol.</string>
+    <string name="heightNotInLimits">Unesite visinu između 45cm i 110cm.</string>
+    <string name="ageNotInLimits">Unesite dob između 0 i 24 mjeseci.</string>
+    <string name="weightNotInLimits">Unesite tjelesnu težinu veću od 0.</string>
+    <string name="headCircumferenceNotInLimits">Unesite opseg glave veći od 0.</string>
 </resources>

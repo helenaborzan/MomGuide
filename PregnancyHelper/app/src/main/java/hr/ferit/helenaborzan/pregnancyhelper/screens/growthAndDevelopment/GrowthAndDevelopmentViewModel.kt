@@ -2,7 +2,9 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
 import android.content.Context
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
@@ -14,6 +16,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.PercentileCalculator
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
+import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,29 +31,47 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
         private set
     private val _showResults = mutableStateOf(false)
     val showResults: State<Boolean> = _showResults
-
+    val bottomHeightLimit = 45
+    val upperHeightLimit = 110
+    val bottomAgeLimit = 0
+    val upperAgeLimit = 24
+    val weightLimit = 0
+    val headCircumferenceLimit = 0
     fun onSexChange(newValue : String){
-        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(sex = newValue))
+        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(sex = newValue), isRadioButtonChecked = true)
     }
 
     fun onHeightChange(newValue : String){
         var newValue = newValue.toIntOrNull() ?: 0
-        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(length = newValue))
+        uiState.value = uiState.value.copy(
+            growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(length = newValue)
+        )
     }
 
     fun onWeightChange(newValue : String){
         var newValue = newValue.toIntOrNull() ?: 0
-        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(weight = newValue))
+        uiState.value = uiState.value.copy(
+            growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(weight = newValue)
+        )
     }
 
     fun onAgeChange(newValue : String){
         var newValue = newValue.toIntOrNull() ?: 0
-        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(age = newValue))
+        uiState.value = uiState.value.copy(
+            growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(age = newValue)
+        )
     }
 
     fun onHeadCircumferenceChange(newValue: String){
         var newValue = newValue.toIntOrNull() ?: 0
-        uiState.value = uiState.value.copy(growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(headCircumference = newValue))
+        uiState.value = uiState.value.copy(
+            growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(headCircumference = newValue)
+        )
+
+    }
+
+    fun clearError() {
+        uiState.value = uiState.value.copy(errorMessageResource = null)
     }
 
     fun onCalculatePercentilesClick(){
@@ -115,6 +136,7 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
             else -> return ""
         }
     }
+
 
 
 }

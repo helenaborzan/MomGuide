@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -43,6 +45,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
+import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
@@ -62,6 +67,7 @@ fun NewbornHomeScreen(
     val growthAndDevelopmentResults = remember(newbornInfo) {
         newbornInfo.flatMap { it.growthAndDevelopmentResults }
     }
+    val uiState by viewModel.uiState
     LazyColumn(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
@@ -69,7 +75,7 @@ fun NewbornHomeScreen(
             .fillMaxSize()
             .background(color = DirtyWhite)
     ){ item {
-        IconBar()
+        IconBar(viewModel = viewModel)
         Recomendations()
         BreastfeedingSection()
         GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
@@ -82,10 +88,13 @@ fun NewbornHomeScreen(
     LaunchedEffect(Unit) {
         viewModel.getUsersNewbornInfo()
     }
+
+    SignOutErrorDialog(viewModel = viewModel, uiState = uiState)
+    ResultDialog(uiState = uiState, navController = navController)
 }
 
 @Composable
-fun IconBar() {
+fun IconBar(viewModel: NewbornHomeViewModel) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -98,10 +107,10 @@ fun IconBar() {
             contentDescription = stringResource(id = R.string.notificationIconDescription),
             tint = Color.DarkGray
         )
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_person_24),
-            contentDescription = stringResource(id = R.string.profileIconDescription),
-            tint = Color.DarkGray
+        Text(
+            text = stringResource(id = R.string.signOut),
+            style = TextStyle(fontSize = 14.sp, color = DarkGray),
+            modifier = Modifier.clickable { viewModel.onSignOutClick() }
         )
     }
 }
@@ -321,6 +330,55 @@ fun showAllQuestionnaireResults(questionnaireResult: List<QuestionnaireResult>) 
         showQuestionnaireResult(
             date = questionnaireResult[i].date,
             resultMessage = questionnaireResult[i].resultMessage)
+    }
+}
+
+@Composable
+fun SignOutErrorDialog(
+    viewModel : NewbornHomeViewModel,
+    uiState : NewbornHomeUiState
+) {
+    uiState.errorMessage?.let { messageId ->
+        AlertDialog(
+            onDismissRequest = { viewModel.clearError() },
+            title = { Text(stringResource(id = R.string.error)) },
+            text = { Text(stringResource(id = messageId)) },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.clearError() },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun ResultDialog(uiState : NewbornHomeUiState, navController : NavController) {
+    if (uiState.isSignedOut == true) {
+        AlertDialog(
+            onDismissRequest = {
+                navController.navigate(Screen.HomeScreen.route) {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                }
+            },
+            title = { Text(stringResource(id = R.string.signOut)) },
+            text = { Text(stringResource(id = R.string.succesfulSignOut)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.HomeScreen.route) {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(Pink)
+                ) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
     }
 }
 
