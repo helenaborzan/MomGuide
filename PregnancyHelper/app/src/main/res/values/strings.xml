@@ -76,4 +76,14 @@
     <string name="ageNotInLimits">Unesite dob između 0 i 24 mjeseci.</string>
     <string name="weightNotInLimits">Unesite tjelesnu težinu veću od 0.</string>
     <string name="headCircumferenceNotInLimits">Unesite opseg glave veći od 0.</string>
+    <string name="emptyInput">Ispunite sva polja.</string>
+
+    <string name="nutritionTitle">Prehrana</string>
+    <string name="contractionsTimerTitle">Mjerač trudova</string>
+    <string name="depressionAndAxietyTitle">Depresija i anksioznost</string>
+    <string name="stressTitle">Stres</string>
+
+    <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
+    <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>
+    <string name="positiveDepressionTest">Rezultati pokazuju da bolujete od deresije. Preporuča se da se obratite liječniku.</string>
 </resources>

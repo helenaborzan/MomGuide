@@ -53,7 +53,9 @@ import javax.inject.Inject
 @Composable
 fun QuestionnaireScreen(
     navController: NavController,
-    viewModel: QuestionnaireViewModel = hiltViewModel()
+    navigate: () -> Unit,
+    viewModel: BaseQuestionnaireViewModel,
+    questionnaireName : String
 ) {
     val questionnaire by viewModel.questionnaire.collectAsState(initial = emptyList())
     val uiState by viewModel.uiState
@@ -72,7 +74,7 @@ fun QuestionnaireScreen(
                 .weight(0.9f)
         ) {
             items(questionnaire) { question ->
-                QandACard(question = question)
+                QandACard(question = question, viewModel = viewModel)
                 HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -90,9 +92,9 @@ fun QuestionnaireScreen(
         )
     }
     LaunchedEffect(Unit) {
-        viewModel.getQuestionnaire()
+        viewModel.getQuestionnaire(questionnaireName)
     }
-    ResultDialog(uiState = uiState, navController = navController)
+    ResultDialog(uiState = uiState, navigate = navigate)
     ErrorDialog(uiState = uiState, viewModel = viewModel)
 
 
@@ -101,7 +103,7 @@ fun QuestionnaireScreen(
 @Composable
 fun QandACard(
     question : Question,
-    viewModel : QuestionnaireViewModel = hiltViewModel()
+    viewModel : BaseQuestionnaireViewModel
 ){
     var selectedAnswer by remember { mutableStateOf<Answer?>(null) }
     Column (
@@ -140,7 +142,7 @@ fun QandACard(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : QuestionnaireViewModel) {
+fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : BaseQuestionnaireViewModel) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End,
@@ -159,15 +161,15 @@ fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : Questio
 }
 
 @Composable
-fun ResultDialog(uiState : QuestionnaireUiState, navController : NavController) {
+fun ResultDialog(uiState : QuestionnaireUiState, navigate: () -> Unit) {
     uiState.resultMessageResource?.let { it ->
         AlertDialog(
-            onDismissRequest = { navController.navigate(Screen.NewbornHomeScreen.route)},
+            onDismissRequest = { navigate() },
             title = { Text(stringResource(id =  R.string.result)) },
             text = { Text(stringResource(id = it)) },
             confirmButton = {
                 Button(
-                    onClick = { navController.navigate(Screen.NewbornHomeScreen.route) },
+                    onClick = { navigate() },
                     colors = ButtonDefaults.buttonColors(Pink)
                 ) {
                     Text(stringResource(id = R.string.ok))
@@ -178,7 +180,7 @@ fun ResultDialog(uiState : QuestionnaireUiState, navController : NavController) 
 }
 
 @Composable
-fun ErrorDialog(uiState: QuestionnaireUiState, viewModel: QuestionnaireViewModel) {
+fun ErrorDialog(uiState: QuestionnaireUiState, viewModel: BaseQuestionnaireViewModel) {
     uiState.errorMessageResource?.let { it ->
         AlertDialog(
             onDismissRequest = {viewModel.clearError()},

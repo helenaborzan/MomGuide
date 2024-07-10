@@ -47,9 +47,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.showAllQuestionnaireResults
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireViewModel
+
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
@@ -97,7 +95,7 @@ fun InputSection(
         LabeledTextField(
             labelId = R.string.heightInputLabel,
             unitId = R.string.cmLabel,
-            value = uiState.growthAndDevelopmentInfo.length.toString(),
+            value = uiState.growthAndDevelopmentInfo.length,
             onValueChange = viewModel::onHeightChange,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -107,7 +105,7 @@ fun InputSection(
         LabeledTextField(
             labelId = R.string.weightInputLabel,
             unitId = R.string.kgLabel,
-            value = uiState.growthAndDevelopmentInfo.weight.toString(),
+            value = uiState.growthAndDevelopmentInfo.weight,
             onValueChange = viewModel::onWeightChange,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -117,7 +115,7 @@ fun InputSection(
         LabeledTextField(
             labelId = R.string.ageInputLabel,
             unitId = R.string.monthsLabel,
-            value = uiState.growthAndDevelopmentInfo.age.toString(),
+            value = uiState.growthAndDevelopmentInfo.age,
             onValueChange = viewModel::onAgeChange,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -127,7 +125,7 @@ fun InputSection(
         LabeledTextField(
             labelId = R.string.headCircumferenceLabel,
             unitId = R.string.cmLabel,
-            value = uiState.growthAndDevelopmentInfo.headCircumference.toString(),
+            value = uiState.growthAndDevelopmentInfo.headCircumference,
             onValueChange = viewModel::onHeadCircumferenceChange,
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -290,11 +288,6 @@ fun PercentileInterpretation(
             modifier = Modifier
                 .weight(0.2f)
                 .clickable { showInterpretation = !showInterpretation }
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_delete_forever_24),
-            contentDescription = stringResource(id = R.string.deletePercentileResult),
-            tint = DarkGray
         )
     }
     if (showInterpretation){

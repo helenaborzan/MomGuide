@@ -55,7 +55,7 @@ fun GrowthAndDevelopmentResultsScreen(
 ) {
     val newbornInfo by viewModel.newbornInfo.collectAsState(initial = emptyList())
     val growthAndDevelopmentResults = remember(newbornInfo) {
-        newbornInfo.flatMap { it.growthAndDevelopmentResults }
+        newbornInfo.flatMap { it.growthAndDevelopmentResults.reversed() }
     }
     val showDialog = viewModel.showDialog.value
 
@@ -70,8 +70,8 @@ fun GrowthAndDevelopmentResultsScreen(
         LazyColumn(modifier = Modifier
             .padding(24.dp)
             .weight(0.9f)) {
-            items(growthAndDevelopmentResults) { result ->
-                PercentilesResult(growthAndDevelopmentResult = result, viewModel = viewModel)
+            items(growthAndDevelopmentResults.withIndex().toList()) {(index, result) ->
+                PercentilesResult(growthAndDevelopmentResult = result, growthAndDevelopmentResultIndex = index, viewModel = viewModel)
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -83,7 +83,7 @@ fun GrowthAndDevelopmentResultsScreen(
 }
 
 @Composable
-fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult, viewModel: NewbornHomeViewModel) {
+fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult,  growthAndDevelopmentResultIndex : Int, viewModel: NewbornHomeViewModel) {
     val date = growthAndDevelopmentResult.growthAndDevelopmentInfo.date
     Column (
         verticalArrangement = Arrangement.Center,
@@ -120,7 +120,7 @@ fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult, vi
         }
             PercentileResultSection(growthAndDevelopmentPercentiles = growthAndDevelopmentResult.growthAndDevelopmentPercentiles)
             DeleteResultDialog(showDialog = viewModel.showDialog.value,
-                onConfirm = { viewModel.deletePercentileResult(growthAndDevelopmentResult) },
+                onConfirm = { viewModel.deletePercentileResult(growthAndDevelopmentResultIndex) },
                 onDismiss = { viewModel.onDeleteResultDialogDismiss() }
             )
     }

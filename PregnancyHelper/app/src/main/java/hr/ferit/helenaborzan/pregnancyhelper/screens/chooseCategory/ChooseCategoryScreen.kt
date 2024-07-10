@@ -65,7 +65,10 @@ fun ChooseCategoryScreen(
                 imageResource = R.drawable.pregnancy_clip_art,
                 stringResource = R.string.pregnancyCategory,
                 borderColor = Pink,
-                onClick = { }
+                onClick = {
+                    viewModel.onPregnancyCategoryClick()
+                    navController.navigate(Screen.PregnancyHomeScreen.route)
+                }
             )
             Spacer(modifier = Modifier.height(24.dp))
             CategoryCard(

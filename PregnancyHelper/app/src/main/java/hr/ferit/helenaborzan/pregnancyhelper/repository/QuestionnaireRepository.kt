@@ -14,8 +14,8 @@ import javax.inject.Inject
 class QuestionnaireRepository @Inject constructor(
     private val firestore : FirebaseFirestore
 ){
-    fun getQuestionnaire(): Flow<List<Question>> = callbackFlow {
-        firestore.collection("postPartumDepressionScale")
+    fun getQuestionnaire(questionnaireName: String): Flow<List<Question>> = callbackFlow {
+        firestore.collection(questionnaireName)
             .get()
             .addOnSuccessListener { result ->
                 val questionnaire = mutableListOf<Question>()

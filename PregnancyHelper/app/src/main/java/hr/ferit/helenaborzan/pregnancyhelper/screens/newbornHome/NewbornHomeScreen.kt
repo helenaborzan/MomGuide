@@ -79,8 +79,8 @@ fun NewbornHomeScreen(
         Recomendations()
         BreastfeedingSection()
         GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
-        PostPartumQuestionnaireSection(
-            navController = navController,
+        QuestionnaireSection(
+            navigate = {navController.navigate(Screen.EPDSQuestionnaireScreen.route)},
             questionnaireResults = questionnaireResults
         )
     }
@@ -245,8 +245,8 @@ fun GrowthAndDevelopmentButton(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PostPartumQuestionnaireSection(
-    navController: NavController,
+fun QuestionnaireSection(
+    navigate : () -> Unit,
     questionnaireResults : List<QuestionnaireResult>
 ){
     var showAllResults by remember {
@@ -272,7 +272,7 @@ fun PostPartumQuestionnaireSection(
                 style = TextStyle(color = Pink, fontSize = 16.sp, textDecoration = TextDecoration.Underline),
                 modifier = Modifier
                     .padding(start = 4.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
-                    .clickable { navController.navigate(Screen.QuestionnaireScreen.route) }
+                    .clickable { navigate() }
             )
            showQuestionnaireResult(
                date = if (questionnaireResults.isNotEmpty())

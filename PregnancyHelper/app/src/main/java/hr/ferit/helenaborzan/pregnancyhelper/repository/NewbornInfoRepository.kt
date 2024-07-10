@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,16 +20,19 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
 class NewbornInfoRepository @Inject constructor(
-    private val accountService: AccountService,
-    private val firestore : FirebaseFirestore
-){
-    private val newbornInfoCollection = firestore.collection("newbornInfo")
+    accountService: AccountService,
+    firestore: FirebaseFirestore
+) : BaseInfoRepository(accountService, firestore) {
+    override val collectionName: String
+        get() = "newbornInfo"
+    val newbornInfoCollection = firestore.collection(collectionName)
 
     fun getUsersNewbornInfo(): Flow<List<NewbornInfo>> = callbackFlow {
         val userId = accountService.currentUserId
@@ -53,48 +57,22 @@ class NewbornInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    suspend fun ensureNewbornInfoDocument() {
-        val userId = accountService.currentUserId
-        val newbornInfoDocRef = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
-
-        if (newbornInfoDocRef.isEmpty) {
-            createNewbornInfoDocument(userId)
-        }
-    }
-
-    private suspend fun createNewbornInfoDocument(userId: String) {
+    override suspend fun createInfoDocument(userId: String) {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
             "breastfeedingInfo" to emptyList<DateTime>(),
             "growthAndDevelopmentResults" to emptyList<GrowthAndDevelopmentResult>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
         )
-        newbornInfoCollection.add(newbornInfoData)
-            .await()
+        collection.add(newbornInfoData).await()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun addQuestionnaireResults(score: Int, resultMessage: String) {
+    suspend fun addGrowthAndDevelopmentResult(
+        growthAndDevelopmentInfo: GrowthAndDevelopmentInfo,
+        growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles
+    ) {
         val userId = accountService.currentUserId
-        val querySnapshot = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
-
-        if (!querySnapshot.isEmpty) {
-            val document = querySnapshot.documents[0]
-            val documentId = document.id
-            val newResult = hashMapOf(
-                "resultMessage" to resultMessage,
-                "score" to score,
-                "date" to Timestamp.now()
-            )
-
-            val documentReference = newbornInfoCollection.document(documentId)
-            documentReference.update("questionnaireResults", FieldValue.arrayUnion(newResult)).await()
-        }
-    }
-
-    suspend fun addGrowthAndDevelopmentResult(growthAndDevelopmentInfo: GrowthAndDevelopmentInfo, growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles ){
-        val userId = accountService.currentUserId
-        val querySnapshot = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
         if (!querySnapshot.isEmpty) {
             val document = querySnapshot.documents[0]
@@ -104,27 +82,30 @@ class NewbornInfoRepository @Inject constructor(
                 "growthAndDevelopmentPercentiles" to growthAndDevelopmentPercentiles
             )
 
-            val documentReference = newbornInfoCollection.document(documentId)
+            val documentReference = collection.document(documentId)
             documentReference.update("growthAndDevelopmentResults", FieldValue.arrayUnion(newResult)).await()
         }
-
     }
 
-    suspend fun deletePercentileResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult) {
+    suspend fun deletePercentileResult(growthAndDevelopmentResultIndex: Int) {
         val userId = accountService.currentUserId
-        val querySnapshot = newbornInfoCollection.whereEqualTo("userId", userId).get().await()
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
         if (!querySnapshot.isEmpty) {
             val document = querySnapshot.documents[0]
             val documentId = document.id
 
-            val resultToRemove = hashMapOf(
-                "growthAndDevelopmentInfo" to growthAndDevelopmentResult.growthAndDevelopmentInfo,
-                "growthAndDevelopmentPercentiles" to growthAndDevelopmentResult.growthAndDevelopmentPercentiles
-            )
+            val currentResults = document.get("growthAndDevelopmentResults") as? List<Map<String, Any>> ?: listOf()
 
-            val documentReference = newbornInfoCollection.document(documentId)
-            documentReference.update("growthAndDevelopmentResults", FieldValue.arrayRemove(resultToRemove)).await()
+            if (growthAndDevelopmentResultIndex in currentResults.indices) {
+                val updatedResults = currentResults.toMutableList()
+                updatedResults.removeAt(growthAndDevelopmentResultIndex)
+
+                val documentReference = collection.document(documentId)
+                documentReference.update("growthAndDevelopmentResults", updatedResults).await()
+            } else {
+                throw IndexOutOfBoundsException("Invalid index for growthAndDevelopmentResults")
+            }
         }
     }
 }

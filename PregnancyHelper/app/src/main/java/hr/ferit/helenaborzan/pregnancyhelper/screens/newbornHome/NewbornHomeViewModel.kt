@@ -77,9 +77,9 @@ class NewbornHomeViewModel @Inject constructor(
         _showDialog.value = !_showDialog.value
     }
 
-    fun deletePercentileResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult){
+    fun deletePercentileResult(growthAndDevelopmentResultIndex: Int){
         viewModelScope.launch {
-            newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResult)
+            newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResultIndex)
         }
     }
     fun onDeleteResultDialogDismiss(){

@@ -42,28 +42,25 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
     }
 
     fun onHeightChange(newValue : String){
-        var newValue = newValue.toIntOrNull() ?: 0
         uiState.value = uiState.value.copy(
             growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(length = newValue)
         )
+
     }
 
     fun onWeightChange(newValue : String){
-        var newValue = newValue.toIntOrNull() ?: 0
         uiState.value = uiState.value.copy(
             growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(weight = newValue)
         )
     }
 
     fun onAgeChange(newValue : String){
-        var newValue = newValue.toIntOrNull() ?: 0
         uiState.value = uiState.value.copy(
             growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(age = newValue)
         )
     }
 
     fun onHeadCircumferenceChange(newValue: String){
-        var newValue = newValue.toIntOrNull() ?: 0
         uiState.value = uiState.value.copy(
             growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(headCircumference = newValue)
         )
@@ -75,29 +72,31 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
     }
 
     fun onCalculatePercentilesClick(){
-        calculatePercentiles()
+        if(areAllFieldsChecked()) {
+            calculatePercentiles()
 
-        var growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo
-        val growthAndDevelopmentPercentiles = uiState.value.growthAndDevelopmentPercentiles
-        growthAndDevelopmentInfo = growthAndDevelopmentInfo.copy(date = Timestamp.now())
-        viewModelScope.launch {
-            if(growthAndDevelopmentInfo!=null && growthAndDevelopmentPercentiles!=null) {
-                newbornInfoRepository.addGrowthAndDevelopmentResult(
-                    growthAndDevelopmentInfo = growthAndDevelopmentInfo,
-                    growthAndDevelopmentPercentiles = growthAndDevelopmentPercentiles
-                )
+            var growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo
+            val growthAndDevelopmentPercentiles = uiState.value.growthAndDevelopmentPercentiles
+            growthAndDevelopmentInfo = growthAndDevelopmentInfo.copy(date = Timestamp.now())
+            viewModelScope.launch {
+                if (growthAndDevelopmentInfo != null && growthAndDevelopmentPercentiles != null) {
+                    newbornInfoRepository.addGrowthAndDevelopmentResult(
+                        growthAndDevelopmentInfo = growthAndDevelopmentInfo,
+                        growthAndDevelopmentPercentiles = growthAndDevelopmentPercentiles
+                    )
+                }
             }
+            _showResults.value = true
         }
-        _showResults.value = true
     }
 
     fun calculatePercentiles(){
        uiState.value = uiState.value.copy(
            growthAndDevelopmentPercentiles = GrowthAndDevelopmentPercentiles(
-           lengthForAgePercentile = percentileCalculator.calculatePercentile(type = "length_age", sex = uiState.value.growthAndDevelopmentInfo!!.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo!!.age, value = uiState.value.growthAndDevelopmentInfo!!.length),
-           weightForAgePercentile = percentileCalculator.calculatePercentile(type = "weight_age", sex = uiState.value.growthAndDevelopmentInfo!!.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo!!.age, value = uiState.value.growthAndDevelopmentInfo!!.weight),
-           weightForLengthPercentile = percentileCalculator.calculatePercentile(type = "weight_length", sex = uiState.value.growthAndDevelopmentInfo!!.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo!!.length, value = uiState.value.growthAndDevelopmentInfo!!.weight),
-           headCircumferenceForAgePercentile = percentileCalculator.calculatePercentile(type = "head_circumference_for_age", sex = uiState.value.growthAndDevelopmentInfo!!.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo!!.age, value = uiState.value.growthAndDevelopmentInfo!!.headCircumference)
+           lengthForAgePercentile = percentileCalculator.calculatePercentile(type = "length_age", sex = uiState.value.growthAndDevelopmentInfo.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(), value = uiState.value.growthAndDevelopmentInfo.length.toInt()),
+           weightForAgePercentile = percentileCalculator.calculatePercentile(type = "weight_age", sex = uiState.value.growthAndDevelopmentInfo.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(), value = uiState.value.growthAndDevelopmentInfo.weight.toInt()),
+           weightForLengthPercentile = percentileCalculator.calculatePercentile(type = "weight_length", sex = uiState.value.growthAndDevelopmentInfo.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo.length.toInt(), value = uiState.value.growthAndDevelopmentInfo.weight.toInt()),
+           headCircumferenceForAgePercentile = percentileCalculator.calculatePercentile(type = "head_circumference_for_age", sex = uiState.value.growthAndDevelopmentInfo.sex, searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(), value = uiState.value.growthAndDevelopmentInfo.headCircumference.toInt())
             )
        )
     }
@@ -136,6 +135,83 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
             else -> return ""
         }
     }
+
+    fun areAllFieldsChecked() : Boolean{
+        return isHeightInLimits(uiState.value.growthAndDevelopmentInfo.length)
+                && isWeightInLimits(uiState.value.growthAndDevelopmentInfo.weight)
+                && isAgeInLimits(uiState.value.growthAndDevelopmentInfo.age)
+                && isHeadCircumferenceInLimits(uiState.value.growthAndDevelopmentInfo.headCircumference)
+                && isSexChecked(uiState.value.isRadioButtonChecked)
+    }
+    fun isSexChecked(isChecked : Boolean) : Boolean{
+        if (!isChecked){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.sexNotChecked)
+        }
+        return isChecked
+    }
+    fun isHeightInLimits(height : String) : Boolean{
+        val bottomLimit = 45
+        val upperLimit = 110
+        if (height.isBlank()){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
+            return false
+        }
+        else if(height.toInt() in 45..110){
+            return true
+        }
+        else{
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.heightNotInLimits)
+            return false
+        }
+    }
+
+    fun isWeightInLimits(weight : String) : Boolean{
+        val limit = 0
+        if (weight.isBlank()){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
+            return false
+        }
+        else if(weight.toInt() > limit){
+            return true
+        }
+        else{
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.weightNotInLimits)
+            return false
+        }
+    }
+
+    fun isAgeInLimits(age : String) : Boolean{
+        val bottomLimit = 0
+        val upperLimit = 24
+        if (age.isBlank()){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
+            return false
+        }
+        else if(age.toInt() in bottomLimit..upperLimit){
+            return true
+        }
+        else{
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.ageNotInLimits)
+            return false
+        }
+    }
+
+    fun isHeadCircumferenceInLimits(headCircumference : String) : Boolean{
+        val limit = 0
+        if (headCircumference.isBlank()){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
+            return false
+        }
+        else if(headCircumference.toInt() > limit){
+            return true
+        }
+        else{
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.headCircumferenceNotInLimits)
+            return false
+        }
+    }
+
+
 
 
 
