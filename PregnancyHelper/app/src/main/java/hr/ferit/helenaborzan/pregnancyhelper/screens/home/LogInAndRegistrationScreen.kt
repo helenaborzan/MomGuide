@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.home
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradientShader
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -29,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.common.util.DeviceProperties.isTablet
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ButtonWithGradient
@@ -36,6 +39,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 
@@ -49,7 +53,7 @@ fun LoginAndRegistrationScreen (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
+            .background(Brush.linearGradient(0.2f to LightPink, 1.0f to Color.White))
             .padding(20.dp)
     ) {
         Column (modifier = Modifier.weight(0.2f)){
@@ -58,7 +62,8 @@ fun LoginAndRegistrationScreen (
             Description()
         }
         Column (
-            modifier = Modifier.weight(0.4f),
+            modifier = Modifier.weight(0.4f)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -67,10 +72,11 @@ fun LoginAndRegistrationScreen (
                 contentDescription = null,
                 modifier = Modifier
                     .padding(32.dp)
+                    .fillMaxSize()
             )
         }
         Column (
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier.weight(0.3f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){

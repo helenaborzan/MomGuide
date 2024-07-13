@@ -72,7 +72,8 @@ fun PregnancyHomeScreen(
             ContractionsTimerSection()
             QuestionnaireSection(
                 navigate = {navController.navigate(Screen.DepressionQuestionnaireScreen.route)},
-                questionnaireResults = questionnaireResults
+                questionnaireResults = questionnaireResults,
+                title = R.string.depressionTitle
             )
         }
     }

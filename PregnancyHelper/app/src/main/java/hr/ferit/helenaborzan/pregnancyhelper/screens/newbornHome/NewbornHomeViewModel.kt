@@ -40,6 +40,9 @@ class NewbornHomeViewModel @Inject constructor(
     private val _showDialog = mutableStateOf(false)
     val showDialog : State<Boolean> = _showDialog
 
+    private val _isDeleted = mutableStateOf(false)
+    val isDeleted : State<Boolean> = _isDeleted
+
     fun getUsersNewbornInfo() {
         viewModelScope.launch {
             newbornInfoRepository.getUsersNewbornInfo()
@@ -80,7 +83,9 @@ class NewbornHomeViewModel @Inject constructor(
     fun deletePercentileResult(growthAndDevelopmentResultIndex: Int){
         viewModelScope.launch {
             newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResultIndex)
+            _isDeleted.value = true
         }
+
     }
     fun onDeleteResultDialogDismiss(){
         _showDialog.value = false

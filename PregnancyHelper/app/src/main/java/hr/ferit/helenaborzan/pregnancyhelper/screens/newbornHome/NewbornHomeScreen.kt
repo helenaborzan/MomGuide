@@ -2,6 +2,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,6 +48,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.map.MapSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
@@ -81,7 +83,8 @@ fun NewbornHomeScreen(
         GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
         QuestionnaireSection(
             navigate = {navController.navigate(Screen.EPDSQuestionnaireScreen.route)},
-            questionnaireResults = questionnaireResults
+            questionnaireResults = questionnaireResults,
+            title = R.string.postPartumDepressionTitle
         )
     }
     }
@@ -247,7 +250,8 @@ fun GrowthAndDevelopmentButton(
 @Composable
 fun QuestionnaireSection(
     navigate : () -> Unit,
-    questionnaireResults : List<QuestionnaireResult>
+    questionnaireResults : List<QuestionnaireResult>,
+    @StringRes title : Int
 ){
     var showAllResults by remember {
         mutableStateOf(false)
@@ -258,7 +262,7 @@ fun QuestionnaireSection(
             .padding(24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.postPartumDepressionTitle),
+            text = stringResource(id = title),
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -284,6 +288,7 @@ fun QuestionnaireSection(
                else
                    stringResource(id = R.string.emptyQuestionnaireResults)
            )
+            MapSection()
             if (questionnaireResults.size > 1) {
                 Icon(
                     painter = if (!showAllResults)

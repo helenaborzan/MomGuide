@@ -80,7 +80,7 @@
 
     <string name="nutritionTitle">Prehrana</string>
     <string name="contractionsTimerTitle">Mjerač trudova</string>
-    <string name="depressionAndAxietyTitle">Depresija i anksioznost</string>
+    <string name="depressionTitle">Depresija</string>
     <string name="stressTitle">Stres</string>
 
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>

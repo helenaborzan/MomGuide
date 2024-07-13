@@ -51,7 +51,6 @@ abstract class BaseQuestionnaireViewModel(
         finalScore.value -= previousPoints ?: 0
         selectedAnswers[questionId] = points
         finalScore.value += points ?: 0
-        Log.i("BaseQuestionnaireViewModel", "score: ${finalScore}")
     }
 
     abstract fun getResultMessageResource(score: Int?): Int?

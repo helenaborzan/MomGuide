@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.NavigationController
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    Places.initialize(applicationContext, "AIzaSyBxc0Sg4d_F2fxVZJKan4ONFWbNwpKlal4")
                     NavigationController()
                 }
             }

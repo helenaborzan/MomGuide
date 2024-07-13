@@ -79,7 +79,6 @@ fun GrowthAndDevelopmentResultsScreen(
     LaunchedEffect(Unit) {
         viewModel.getUsersNewbornInfo()
     }
-
 }
 
 @Composable
