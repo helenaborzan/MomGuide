@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -33,18 +35,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
-import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
+import hr.ferit.helenaborzan.pregnancyhelper.model.Point
+import hr.ferit.helenaborzan.pregnancyhelper.repository.headCircumferenceForAgeData
+import hr.ferit.helenaborzan.pregnancyhelper.repository.heightForAgeData
+import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForAgeData
+import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForHeightData
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.showAllQuestionnaireResults
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 
@@ -58,6 +64,23 @@ fun GrowthAndDevelopmentResultsScreen(
         newbornInfo.flatMap { it.growthAndDevelopmentResults.reversed() }
     }
     val showDialog = viewModel.showDialog.value
+    val selectedChartType by viewModel.selectedChartType.collectAsState()
+
+    val chartData =  when (selectedChartType) {
+        "lengthForAge" -> heightForAgeData
+        "weightForAge" -> weightForAgeData
+        "weightForLength" -> weightForHeightData
+        "headCircumferenceForAge" -> headCircumferenceForAgeData
+        else -> emptyList()
+    }
+
+    LaunchedEffect(growthAndDevelopmentResults, selectedChartType) {
+        viewModel.updatePoints(growthAndDevelopmentResults, selectedChartType)
+    }
+
+    val points by viewModel.points.collectAsState()
+
+
 
     Column (modifier = Modifier.background(color = DirtyWhite)){
         GoBackIconBar(
@@ -67,6 +90,16 @@ fun GrowthAndDevelopmentResultsScreen(
                 .weight(0.1f),
             navController = navController
         )
+        ChoosePercentile(viewModel = viewModel)
+        GrowthPercentileChart(
+            data = chartData,
+            points = points,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.4f)
+                .align(Alignment.CenterHorizontally)
+                .padding(24.dp),
+            )
         LazyColumn(modifier = Modifier
             .padding(24.dp)
             .weight(0.9f)) {
@@ -88,7 +121,7 @@ fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult,  g
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
-            .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(4.dp))
+            .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(4.dp))
             .background(Color.White)
     ){
         Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -179,5 +212,41 @@ fun DeleteResultDialog(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun ChoosePercentile(viewModel : NewbornHomeViewModel) {
+    val selectedChartType by viewModel.selectedChartType.collectAsState()
+    LazyRow (horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Top,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)) {
+        item {
+            BasicButton(
+                text = stringResource(id = R.string.lengthForAge),
+                onClick = { viewModel.selectChartType("lengthForAge") },
+                containerColor = if (selectedChartType == "lengthForAge") LightPink else Color.White
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            BasicButton(
+                text = stringResource(id = R.string.weightForAge),
+                onClick = { viewModel.selectChartType("weightForAge")},
+                containerColor = if (selectedChartType == "weightForAge") LightPink else Color.White
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            BasicButton(
+                text = stringResource(id = R.string.weightForLength),
+                onClick = { viewModel.selectChartType("weightForLength")},
+                containerColor = if (selectedChartType == "weightForLength") LightPink else Color.White
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            BasicButton(
+                text = stringResource(id = R.string.headCircumferenceForAge),
+                onClick = { viewModel.selectChartType("headCircumferenceForAge") },
+                containerColor = if (selectedChartType == "headCircumferenceForAge") LightPink else Color.White
+            )
+        }
     }
 }

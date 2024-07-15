@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.Point
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
@@ -42,6 +43,56 @@ class NewbornHomeViewModel @Inject constructor(
 
     private val _isDeleted = mutableStateOf(false)
     val isDeleted : State<Boolean> = _isDeleted
+
+    private val _selectedChartType = MutableStateFlow("lengthForAge")
+    val selectedChartType: StateFlow<String> = _selectedChartType
+
+    fun selectChartType(chartType: String) {
+        _selectedChartType.value = chartType
+    }
+
+    private val _points = MutableStateFlow<List<Point>>(emptyList())
+    val points: StateFlow<List<Point>> = _points
+
+    fun updatePoints(growthAndDevelopmentResults: List<GrowthAndDevelopmentResult>, selectedChartType: String) {
+        viewModelScope.launch {
+            val newPoints = growthAndDevelopmentResults.mapNotNull {
+                val info = it.growthAndDevelopmentInfo
+                when (selectedChartType) {
+                    "lengthForAge" -> {
+                        info.age.toIntOrNull()?.let { age ->
+                            info.length.toIntOrNull()?.let { length ->
+                                Point(age, length)
+                            }
+                        }
+                    }
+                    "weightForAge" -> {
+                        info.age.toIntOrNull()?.let { age ->
+                            info.weight.toIntOrNull()?.let { weight ->
+                                Point(age, weight)
+                            }
+                        }
+                    }
+                    "weightForLength" -> {
+                        info.length.toIntOrNull()?.let { length ->
+                            info.weight.toIntOrNull()?.let { weight ->
+                                Point(length, weight)
+                            }
+                        }
+                    }
+                    "headCircumferenceForAge" -> {
+                        info.age.toIntOrNull()?.let { age ->
+                            info.headCircumference.toIntOrNull()?.let { headCircumference ->
+                                Point(age, headCircumference)
+                            }
+                        }
+                    }
+                    else -> null
+                }
+            }
+            _points.value = newPoints
+        }
+    }
 
     fun getUsersNewbornInfo() {
         viewModelScope.launch {

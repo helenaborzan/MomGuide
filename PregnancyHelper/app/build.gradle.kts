@@ -102,6 +102,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation("io.data2viz.charts:core:1.1.0-eap1")
+    implementation("io.data2viz.d2v:viz:0.8.12")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 }
 
 
