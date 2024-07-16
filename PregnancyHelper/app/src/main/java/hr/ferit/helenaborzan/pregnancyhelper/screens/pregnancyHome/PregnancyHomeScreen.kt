@@ -69,7 +69,7 @@ fun PregnancyHomeScreen(
             IconBar(viewModel = viewModel)
             Recomendations()
             NutritionSection()
-            ContractionsTimerSection()
+            ContractionsTimerSection(navController)
             QuestionnaireSection(
                 navigate = {navController.navigate(Screen.DepressionQuestionnaireScreen.route)},
                 questionnaireResults = questionnaireResults,
@@ -129,7 +129,7 @@ fun NutritionSection() {
 }
 
 @Composable
-fun ContractionsTimerSection() {
+fun ContractionsTimerSection(navController: NavController) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -145,6 +145,7 @@ fun ContractionsTimerSection() {
                 .fillMaxWidth()
                 .height(200.dp)
                 .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
+                    .clickable{ navController.navigate(Screen.ContractionsTimerScreen.route)}
         ){}
     }
 }

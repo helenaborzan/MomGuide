@@ -8,11 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory.ChooseCategoryScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.ContractionsTimerSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
@@ -66,6 +68,9 @@ fun NavigationController() {
                 viewModel = viewModel,
                 navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
                 questionnaireName = "depressionScale")
+        }
+        composable(Screen.ContractionsTimerScreen.route){
+            ContractionsTimerScreen(navController = navController)
         }
 
     }

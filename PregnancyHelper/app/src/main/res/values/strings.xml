@@ -90,4 +90,13 @@
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
     <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>
     <string name="positiveDepressionTest">Rezultati pokazuju da bolujete od deresije. Preporuča se da se obratite liječniku.</string>
+
+    <string name="contractionStarted">Trud je započeo</string>
+    <string name="contractionEnded">Trud je završio</string>
+    <string name="numberOfContractionsInHour">Broj trudova u satu</string>
+    <string name="averageContractionDuration">Prosječno trajanje</string>
+    <string name="averageContractionFrequency">Prosječna učestalost</string>
+    <string name="start">POČETAK</string>
+    <string name="duration">TRAJANJE</string>
+    <string name="frequency">UČESTALOST</string>
 </resources>

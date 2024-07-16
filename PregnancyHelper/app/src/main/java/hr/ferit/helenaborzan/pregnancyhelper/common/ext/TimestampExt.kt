@@ -15,3 +15,14 @@ fun getDate(timestamp: Timestamp) : Map<String, Int>{
     )
     return dateYMD
 }
+
+fun getHoursAndMins(timestamp: Timestamp) : Map<String, Int>{
+    val date = timestamp.toDate()
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+    val dateHHMM = hashMapOf(
+        "hours" to calendar.get(Calendar.HOUR),
+        "minutes" to calendar.get(Calendar.MINUTE)
+    )
+    return dateHHMM
+}
