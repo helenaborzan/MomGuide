@@ -1,7 +1,10 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
@@ -19,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +33,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getHoursAndMins
+import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.NavigationController
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
@@ -41,9 +47,22 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LilaPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Purple
+import java.time.Duration
+import java.time.Instant
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContractionsTimerScreen(navController: NavController ) {
+fun ContractionsTimerScreen(
+    navController: NavController,
+    viewModel : ContractionsTimerViewModel = hiltViewModel()
+){
+    val uiState by viewModel.uiState.collectAsState()
+
     Column (
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,17 +77,21 @@ fun ContractionsTimerScreen(navController: NavController ) {
                 .weight(0.1f),
             navController = navController
         )
-        ContractionButton(modifier = Modifier.weight(0.4f, fill = false))
+        ContractionButton(modifier = Modifier.weight(0.4f, fill = false), uiState = uiState, viewModel = viewModel)
         Spacer(modifier = Modifier.height(40.dp))
         AverageResults(modifier = Modifier.weight(0.1f))
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-        TimedContractions(modifier = Modifier.weight(0.3f))
+        TimedContractions(modifier = Modifier.weight(0.3f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContractionButton(modifier : Modifier = Modifier) {
+fun ContractionButton(
+    modifier : Modifier = Modifier,
+    uiState: ContractionsTimerUiState,
+    viewModel: ContractionsTimerViewModel) {
     Box(
         contentAlignment= Alignment.Center,
         modifier = modifier
@@ -80,9 +103,11 @@ fun ContractionButton(modifier : Modifier = Modifier) {
             )
             .clip(shape = CircleShape)
             .background(color = LightestPink)
+            .clickable { viewModel.onContractionsButtonClick() }
     ) {
         Text(
-            text = stringResource(id = R.string.contractionStarted),
+            text = if (uiState.isTimerRunning) stringResource(id = R.string.contractionEnded)
+                    else stringResource(id = R.string.contractionStarted),
             modifier = Modifier.padding(8.dp)
         )
     }
@@ -130,14 +155,15 @@ fun <T>AverageResult(label : String, value : T, modifier : Modifier = Modifier) 
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TimedContractions(modifier: Modifier = Modifier) {
+fun TimedContractions(modifier: Modifier = Modifier, uiState: ContractionsTimerUiState) {
     Column(modifier = modifier.fillMaxWidth()) {
         TimedContractionsLabels()
-        LazyColumn() { item{
-            ContractionInfo(startValue = Timestamp.now(), duration = 5.43, frequency = 3.2)
-        }
-
+        LazyColumn() {
+            items(uiState.contractions.size) { index ->
+                ContractionInfo(contractionsInfo = uiState.contractions[index])
+            }
         }
     }
 }
@@ -165,9 +191,9 @@ fun TimedContractionsLabels() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContractionInfo(startValue : Timestamp, duration : Double, frequency : Double) {
-    val dateHHMM = getHoursAndMins(startValue)
+fun ContractionInfo(contractionsInfo: ContractionsInfo) {
     Row (horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -175,15 +201,15 @@ fun ContractionInfo(startValue : Timestamp, duration : Double, frequency : Doubl
             .padding(24.dp)
     ){
         TextLabel(
-            text = "${dateHHMM.getValue("hours")}:${dateHHMM.getValue("minutes")}",
+            text = "${formatStartTime(contractionsInfo.startTime)}",
             modifier = Modifier.weight(0.3f)
         )
         TextLabel(
-            text = "$duration",
+            text = "${formatDuration(contractionsInfo.duration)}",
             modifier = Modifier.weight(0.3f)
         )
         TextLabel(
-            text = "$frequency",
+            text = "${formatDuration(contractionsInfo.frequency)}",
             modifier = Modifier.weight(0.3f)
         )
 
