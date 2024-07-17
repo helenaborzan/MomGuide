@@ -10,6 +10,5 @@ import java.time.Instant
 data class ContractionsInfo(
     val startTime : Instant,
     var endTime : Instant? = null,
-    var duration : Duration = Duration.ZERO,
-    var frequency : Duration = Duration.ZERO
+    var duration : Duration = Duration.ZERO
 )

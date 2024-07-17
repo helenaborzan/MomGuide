@@ -32,40 +32,62 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<ContractionsTimerUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
-    private var lastStartTime: Instant? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onContractionsButtonClick() {
         val currentTime = Instant.now()
         if (_uiState.value.isTimerRunning) {
-            stopTimer()
+            endContraction(currentTime)
         } else {
-            startTimer()
-            addNewContraction(currentTime)
+            startNewContraction(currentTime)
         }
-        _uiState.update { it.copy(isTimerRunning = !it.isTimerRunning) }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun addNewContraction(startTime: Instant) {
-        val newContraction = ContractionsInfo(
-            startTime = startTime,
-            frequency = if (lastStartTime != null) Duration.between(lastStartTime, startTime) else Duration.ZERO
-        )
+    private fun startNewContraction(startTime: Instant) {
+        val newContraction = ContractionsInfo(startTime = startTime)
+        val newFrequency = if (_uiState.value.contractions.isNotEmpty()) {
+            Duration.between(_uiState.value.contractions.last().startTime, startTime)
+        } else null
+
         _uiState.update {
-            it.copy(contractions = it.contractions + newContraction)
+            it.copy(
+                isTimerRunning = true,
+                contractions = it.contractions + newContraction,
+                frequencies = if (newFrequency != null) it.frequencies + newFrequency else it.frequencies
+            )
         }
-        lastStartTime = startTime
+
+        startTimer()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun endContraction(endTime: Instant) {
+        stopTimer()
+
+        val updatedContractions = _uiState.value.contractions.toMutableList()
+        if (updatedContractions.isNotEmpty()) {
+            val lastContraction = updatedContractions.last()
+            updatedContractions[updatedContractions.lastIndex] = lastContraction.copy(
+                endTime = endTime,
+                duration = Duration.between(lastContraction.startTime, endTime)
+            )
+        }
+
+        _uiState.update {
+            it.copy(
+                isTimerRunning = false,
+                contractions = updatedContractions
+            )
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startTimer() {
-        if (timerJob == null) {
-            timerJob = viewModelScope.launch {
-                while (isActive) {
-                    updateDurations()
-                    delay(1000) // Ažuriraj svake sekunde
-                }
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                updateCurrentContractionDuration()
+                delay(1000) // Ažuriraj svake sekunde
             }
         }
     }
@@ -76,21 +98,43 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun updateDurations() {
+    private fun updateCurrentContractionDuration() {
         val currentTime = Instant.now()
-        val updatedContractions = _uiState.value.contractions.mapIndexed { index, contraction ->
-            contraction.copy(
-                duration = Duration.between(contraction.startTime, currentTime),
-                frequency = if (index > 0) {
-                    Duration.between(
-                        _uiState.value.contractions[index - 1].startTime,
-                        contraction.startTime
-                    )
-                } else {
-                    contraction.frequency
-                }
+        val updatedContractions = _uiState.value.contractions.toMutableList()
+        if (updatedContractions.isNotEmpty()) {
+            val lastContraction = updatedContractions.last()
+            updatedContractions[updatedContractions.lastIndex] = lastContraction.copy(
+                duration = Duration.between(lastContraction.startTime, currentTime)
             )
         }
+
         _uiState.update { it.copy(contractions = updatedContractions) }
+        updateAverages()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateAverages() {
+        val completedContractions = _uiState.value.contractions.filter { it.endTime != null }
+
+        val averageDuration = if (completedContractions.isNotEmpty()) {
+            completedContractions.map { it.duration }.reduce { acc, duration -> acc.plus(duration) }
+                .dividedBy(completedContractions.size.toLong())
+        } else {
+            Duration.ZERO
+        }
+
+        val averageFrequency = if (_uiState.value.frequencies.size > 1) {
+            _uiState.value.frequencies.reduce { acc, duration -> acc.plus(duration) }
+                .dividedBy(_uiState.value.frequencies.size.toLong())
+        } else {
+            Duration.ZERO
+        }
+
+        _uiState.update {
+            it.copy(
+                averageContractionDuration = averageDuration,
+                averageContractionFrequency = averageFrequency
+            )
+        }
     }
 }

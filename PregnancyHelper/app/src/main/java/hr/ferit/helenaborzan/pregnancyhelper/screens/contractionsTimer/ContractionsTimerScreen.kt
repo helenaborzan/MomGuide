@@ -79,7 +79,7 @@ fun ContractionsTimerScreen(
         )
         ContractionButton(modifier = Modifier.weight(0.4f, fill = false), uiState = uiState, viewModel = viewModel)
         Spacer(modifier = Modifier.height(40.dp))
-        AverageResults(modifier = Modifier.weight(0.1f))
+        AverageResults(modifier = Modifier.weight(0.1f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         TimedContractions(modifier = Modifier.weight(0.3f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
@@ -113,22 +113,23 @@ fun ContractionButton(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AverageResults(modifier: Modifier = Modifier) {
+fun AverageResults(modifier: Modifier = Modifier, uiState: ContractionsTimerUiState) {
     Row (horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .padding(24.dp)
             .background(color = Color.White, shape = RoundedCornerShape(4.dp))
     ){
-        AverageResult(label = stringResource(id = R.string.numberOfContractionsInHour),
-            value = 3,
+        AverageResult(label = stringResource(id = R.string.numberOfContractions),
+            value = uiState.contractions.size,
             modifier = Modifier.weight(0.3f))
         AverageResult(label = stringResource(id = R.string.averageContractionDuration),
-            value = 4.3,
+            value = formatDuration(uiState.averageContractionDuration),
             modifier = Modifier.weight(0.3f))
         AverageResult(label = stringResource(id = R.string.averageContractionFrequency),
-            value = 5.4,
+            value = formatDuration(uiState.averageContractionFrequency),
             modifier = Modifier.weight(0.3f))
     }
 }
@@ -162,7 +163,10 @@ fun TimedContractions(modifier: Modifier = Modifier, uiState: ContractionsTimerU
         TimedContractionsLabels()
         LazyColumn() {
             items(uiState.contractions.size) { index ->
-                ContractionInfo(contractionsInfo = uiState.contractions[index])
+                ContractionInfo(
+                    contractionsInfo = uiState.contractions[index],
+                    frequency = if (index > 0) uiState.frequencies.getOrNull(index - 1) else null
+                )
             }
         }
     }
@@ -193,7 +197,7 @@ fun TimedContractionsLabels() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ContractionInfo(contractionsInfo: ContractionsInfo) {
+fun ContractionInfo(contractionsInfo: ContractionsInfo, frequency: Duration?) {
     Row (horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -209,7 +213,7 @@ fun ContractionInfo(contractionsInfo: ContractionsInfo) {
             modifier = Modifier.weight(0.3f)
         )
         TextLabel(
-            text = "${formatDuration(contractionsInfo.frequency)}",
+            text = frequency?.let { formatDuration(it) } ?: "-",
             modifier = Modifier.weight(0.3f)
         )
 
