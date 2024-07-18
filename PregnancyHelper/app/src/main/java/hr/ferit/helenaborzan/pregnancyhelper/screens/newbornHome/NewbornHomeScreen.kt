@@ -79,7 +79,7 @@ fun NewbornHomeScreen(
     ){ item {
         IconBar(viewModel = viewModel)
         Recomendations()
-        BreastfeedingSection()
+        BreastfeedingSection(navController = navController)
         GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
         QuestionnaireSection(
             navigate = {navController.navigate(Screen.EPDSQuestionnaireScreen.route)},
@@ -144,7 +144,7 @@ fun Recomendations() {
 }
 
 @Composable
-fun BreastfeedingSection() {
+fun BreastfeedingSection(navController: NavController) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -160,6 +160,7 @@ fun BreastfeedingSection() {
                 .fillMaxWidth()
                 .height(200.dp)
                 .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
+                .clickable { navController.navigate(Screen.BreastfeedingInputScreen.route) }
         ){}
     }
 }
@@ -288,7 +289,9 @@ fun QuestionnaireSection(
                else
                    stringResource(id = R.string.emptyQuestionnaireResults)
            )
-            MapSection()
+            if (Build.VERSION.SDK_INT >= 34) {
+                MapSection()
+            }
             if (questionnaireResults.size > 1) {
                 Icon(
                     painter = if (!showAllResults)

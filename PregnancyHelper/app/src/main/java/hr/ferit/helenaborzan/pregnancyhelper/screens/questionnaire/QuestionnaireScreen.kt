@@ -149,7 +149,7 @@ fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : BaseQue
         verticalAlignment = Alignment.CenterVertically
     ){
         BasicButton(
-            text = "Podnesi",
+            text = stringResource(id = R.string.submit),
             onClick = { viewModel.onSubmitQuestionnaire() },
             borderColor = Pink,
             containerColor = Color.White,

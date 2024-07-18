@@ -48,6 +48,7 @@
     <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>
     <string name="result">Rezultat</string>
     <string name="questionnaireErrorMessage">Morate odgovoriti na sva pitanja.</string>
+    <string name="submit">Podnesi</string>
 
     <string name="chooseSexLabel">Odaberite <b>spol</b> djeteta</string>
     <string name="maleLabel">muško</string>
@@ -99,4 +100,14 @@
     <string name="start">POČETAK</string>
     <string name="duration">TRAJANJE</string>
     <string name="frequency">UČESTALOST</string>
+
+    <string name="breastfeedingType">Dojenje</string>
+    <string name="formulaType">Bočica</string>
+    <string name="cancel">Odustani</string>
+    <string name="startTime">Vrijeme početka</string>
+    <string name="endTime">Vrijeme završetka</string>
+    <string name="left">lijeva</string>
+    <string name="right">desna</string>
+    <string name="both">obje</string>
+    <string name="breast">Dojka</string>
 </resources>
