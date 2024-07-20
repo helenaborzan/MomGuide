@@ -8,10 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
+import io.data2viz.interpolate.quad
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -51,8 +53,22 @@ class BreastfeedingViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun onTimeChange(newTime : LocalTime){
+        uiState.value = uiState.value.copy(time = newTime)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onQuantityChange(newQuantity : String){
+        uiState.value = uiState.value.copy(quantity = newQuantity)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
     fun areAllBreastfeedingFieldsChecked() : Boolean{
         return isBreastFieldChecked()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun areAllBottleFieldsChecked() : Boolean{
+        return isQuantityFieldChecked()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -65,12 +81,33 @@ class BreastfeedingViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    fun isQuantityFieldChecked() : Boolean{
+        if (uiState.value.quantity.isBlank()){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
+            return false
+        }
+        else if (uiState.value.quantity.toInt() <= 0){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.milkQuantityNotInLimits)
+            return false
+        }
+        return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onWrongTimeInput(){
         uiState.value = uiState.value.copy(errorMessageResource = R.string.wrongTimeInput)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onSubmitClick(){
+        if (uiState.value.feedingType == "Dojenje"){
+            onSubmitBreastfeedingClick()
+        }
+        else onSubmitBottleClick()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onSubmitBreastfeedingClick(){
         if(areAllBreastfeedingFieldsChecked()) {
 
             val feedingType = uiState.value.feedingType
@@ -78,7 +115,6 @@ class BreastfeedingViewModel @Inject constructor(
             val endTime = convertToTimestamp(uiState.value.endTime)
             val breast = uiState.value.breast
             var breastfeedingInfo = BreastfeedingInfo(
-                feedingType = feedingType,
                 startTime = startTime,
                 endTime = endTime,
                 breast = breast
@@ -86,7 +122,28 @@ class BreastfeedingViewModel @Inject constructor(
             viewModelScope.launch {
                 if (breastfeedingInfo != null) {
                     newbornInfoRepository.addBreastfeedingInfo(
-                       breastfeedingInfo = breastfeedingInfo
+                        breastfeedingInfo = breastfeedingInfo
+                    )
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onSubmitBottleClick(){
+        if(areAllBottleFieldsChecked()) {
+
+            val feedingType = uiState.value.feedingType
+            val quantity = uiState.value.quantity.toInt()
+            val time = convertToTimestamp(uiState.value.time)
+            var bottleInfo = BottleInfo(
+                startTime = time,
+                quantity = quantity
+            )
+            viewModelScope.launch {
+                if (bottleInfo != null) {
+                    newbornInfoRepository.addBottleInfo(
+                        bottleInfo = bottleInfo
                     )
                 }
             }

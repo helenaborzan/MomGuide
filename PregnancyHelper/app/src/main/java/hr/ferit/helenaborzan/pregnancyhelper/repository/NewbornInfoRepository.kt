@@ -11,6 +11,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
+import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
@@ -63,7 +64,8 @@ class NewbornInfoRepository @Inject constructor(
     override suspend fun createInfoDocument(userId: String) {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
-            "breastfeedingInfo" to emptyList<DateTime>(),
+            "breastfeedingInfo" to emptyList<BreastfeedingInfo>(),
+            "bottleInfo" to emptyList<BottleInfo>(),
             "growthAndDevelopmentResults" to emptyList<GrowthAndDevelopmentResult>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
         )
@@ -100,7 +102,6 @@ class NewbornInfoRepository @Inject constructor(
             val document = querySnapshot.documents[0]
             val documentId = document.id
             val newResult = hashMapOf(
-                "feedingType" to breastfeedingInfo.feedingType,
                 "startTime" to breastfeedingInfo.startTime,
                 "endTime" to breastfeedingInfo.endTime,
                 "breast" to breastfeedingInfo.breast
@@ -108,6 +109,25 @@ class NewbornInfoRepository @Inject constructor(
 
             val documentReference = collection.document(documentId)
             documentReference.update("breastfeedingInfo", FieldValue.arrayUnion(newResult)).await()
+        }
+    }
+
+    suspend fun addBottleInfo(
+        bottleInfo: BottleInfo
+    ){
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+            val newResult = hashMapOf(
+                "time" to bottleInfo.startTime,
+                "quantity" to bottleInfo.quantity
+            )
+
+            val documentReference = collection.document(documentId)
+            documentReference.update("bottleInfo", FieldValue.arrayUnion(newResult)).await()
         }
     }
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -40,6 +41,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -47,16 +49,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimeInput
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
+import okhttp3.internal.wait
 import java.time.format.DateTimeParseException
 
 
@@ -70,32 +75,82 @@ fun BreastfeedingInputScreen(
     val uiState by viewModel.uiState
 
     Column (
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .background(color = DirtyWhite)
             .padding(24.dp)
     ){
-        GoBackIconBar(navController = navController)
-        Spacer(modifier = Modifier.height(80.dp))
-        ChooseFeedingType(viewModel = viewModel, uiState = uiState)
-        Row(modifier = Modifier.fillMaxWidth()) {
-            TimePicker(labelId = R.string.startTime, modifier = Modifier.weight(0.7f), onTimeSelected = { newTime ->
-                viewModel.onStartTimeChange(newTime)
-                },
-                viewModel = viewModel
-            )
+        GoBackIconBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+                .weight(0.1f),
+            navController = navController
+        )
+        Spacer(modifier = Modifier.weight(0.2f))
+        Column (
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .weight(0.7f)
+                .background(color = Color.White)
+                .padding(24.dp)
+        ){
+            ChooseFeedingType(viewModel = viewModel, uiState = uiState)
+            if (uiState.feedingType == "Dojenje") {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    TimePicker(
+                        labelId = R.string.startTime,
+                        modifier = Modifier.weight(0.7f),
+                        onTimeSelected = { newTime ->
+                            viewModel.onStartTimeChange(newTime)
+                        },
+                        viewModel = viewModel
+                    )
+                }
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    TimePicker(
+                        labelId = R.string.endTime,
+                        modifier = Modifier.weight(0.7f),
+                        onTimeSelected = { newTime ->
+                            viewModel.onEndTimeChange(newTime)
+                        },
+                        viewModel = viewModel
+                    )
+                }
+                ChooseBreast(viewModel = viewModel)
+            } else {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    TimePicker(
+                        labelId = R.string.time,
+                        modifier = Modifier.weight(0.7f),
+                        onTimeSelected = { newTime ->
+                            viewModel.onTimeChange(newTime)
+                        },
+                        viewModel = viewModel
+                    )
+                }
+                LabeledTextField(
+                    labelId = R.string.milkQuantity,
+                    unitId = R.string.mlLabel,
+                    value = uiState.quantity,
+                    onValueChange = viewModel::onQuantityChange,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier =  Modifier
+                        .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(16.dp))
+                        .background(color = Color.White)
+                        .height(54.dp)
+                        .weight(0.8f)
+                        .padding(vertical = 8.dp),
+                    fontSize = 24.sp,
+                    padding = PaddingValues(0.dp)
+                )
+            }
+            AddButton(uiState = uiState, viewModel = viewModel)
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            TimePicker(labelId = R.string.endTime, modifier = Modifier.weight(0.7f), onTimeSelected = { newTime ->
-                viewModel.onEndTimeChange(newTime)
-            },
-                viewModel = viewModel
-            )
-        }
-        ChooseBreast(viewModel = viewModel)
-        AddButton(uiState = uiState, viewModel = viewModel)
+        Spacer(modifier = Modifier.weight(0.2f))
     }
     ErrorDialog(uiState = uiState, viewModel = viewModel)
 }
@@ -169,7 +224,7 @@ fun TimePicker(
     ){
         Text(
             text = stringResource(id = labelId),
-            style = TextStyle(color = Color.Black),
+            style = TextStyle(color = Color.Black, fontSize = 16.sp),
             modifier = Modifier.padding(vertical = 8.dp)
         )
         Row(

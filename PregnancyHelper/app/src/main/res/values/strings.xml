@@ -111,4 +111,8 @@
     <string name="both">obje</string>
     <string name="breast">Dojka</string>
     <string name="wrongTimeInput">Unesite ispravno vrijeme.</string>
+    <string name="time">Vrijeme</string>
+    <string name="mlLabel">ml</string>
+    <string name="milkQuantity">Količina mlijeka</string>
+    <string name="milkQuantityNotInLimits">Količina mlijeka mora biti veća od 0.</string>
 </resources>
