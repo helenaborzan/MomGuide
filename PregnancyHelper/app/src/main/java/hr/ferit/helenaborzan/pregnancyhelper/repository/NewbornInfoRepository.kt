@@ -11,6 +11,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
+import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
@@ -22,6 +23,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.tasks.await
+import java.time.Instant
+import java.time.format.DateTimeParseException
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -84,6 +87,27 @@ class NewbornInfoRepository @Inject constructor(
 
             val documentReference = collection.document(documentId)
             documentReference.update("growthAndDevelopmentResults", FieldValue.arrayUnion(newResult)).await()
+        }
+    }
+
+    suspend fun addBreastfeedingInfo(
+        breastfeedingInfo: BreastfeedingInfo
+    ){
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+            val newResult = hashMapOf(
+                "feedingType" to breastfeedingInfo.feedingType,
+                "startTime" to breastfeedingInfo.startTime,
+                "endTime" to breastfeedingInfo.endTime,
+                "breast" to breastfeedingInfo.breast
+            )
+
+            val documentReference = collection.document(documentId)
+            documentReference.update("breastfeedingInfo", FieldValue.arrayUnion(newResult)).await()
         }
     }
 

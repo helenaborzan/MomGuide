@@ -74,7 +74,7 @@ fun NavigationController() {
             ContractionsTimerScreen(navController = navController)
         }
         composable(Screen.BreastfeedingInputScreen.route){
-            BreastfeedingInputScreen()
+            BreastfeedingInputScreen(navController)
         }
 
     }

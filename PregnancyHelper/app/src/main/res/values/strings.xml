@@ -110,4 +110,5 @@
     <string name="right">desna</string>
     <string name="both">obje</string>
     <string name="breast">Dojka</string>
+    <string name="wrongTimeInput">Unesite ispravno vrijeme.</string>
 </resources>
