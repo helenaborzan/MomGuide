@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertToTimestamp
 import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
@@ -150,21 +151,6 @@ class BreastfeedingViewModel @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun convertToTimestamp(value: Any): Any {
-        return when (value) {
-            is Timestamp -> value
-            is String -> {
-                try {
-                    val instant = Instant.parse(value)
-                    Timestamp(instant.epochSecond, instant.nano)
-                } catch (e: DateTimeParseException) {
-                    value // If parsing fails, return the original string
-                }
-            }
-            else -> value
-        }
-    }
     @RequiresApi(Build.VERSION_CODES.O)
     fun clearError() {
         uiState.value = uiState.value.copy(errorMessageResource = null)
