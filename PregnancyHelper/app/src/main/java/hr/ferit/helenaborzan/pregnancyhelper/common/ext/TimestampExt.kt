@@ -11,6 +11,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 import java.util.Calendar
+import java.util.Date
 
 
 fun getDate(timestamp: Timestamp) : Map<String, Int>{
@@ -34,6 +35,63 @@ fun getHoursAndMins(timestamp: Timestamp) : Map<String, Int>{
         "minutes" to calendar.get(Calendar.MINUTE)
     )
     return dateHHMM
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getHoursAndMins(value: Any): Map<String, Int>? {
+    return when (value) {
+        is Timestamp -> {
+            val date = value.toDate()
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            mapOf(
+                "hours" to calendar.get(Calendar.HOUR_OF_DAY),
+                "minutes" to calendar.get(Calendar.MINUTE)
+            )
+        }
+        is String -> {
+            try {
+                val instant = Instant.parse(value)
+                val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                mapOf(
+                    "hours" to localDateTime.hour,
+                    "minutes" to localDateTime.minute
+                )
+            } catch (e: DateTimeParseException) {
+                null // If parsing fails, return null
+            }
+        }
+        is LocalTime -> {
+            mapOf(
+                "hours" to value.hour,
+                "minutes" to value.minute
+            )
+        }
+        is LocalDateTime -> {
+            mapOf(
+                "hours" to value.hour,
+                "minutes" to value.minute
+            )
+        }
+        is Date -> {
+            val calendar = Calendar.getInstance()
+            calendar.time = value
+            mapOf(
+                "hours" to calendar.get(Calendar.HOUR_OF_DAY),
+                "minutes" to calendar.get(Calendar.MINUTE)
+            )
+        }
+        is Long -> { // If the value is a long timestamp (milliseconds)
+            val date = Date(value)
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            mapOf(
+                "hours" to calendar.get(Calendar.HOUR_OF_DAY),
+                "minutes" to calendar.get(Calendar.MINUTE)
+            )
+        }
+        else -> null // If the type is not supported, return null
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

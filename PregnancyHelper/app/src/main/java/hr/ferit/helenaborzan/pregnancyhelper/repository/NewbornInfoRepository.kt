@@ -122,7 +122,7 @@ class NewbornInfoRepository @Inject constructor(
             val document = querySnapshot.documents[0]
             val documentId = document.id
             val newResult = hashMapOf(
-                "time" to bottleInfo.startTime,
+                "time" to bottleInfo.time,
                 "quantity" to bottleInfo.quantity
             )
 

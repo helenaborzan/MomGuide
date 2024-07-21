@@ -100,53 +100,12 @@ fun BreastfeedingInputScreen(
         ){
             ChooseFeedingType(viewModel = viewModel, uiState = uiState)
             if (uiState.feedingType == "Dojenje") {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TimePicker(
-                        labelId = R.string.startTime,
-                        modifier = Modifier.weight(0.7f),
-                        onTimeSelected = { newTime ->
-                            viewModel.onStartTimeChange(newTime)
-                        },
-                        viewModel = viewModel
-                    )
-                }
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TimePicker(
-                        labelId = R.string.endTime,
-                        modifier = Modifier.weight(0.7f),
-                        onTimeSelected = { newTime ->
-                            viewModel.onEndTimeChange(newTime)
-                        },
-                        viewModel = viewModel
-                    )
-                }
-                ChooseBreast(viewModel = viewModel)
+                BreastfeedingSpecific(viewModel = viewModel)
             } else {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    TimePicker(
-                        labelId = R.string.time,
-                        modifier = Modifier.weight(0.7f),
-                        onTimeSelected = { newTime ->
-                            viewModel.onTimeChange(newTime)
-                        },
-                        viewModel = viewModel
-                    )
-                }
-                LabeledTextField(
-                    labelId = R.string.milkQuantity,
-                    unitId = R.string.mlLabel,
-                    value = uiState.quantity,
-                    onValueChange = viewModel::onQuantityChange,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier =  Modifier
-                        .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(16.dp))
-                        .background(color = Color.White)
-                        .height(54.dp)
-                        .weight(0.8f)
-                        .padding(vertical = 8.dp),
-                    fontSize = 24.sp,
-                    padding = PaddingValues(0.dp)
-                )
+                BottleSpecific(
+                    viewModel = viewModel,
+                    uiState = uiState,
+                    modifier = Modifier.weight(0.8f))
             }
             AddButton(uiState = uiState, viewModel = viewModel)
         }
@@ -155,7 +114,63 @@ fun BreastfeedingInputScreen(
     ErrorDialog(uiState = uiState, viewModel = viewModel)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun BreastfeedingSpecific(viewModel: BreastfeedingViewModel) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TimePicker(
+            labelId = R.string.startTime,
+            modifier = Modifier.weight(0.7f),
+            onTimeSelected = { newTime ->
+                viewModel.onStartTimeChange(newTime)
+            },
+            viewModel = viewModel
+        )
+    }
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TimePicker(
+            labelId = R.string.endTime,
+            modifier = Modifier.weight(0.7f),
+            onTimeSelected = { newTime ->
+                viewModel.onEndTimeChange(newTime)
+            },
+            viewModel = viewModel
+        )
+    }
+    ChooseBreast(viewModel = viewModel)
+}
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun BottleSpecific(
+    viewModel: BreastfeedingViewModel,
+    uiState: BreastfeedingUiState,
+    modifier: Modifier = Modifier) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TimePicker(
+            labelId = R.string.time,
+            modifier = Modifier.weight(0.7f),
+            onTimeSelected = { newTime ->
+                viewModel.onTimeChange(newTime)
+            },
+            viewModel = viewModel
+        )
+    }
+    LabeledTextField(
+        labelId = R.string.milkQuantity,
+        unitId = R.string.mlLabel,
+        value = uiState.quantity,
+        onValueChange = viewModel::onQuantityChange,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = modifier
+            .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(16.dp))
+            .background(color = Color.White)
+            .height(54.dp)
+            .padding(vertical = 8.dp),
+        fontSize = 24.sp,
+        padding = PaddingValues(0.dp)
+    )
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChooseFeedingType(viewModel: BreastfeedingViewModel, uiState: BreastfeedingUiState) {
@@ -312,23 +327,23 @@ fun ChooseBreast(viewModel: BreastfeedingViewModel) {
         ) {
             RadioButtonSection(
                 textId = R.string.left,
-                isSelected = selectedBreast == "lijeva",
+                isSelected = selectedBreast == "lijeva dojka",
                 onCheckedChange = {
-                    selectedBreast = "lijeva"
+                    selectedBreast = "lijeva dojka"
                     viewModel.onBreastChange(selectedBreast)
                 })
             RadioButtonSection(
                 textId = R.string.right,
-                isSelected = selectedBreast == "desna",
+                isSelected = selectedBreast == "desna dojka",
                 onCheckedChange = {
-                    selectedBreast = "desna"
+                    selectedBreast = "desna dojka"
                     viewModel.onBreastChange(selectedBreast)
                 })
             RadioButtonSection(
                 textId = R.string.both,
-                isSelected = selectedBreast == "obje",
+                isSelected = selectedBreast == "obje dojke",
                 onCheckedChange = {
-                    selectedBreast = "obje"
+                    selectedBreast = "obje dojke"
                     viewModel.onBreastChange(selectedBreast)
                 })
         }

@@ -162,6 +162,8 @@ fun BreastfeedingSection(navController: NavController) {
                 .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
                 .clickable { navController.navigate(Screen.BreastfeedingInputScreen.route) }
         ){}
+        Text(text = "Rezultati",
+            modifier = Modifier.clickable { navController.navigate(Screen.BreastfeedingInfoScreen.route) })
     }
 }
 

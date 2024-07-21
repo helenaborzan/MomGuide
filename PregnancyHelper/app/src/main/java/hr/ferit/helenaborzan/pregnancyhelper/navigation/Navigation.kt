@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInputScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory.ChooseCategoryScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerScreen
@@ -75,6 +76,9 @@ fun NavigationController() {
         }
         composable(Screen.BreastfeedingInputScreen.route){
             BreastfeedingInputScreen(navController)
+        }
+        composable(Screen.BreastfeedingInfoScreen.route){
+            BreastfeedingInfoScreen(navController = navController)
         }
 
     }

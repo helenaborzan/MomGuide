@@ -138,7 +138,7 @@ class BreastfeedingViewModel @Inject constructor(
             val quantity = uiState.value.quantity.toInt()
             val time = convertToTimestamp(uiState.value.time)
             var bottleInfo = BottleInfo(
-                startTime = time,
+                time = time,
                 quantity = quantity
             )
             viewModelScope.launch {
