@@ -239,7 +239,7 @@ fun ChooseDate(
             modifier = Modifier.clickable { viewModel.onPreviousDayClick() }
         )
         Text(
-            text = if (viewModel.isSelectedDayToday()) "Danas" else getString(uiState.selectedDate),
+            text = if (viewModel.isSelectedDayToday(uiState.selectedDate)) "Danas" else getString(uiState.selectedDate),
             style = TextStyle(textDecoration = TextDecoration.Underline),
             modifier = Modifier.clickable { onClick() }
         )

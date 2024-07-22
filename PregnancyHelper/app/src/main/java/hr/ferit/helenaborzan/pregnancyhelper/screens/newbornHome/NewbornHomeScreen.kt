@@ -9,15 +9,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,10 +48,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ScatterPlot
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.timesToTimePoints
+import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.AddFeeding
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.map.MapSection
@@ -69,6 +81,16 @@ fun NewbornHomeScreen(
     val growthAndDevelopmentResults = remember(newbornInfo) {
         newbornInfo.flatMap { it.growthAndDevelopmentResults }
     }
+    val breastfeedingInfo = remember(newbornInfo) {
+        newbornInfo.flatMap { it.breastfeedingInfo }
+    }
+    val bottleInfo = remember (newbornInfo){
+        newbornInfo.flatMap { it.bottleInfo }
+    }
+
+    val todaysBreastfeedingInfo = viewModel.getTodaysBreastfeedingInfo(breastfeedingInfo = breastfeedingInfo)
+    val todaysBottleInfo = viewModel.getTodaysBottleInfo(bottleInfo = bottleInfo)
+
     val uiState by viewModel.uiState
     LazyColumn(
         verticalArrangement = Arrangement.Top,
@@ -79,7 +101,13 @@ fun NewbornHomeScreen(
     ){ item {
         IconBar(viewModel = viewModel)
         Recomendations()
-        BreastfeedingSection(navController = navController)
+        BreastfeedingSection(
+            navController = navController,
+            uiState = uiState,
+            viewModel = viewModel,
+            todaysBreastfeedingInfo = todaysBreastfeedingInfo,
+            todaysBottleInfo = todaysBottleInfo
+        )
         GrowthAndDevelopmentSection(navController = navController, growthAndDevelopmentResults = growthAndDevelopmentResults)
         QuestionnaireSection(
             navigate = {navController.navigate(Screen.EPDSQuestionnaireScreen.route)},
@@ -143,27 +171,214 @@ fun Recomendations() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BreastfeedingSection(navController: NavController) {
+fun BreastfeedingSection(
+    viewModel: NewbornHomeViewModel,
+    uiState: NewbornHomeUiState,
+    navController: NavController,
+    todaysBreastfeedingInfo: List<BreastfeedingInfo>,
+    todaysBottleInfo : List<BottleInfo>
+) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.breastfeedingTitle),
+            text = stringResource(id = R.string.breastfeedingAndFormulaTitle),
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        ChooseType(viewModel = viewModel, uiState = uiState)
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
-                .clickable { navController.navigate(Screen.BreastfeedingInputScreen.route) }
-        ){}
-        Text(text = "Rezultati",
-            modifier = Modifier.clickable { navController.navigate(Screen.BreastfeedingInfoScreen.route) })
+                .padding(24.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(4.dp)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            if (uiState.feedingType == "Dojenje"){
+                Breastfeeding(
+                    todaysBreastfeedingInfo = todaysBreastfeedingInfo,
+                    viewModel = viewModel,
+                    navController = navController
+                )
+            }
+            else{
+                Bottle(
+                    todaysBottleInfo = todaysBottleInfo,
+                    viewModel = viewModel,
+                    navController = navController
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AddFeeding(onClick = { navController.navigate(Screen.BreastfeedingInputScreen.route) })
+        }
+
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Breastfeeding(
+    todaysBreastfeedingInfo: List<BreastfeedingInfo>,
+    viewModel: NewbornHomeViewModel,
+    navController: NavController
+) {
+    if (todaysBreastfeedingInfo.size > 0){
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = "${todaysBreastfeedingInfo.size} hranjenja",
+                style = TextStyle(color = Pink)
+            )
+            Text(
+                text = stringResource(id = R.string.today),
+                style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = stringResource(id = R.string.seeAll),
+                style = TextStyle(color = Color.LightGray, textDecoration = TextDecoration.Underline),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                }
+            )
+        }
+        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+        ScatterPlot(
+            times = timesToTimePoints(todaysBreastfeedingInfo.map { it.startTime }),
+            yValues = viewModel.getFeedingDuration(todaysBreastfeedingInfo),
+            xlabel = stringResource(id = R.string.time),
+            ylabel = stringResource(id = R.string.feedingDuration),
+            modifier = Modifier.height(360.dp)
+        )
+    }
+    else{
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.noFeedingHistoryToday)
+            )
+            Text(
+                text = stringResource(id = R.string.seeAll),
+                style = TextStyle(
+                    color = Color.LightGray,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                }
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Bottle(
+    todaysBottleInfo: List<BottleInfo>,
+    viewModel: NewbornHomeViewModel,
+    navController: NavController
+) {
+    if (todaysBottleInfo.size > 0){
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = "${todaysBottleInfo.size} hranjenja",
+                style = TextStyle(color = Pink)
+            )
+            Text(
+                text = stringResource(id = R.string.today),
+                style = TextStyle(color = Color.Black, fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = stringResource(id = R.string.seeAll),
+                style = TextStyle(color = Color.LightGray, textDecoration = TextDecoration.Underline),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                }
+            )
+        }
+        HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+        ScatterPlot(
+            times = timesToTimePoints(todaysBottleInfo.map { it.time }),
+            yValues = todaysBottleInfo.map { it.quantity },
+            xlabel = stringResource(id = R.string.time),
+            ylabel = stringResource(id = R.string.milkQuantityMl),
+            modifier = Modifier.height(360.dp)
+        )
+    }
+    else{
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.noFeedingHistoryToday)
+            )
+            Text(
+                text = stringResource(id = R.string.seeAll),
+                style = TextStyle(
+                    color = Color.LightGray,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                }
+            )
+        }
+    }
+}
+
+
+
+@Composable
+fun ChooseType(viewModel: NewbornHomeViewModel, uiState: NewbornHomeUiState) {
+    Row (
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ){
+        BasicButton(
+            text = stringResource(id = R.string.breastfeedingTitle),
+            onClick = { viewModel.onFeedingTypeChangeHome("Dojenje") },
+            containerColor = if (uiState.feedingType == "Dojenje") LightestPink else Color.White,
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(36.dp))
+                .size(width = 120.dp, height = 36.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        BasicButton(
+            text = stringResource(id = R.string.formulaType),
+            onClick = { viewModel.onFeedingTypeChangeHome("Bočica") },
+            containerColor = if (uiState.feedingType == "Bočica") LightestPink else Color.White,
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(36.dp))
+                .size(width = 120.dp, height = 36.dp)
+        )
     }
 }
 

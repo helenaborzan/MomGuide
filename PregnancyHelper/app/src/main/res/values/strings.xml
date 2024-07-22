@@ -33,6 +33,7 @@
     <string name="notificationIconDescription">Obavijesti</string>
     <string name="profileIconDescription">Profil</string>
     <string name="recomendations">Preporuke</string>
+    <string name="breastfeedingAndFormulaTitle">Dojenje i dohrana</string>
     <string name="breastfeedingTitle">Dojenje</string>
     <string name="growthAndDevelopmentTitle">Rast i razvoj djeteta</string>
     <string name="postPartumDepressionTitle">Postporođajna depresija</string>
@@ -118,7 +119,10 @@
     <string name="previousDate">Prethodni dan</string>
     <string name="nextDay">Sljedeći dan</string>
     <string name="noFeedingHistory">Nema unesenih hranjenja.</string>
+    <string name="noFeedingHistoryToday">Nema unesenih hranjenja danas</string>
     <string name="add">Dodaj</string>
     <string name="feedingDuration">Trajanje [min]</string>
     <string name="milkQuantityMl">Količina mlijeka [ml]</string>
+    <string name="today">Danas</string>
+    <string name="seeAll">Vidi sve</string>
 </resources>

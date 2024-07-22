@@ -191,12 +191,48 @@ class NewbornHomeViewModel @Inject constructor(
         }
         return breastfeedingInfoByDate
     }
+
+    fun getTodaysBreastfeedingInfo(breastfeedingInfo: List<BreastfeedingInfo>) : MutableList<BreastfeedingInfo>{
+        val date = LocalDate.now()
+        val selectedYear = getDate(date).get("year")
+        val selectedMonth = getDate(date).get("month")
+        val selectedDay = getDate(date).get("day")
+        var todaysBreastfeedingInfo = mutableListOf<BreastfeedingInfo>()
+
+        for (row in breastfeedingInfo){
+            if (selectedYear == getDate(row.startTime).get("year")
+                && selectedMonth == getDate(row.startTime).get("month")
+                && selectedDay == getDate(row.startTime).get("day")
+            ){
+                todaysBreastfeedingInfo.add(row)
+            }
+        }
+        return todaysBreastfeedingInfo
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     fun getBottleInfoByDate(bottleInfo: List<BottleInfo>) : MutableList<BottleInfo>{
         val selectedDate = breastfeedingInfoUiState.value.selectedDate
         val selectedYear = getDate(selectedDate).get("year")
         val selectedMonth = getDate(selectedDate).get("month")
         val selectedDay = getDate(selectedDate).get("day")
+        var todaysBottleInfo = mutableListOf<BottleInfo>()
+
+        for (row in bottleInfo){
+            if (selectedYear == getDate(row.time).get("year")
+                && selectedMonth == getDate(row.time).get("month")
+                && selectedDay == getDate(row.time).get("day")
+            ){
+                todaysBottleInfo.add(row)
+            }
+        }
+        return todaysBottleInfo
+    }
+
+    fun getTodaysBottleInfo(bottleInfo: List<BottleInfo>) : MutableList<BottleInfo>{
+        val date = LocalDate.now()
+        val selectedYear = getDate(date).get("year")
+        val selectedMonth = getDate(date).get("month")
+        val selectedDay = getDate(date).get("day")
         var bottleInfoByDate = mutableListOf<BottleInfo>()
 
         for (row in bottleInfo){
@@ -217,9 +253,12 @@ class NewbornHomeViewModel @Inject constructor(
         )
     }
 
+    fun onFeedingTypeChangeHome(newValue: String){
+        uiState.value = uiState.value.copy(feedingType = newValue)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    fun isSelectedDayToday() : Boolean{
-        val selectedDate = breastfeedingInfoUiState.value.selectedDate
+    fun isSelectedDayToday(selectedDate : LocalDate) : Boolean{
         val today = LocalDate.now()
         val selectedYear = getDate(selectedDate).get("year")
         val selectedMonth = getDate(selectedDate).get("month")
