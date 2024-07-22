@@ -5,23 +5,14 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertToTimestamp
 import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
-import io.data2viz.interpolate.quad
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeParseException
 import javax.inject.Inject
 
 
@@ -30,7 +21,7 @@ class BreastfeedingViewModel @Inject constructor(
     private val newbornInfoRepository: NewbornInfoRepository
 ) : ViewModel(){
     @RequiresApi(Build.VERSION_CODES.O)
-    var uiState = mutableStateOf(BreastfeedingUiState())
+    var uiState = mutableStateOf(BreastfeedingInputUiState())
         private set
 
     @RequiresApi(Build.VERSION_CODES.O)

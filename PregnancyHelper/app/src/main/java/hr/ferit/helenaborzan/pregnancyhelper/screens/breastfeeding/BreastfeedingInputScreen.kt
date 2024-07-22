@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.foundation.layout.size
@@ -57,11 +56,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButto
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
-import okhttp3.internal.wait
 import java.time.format.DateTimeParseException
 
 
@@ -107,7 +104,7 @@ fun BreastfeedingInputScreen(
                     uiState = uiState,
                     modifier = Modifier.weight(0.8f))
             }
-            AddButton(uiState = uiState, viewModel = viewModel)
+            AddButton(uiState = uiState, viewModel = viewModel, navController = navController)
         }
         Spacer(modifier = Modifier.weight(0.2f))
     }
@@ -144,7 +141,7 @@ fun BreastfeedingSpecific(viewModel: BreastfeedingViewModel) {
 @Composable
 fun BottleSpecific(
     viewModel: BreastfeedingViewModel,
-    uiState: BreastfeedingUiState,
+    uiState: BreastfeedingInputUiState,
     modifier: Modifier = Modifier) {
     Row(modifier = Modifier.fillMaxWidth()) {
         TimePicker(
@@ -173,7 +170,7 @@ fun BottleSpecific(
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChooseFeedingType(viewModel: BreastfeedingViewModel, uiState: BreastfeedingUiState) {
+fun ChooseFeedingType(viewModel: BreastfeedingViewModel, uiState: BreastfeedingInputUiState) {
     Row (modifier = Modifier
         .fillMaxWidth()
         .height(40.dp)){
@@ -375,8 +372,9 @@ fun RadioButtonSection(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AddButton(
-    uiState : BreastfeedingUiState,
-    viewModel: BreastfeedingViewModel) {
+    uiState : BreastfeedingInputUiState,
+    viewModel: BreastfeedingViewModel,
+    navController: NavController) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -384,7 +382,12 @@ fun AddButton(
     ){
         BasicButton(
             text = stringResource(id = R.string.submit),
-            onClick = { if (uiState.errorMessageResource == null) viewModel.onSubmitClick() },
+            onClick = {
+                if (uiState.errorMessageResource == null) {
+                    viewModel.onSubmitClick()
+                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                }
+             },
             borderColor = Pink,
             containerColor = Color.White,
             modifier = Modifier
@@ -396,7 +399,7 @@ fun AddButton(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ErrorDialog(uiState: BreastfeedingUiState, viewModel: BreastfeedingViewModel) {
+fun ErrorDialog(uiState: BreastfeedingInputUiState, viewModel: BreastfeedingViewModel) {
     uiState.errorMessageResource?.let { it ->
         AlertDialog(
             onDismissRequest = {viewModel.clearError()},

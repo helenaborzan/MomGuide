@@ -26,6 +26,27 @@ fun getDate(timestamp: Timestamp) : Map<String, Int>{
     return dateYMD
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+fun getDate(input: Any): Map<String, Int> {
+    val calendar = Calendar.getInstance()
+
+    when (input) {
+        is Timestamp -> calendar.time = input.toDate()
+        is Date -> calendar.time = input
+        is Long -> calendar.timeInMillis = input
+        is LocalDate -> {
+            calendar.set(input.year, input.monthValue - 1, input.dayOfMonth)
+        }
+        else -> throw IllegalArgumentException("Nepoznati tip ulaznog parametra: ${input::class.java}")
+    }
+
+    return mapOf(
+        "year" to calendar.get(Calendar.YEAR),
+        "month" to calendar.get(Calendar.MONTH) + 1,
+        "day" to calendar.get(Calendar.DAY_OF_MONTH)
+    )
+}
+
 fun getHoursAndMins(timestamp: Timestamp) : Map<String, Int>{
     val date = timestamp.toDate()
     val calendar = Calendar.getInstance()
@@ -114,4 +135,13 @@ fun convertToTimestamp(value: Any): Any {
         }
         else -> value
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun getString(date : Any) : String{
+    val year = getDate(date).get("year")
+    val month = getDate(date).get("month")
+    val day = getDate(date).get("day")
+
+    return "$day.$month.$year."
 }

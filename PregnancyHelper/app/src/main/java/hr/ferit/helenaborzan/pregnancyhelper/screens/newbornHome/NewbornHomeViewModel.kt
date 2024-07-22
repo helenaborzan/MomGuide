@@ -7,20 +7,26 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.google.type.DateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.Point
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
+import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -36,6 +42,10 @@ class NewbornHomeViewModel @Inject constructor(
     val newbornInfo: StateFlow<List<NewbornInfo>> = _newbornInfo.asStateFlow()
 
     var uiState = mutableStateOf(NewbornHomeUiState())
+        private set
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    var breastfeedingInfoUiState = mutableStateOf(BreastfeedingInfoUiState())
         private set
 
     private val _showDialog = mutableStateOf(false)
@@ -140,5 +150,83 @@ class NewbornHomeViewModel @Inject constructor(
     }
     fun onDeleteResultDialogDismiss(){
         _showDialog.value = false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateSelectedDate(newDate : LocalDate){
+        breastfeedingInfoUiState.value = breastfeedingInfoUiState.value.copy(selectedDate = newDate)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onPreviousDayClick() {
+        val currentDate = breastfeedingInfoUiState.value.selectedDate
+        breastfeedingInfoUiState.value = breastfeedingInfoUiState.value.copy(
+                selectedDate = currentDate?.minusDays(1) ?: LocalDate.now().minusDays(1)
+            )
+        }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onNextDayClick() {
+        val currentDate = breastfeedingInfoUiState.value.selectedDate
+        breastfeedingInfoUiState.value = breastfeedingInfoUiState.value.copy(
+                selectedDate = currentDate?.plusDays(1) ?: LocalDate.now().plusDays(1)
+            )
+        }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getBreastfeedingInfoByDate(breastfeedingInfo: List<BreastfeedingInfo>) : MutableList<BreastfeedingInfo>{
+        val selectedDate = breastfeedingInfoUiState.value.selectedDate
+        val selectedYear = getDate(selectedDate).get("year")
+        val selectedMonth = getDate(selectedDate).get("month")
+        val selectedDay = getDate(selectedDate).get("day")
+        var breastfeedingInfoByDate = mutableListOf<BreastfeedingInfo>()
+
+        for (row in breastfeedingInfo){
+            if (selectedYear == getDate(row.startTime).get("year")
+                && selectedMonth == getDate(row.startTime).get("month")
+                && selectedDay == getDate(row.startTime).get("day")
+            ){
+                breastfeedingInfoByDate.add(row)
+            }
+        }
+        return breastfeedingInfoByDate
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getBottleInfoByDate(bottleInfo: List<BottleInfo>) : MutableList<BottleInfo>{
+        val selectedDate = breastfeedingInfoUiState.value.selectedDate
+        val selectedYear = getDate(selectedDate).get("year")
+        val selectedMonth = getDate(selectedDate).get("month")
+        val selectedDay = getDate(selectedDate).get("day")
+        var bottleInfoByDate = mutableListOf<BottleInfo>()
+
+        for (row in bottleInfo){
+            if (selectedYear == getDate(row.time).get("year")
+                && selectedMonth == getDate(row.time).get("month")
+                && selectedDay == getDate(row.time).get("day")
+            ){
+                bottleInfoByDate.add(row)
+            }
+        }
+        return bottleInfoByDate
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onFeedingTypeChange(newValue : String){
+        breastfeedingInfoUiState.value = breastfeedingInfoUiState.value.copy(
+            feedingType = newValue
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun isSelectedDayToday() : Boolean{
+        val selectedDate = breastfeedingInfoUiState.value.selectedDate
+        val today = LocalDate.now()
+        val selectedYear = getDate(selectedDate).get("year")
+        val selectedMonth = getDate(selectedDate).get("month")
+        val selectedDay = getDate(selectedDate).get("day")
+
+        return ((selectedYear == getDate(today).get("year")) &&
+                (selectedMonth == getDate(today).get("month")) &&
+                (selectedDay == getDate(today).get("day")))
     }
 }

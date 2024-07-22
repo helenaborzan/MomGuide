@@ -115,4 +115,8 @@
     <string name="mlLabel">ml</string>
     <string name="milkQuantity">Količina mlijeka</string>
     <string name="milkQuantityNotInLimits">Količina mlijeka mora biti veća od 0.</string>
+    <string name="previousDate">Prethodni dan</string>
+    <string name="nextDay">Sljedeći dan</string>
+    <string name="noFeedingHistory">Nema unesenih hranjenja.</string>
+    <string name="add">Dodaj</string>
 </resources>
