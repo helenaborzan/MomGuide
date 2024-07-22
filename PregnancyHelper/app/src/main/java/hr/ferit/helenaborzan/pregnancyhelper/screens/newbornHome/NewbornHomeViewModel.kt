@@ -229,4 +229,13 @@ class NewbornHomeViewModel @Inject constructor(
                 (selectedMonth == getDate(today).get("month")) &&
                 (selectedDay == getDate(today).get("day")))
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getFeedingDuration(breastfeedingInfo: List<BreastfeedingInfo>) : List<Int>{
+        val feedingDurations = mutableListOf<Int>()
+        for (row in breastfeedingInfo){
+            feedingDurations.add(row.getMinutesDifference() ?: 0)
+        }
+        return feedingDurations
+    }
 }

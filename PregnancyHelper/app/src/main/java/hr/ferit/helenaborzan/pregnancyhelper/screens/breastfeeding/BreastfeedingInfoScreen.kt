@@ -48,9 +48,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ScatterPlot
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getHoursAndMins
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getString
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.timesToTimePoints
 import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
@@ -86,11 +88,20 @@ fun BreastfeedingInfoScreen(
     val bottleInfo = remember(newbornInfo) {
         newbornInfo.flatMap { it.bottleInfo }
     }
+
     val availableBottleDates = bottleInfo.mapNotNull { info ->
         anyToLocalDate(info.time)
     }.distinct()
     
     var showDatePicker by remember { mutableStateOf(false) }
+    
+    val breastfeedingInfoByDate = viewModel.getBreastfeedingInfoByDate(breastfeedingInfo)
+    val bottleInfoByDate = viewModel.getBottleInfoByDate(bottleInfo)
+
+    val milkQuantity = remember (bottleInfoByDate){
+        bottleInfo.map { it.quantity }
+    }
+    
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -118,16 +129,34 @@ fun BreastfeedingInfoScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         ChooseFeedingType(viewModel = viewModel, uiState = uiState)
+        Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.height(40.dp))
         if(uiState.feedingType == "Dojenje") {
-            val breastfeedingInfoByDate = viewModel.getBreastfeedingInfoByDate(breastfeedingInfo)
+            if(breastfeedingInfoByDate.size > 0) {
+                ScatterPlot(
+                    times = timesToTimePoints(breastfeedingInfoByDate.map { it.startTime }),
+                    yValues = viewModel.getFeedingDuration(breastfeedingInfoByDate),
+                    xlabel = stringResource(id = R.string.time),
+                    ylabel = stringResource(id = R.string.feedingDuration)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             BreastfeedingHistory(
                 breastfeedingInfo = breastfeedingInfoByDate,
-                modifier = Modifier.weight(0.8f)
+                modifier = Modifier.weight(0.8f),
+                viewModel = viewModel
             )
         }
         else{
-            val bottleInfoByDate = viewModel.getBottleInfoByDate(bottleInfo)
+            if(bottleInfoByDate.size > 0) {
+                ScatterPlot(
+                    times = timesToTimePoints(bottleInfoByDate.map { it.time }),
+                    yValues = milkQuantity,
+                    xlabel = stringResource(id = R.string.time),
+                    ylabel = stringResource(id = R.string.milkQuantityMl)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             BottleHistory(
                 bottleInfo = bottleInfoByDate,
                 modifier = Modifier.weight(0.8f)
@@ -168,7 +197,8 @@ fun ChooseFeedingType(viewModel: NewbornHomeViewModel, uiState: BreastfeedingInf
 @Composable
 fun BreastfeedingHistory(
     modifier: Modifier = Modifier,
-    breastfeedingInfo : List<BreastfeedingInfo>
+    breastfeedingInfo : List<BreastfeedingInfo>,
+    viewModel: NewbornHomeViewModel
 ) {
     if (breastfeedingInfo.size > 0) {
         LazyColumn(modifier = modifier) {
@@ -179,7 +209,7 @@ fun BreastfeedingHistory(
                 val endHours = getHoursAndMins(breastfeedingInfo[it].endTime)?.get("hours") ?: 0
                 val endMins = getHoursAndMins(breastfeedingInfo[it].endTime)?.get("minutes") ?: 0
                 BreastfeedingCard(
-                    text = "$startHours:$startMins - $endHours:$endMins, ${breastfeedingInfo[it].breast}"
+                    text = "$startHours:$startMins - $endHours:$endMins, ${breastfeedingInfo[it].getMinutesDifference()}min, ${breastfeedingInfo[it].breast}"
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

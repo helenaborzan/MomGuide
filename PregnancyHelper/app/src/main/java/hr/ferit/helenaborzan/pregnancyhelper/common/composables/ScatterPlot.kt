@@ -1,12 +1,15 @@
 package hr.ferit.helenaborzan.pregnancyhelper.common.composables
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -15,116 +18,151 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import hr.ferit.helenaborzan.pregnancyhelper.model.TimePoint
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 import kotlin.math.roundToInt
-
-data class TimePoint(val hours: Int, val minutes: Int) {
-    fun toFloat(): Float = hours + minutes / 60f
-}
 
 @Composable
 fun ScatterPlot(
     times: List<TimePoint>,
-    yValues: List<Float>,
+    yValues: List<Int>,
     modifier: Modifier = Modifier,
-    pointColor: Color = Color.Blue,
-    axisColor: Color = Color.Black
+    pointColor: Color = Pink,
+    axisColor: Color = Color.Black,
+    xlabel : String,
+    ylabel : String
 ) {
     require(times.size == yValues.size) { "Liste times i yValues moraju biti iste veličine" }
 
     Canvas(modifier = modifier
         .fillMaxWidth()
-        .height(300.dp)
+        .height(400.dp)
+        .background(Color.White)
     ) {
-        val yMin = yValues.minOrNull() ?: 0f
-        val yMax = yValues.maxOrNull() ?: 1f
+        val yMin = yValues.minOrNull() ?: 0
+        val yMax = yValues.maxOrNull() ?: 1
 
-        drawAxis(times, yMin, yMax, axisColor)
+        val yRange = maxOf(yMax - yMin, 10)
+        val adjustedYMin = maxOf(0, yMin - (yRange * 0.1f).toInt())
+        val adjustedYMax = adjustedYMin + (yRange * 1.2f).toInt()
+
+        val xPadding = 100f
+        val yPadding = 100f
+        val innerPadding = 50f
+
+        val plotArea = size.copy(
+            width = size.width - xPadding - innerPadding * 2,
+            height = size.height - yPadding - innerPadding * 2
+        )
+
+        drawAxis(times, adjustedYMin.toFloat(), adjustedYMax.toFloat(), axisColor, plotArea, xPadding, yPadding, innerPadding, xlabel, ylabel)
 
         times.zip(yValues).forEach { (time, value) ->
-            val xPos = time.toFloat() / 24f * size.width
-            val yPos = size.height - ((value - yMin) / (yMax - yMin) * size.height)
+            val xPos = xPadding + innerPadding + (time.toFloat() / 24f * plotArea.width)
+            val yPos = innerPadding + plotArea.height - ((value - adjustedYMin).toFloat() / (adjustedYMax - adjustedYMin) * plotArea.height)
             drawCircle(
                 color = pointColor,
-                radius = 5f,
+                radius = 7f,
                 center = Offset(xPos, yPos)
             )
         }
     }
 }
 
-private fun DrawScope.drawAxis(times: List<TimePoint>, yMin: Float, yMax: Float, color: Color) {
-    // X-osa (sati)
+private fun DrawScope.drawAxis(
+    times: List<TimePoint>,
+    yMin: Float,
+    yMax: Float,
+    color: Color,
+    plotArea: Size,
+    xPadding: Float,
+    yPadding: Float,
+    innerPadding: Float,
+    xlabel: String,
+    ylabel: String
+) {
+    // X-axis
     drawLine(
         color = color,
-        start = Offset(0f, size.height),
-        end = Offset(size.width, size.height)
+        start = Offset(xPadding, innerPadding + plotArea.height),
+        end = Offset(size.width - innerPadding, innerPadding + plotArea.height)
     )
 
-    // Y-osa (vrednosti)
+    // Y-axis
     drawLine(
         color = color,
-        start = Offset(0f, 0f),
-        end = Offset(0f, size.height)
+        start = Offset(xPadding, innerPadding),
+        end = Offset(xPadding, innerPadding + plotArea.height)
     )
 
-    // Označavanje x-ose (sati i specifična vremena)
-    val hourLabels = listOf(0, 6, 12, 18, 24)
-    hourLabels.forEach { hour ->
-        val x = size.width * hour / 24f
-        drawLine(color, Offset(x, size.height - 5), Offset(x, size.height + 5))
+    // X-axis labels (every third hour)
+    for (hour in 0..24 step 3) {
+        val x = xPadding + innerPadding + (plotArea.width * hour / 24f)
+        drawLine(color, Offset(x, innerPadding + plotArea.height), Offset(x, innerPadding + plotArea.height + 5))
         drawContext.canvas.nativeCanvas.drawText(
             "${hour}:00",
             x,
-            size.height + 15,
+            size.height - yPadding / 2,
             android.graphics.Paint().apply {
                 this.color = color.toArgb()
-                textSize = 8.sp.toPx()
+                textSize = 12.sp.toPx()
                 textAlign = android.graphics.Paint.Align.CENTER
             }
         )
     }
 
-    // Označavanje specifičnih vremena
-    times.forEach { time ->
-        val x = size.width * time.toFloat() / 24f
-        drawLine(color, Offset(x, size.height - 3), Offset(x, size.height + 3))
-        drawContext.canvas.nativeCanvas.drawText(
-            "${time.hours}:${time.minutes.toString().padStart(2, '0')}",
-            x,
-            size.height + 25,
-            android.graphics.Paint().apply {
-                this.color = color.toArgb()
-                textSize = 6.sp.toPx()
-                textAlign = android.graphics.Paint.Align.CENTER
-            }
-        )
-    }
-
-    // Označavanje y-ose (vrednosti)
+    // Y-axis labels
     val yStep = (yMax - yMin) / 5
     for (i in 0..5) {
-        val y = size.height - (size.height * i / 5)
+        val y = innerPadding + plotArea.height - (plotArea.height * i / 5)
         val value = yMin + yStep * i
-        drawLine(color, Offset(-5f, y), Offset(5f, y))
+        drawLine(color, Offset(xPadding - 5, y), Offset(xPadding, y))
         drawContext.canvas.nativeCanvas.drawText(
-            String.format("%.1f", value),
-            10f,
-            y,
+            String.format("%.0f", value),
+            xPadding - 15,
+            y + 5,
             android.graphics.Paint().apply {
                 this.color = color.toArgb()
-                textSize = 8.sp.toPx()
-                textAlign = android.graphics.Paint.Align.LEFT
+                textSize = 12.sp.toPx()
+                textAlign = android.graphics.Paint.Align.RIGHT
             }
         )
     }
+
+    // X-axis label
+    drawContext.canvas.nativeCanvas.drawText(
+        xlabel,
+        size.width / 2,
+        size.height - 15,
+        android.graphics.Paint().apply {
+            this.color = color.toArgb()
+            textSize = 14.sp.toPx()
+            textAlign = android.graphics.Paint.Align.CENTER
+        }
+    )
+
+    // Y-axis label
+    drawContext.canvas.nativeCanvas.apply {
+        save()
+        rotate(-90f, xPadding / 4, size.height / 2)
+        drawText(
+            ylabel,
+            xPadding / 4,
+            size.height / 2,
+            android.graphics.Paint().apply {
+                this.color = color.toArgb()
+                textSize = 14.sp.toPx()
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+        )
+        restore()
+    }
 }
-
-
 
 @Preview
 @Composable
 fun ShowScatterPlot() {
     val x = listOf<TimePoint>(TimePoint(8,1), TimePoint(2,1), TimePoint(14,28), TimePoint(21,2))
-    val y = listOf<Float>(2.3F, 1.2F, 4.2F, 9.2F)
-    ScatterPlot(times = x, yValues = y)
+    val y = listOf<Int>(20, 11, 50, 45)
+    ScatterPlot(times = x, yValues = y, xlabel = "xos", ylabel = "yos")
 }

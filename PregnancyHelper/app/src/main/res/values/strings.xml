@@ -119,4 +119,6 @@
     <string name="nextDay">Sljedeći dan</string>
     <string name="noFeedingHistory">Nema unesenih hranjenja.</string>
     <string name="add">Dodaj</string>
+    <string name="feedingDuration">Trajanje [min]</string>
+    <string name="milkQuantityMl">Količina mlijeka [ml]</string>
 </resources>
