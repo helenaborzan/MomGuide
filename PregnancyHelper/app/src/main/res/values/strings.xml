@@ -50,6 +50,8 @@
     <string name="result">Rezultat</string>
     <string name="questionnaireErrorMessage">Morate odgovoriti na sva pitanja.</string>
     <string name="submit">Podnesi</string>
+    <string name="previousQuestion">Prethodno pitanje</string>
+    <string name="nextQuestion">Sljedeće pitanje</string>
 
     <string name="chooseSexLabel">Odaberite <b>spol</b> djeteta</string>
     <string name="maleLabel">muško</string>

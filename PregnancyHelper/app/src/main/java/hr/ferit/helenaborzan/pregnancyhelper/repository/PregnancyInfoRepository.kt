@@ -1,12 +1,14 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
+import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
@@ -51,13 +53,33 @@ class PregnancyInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun createInfoDocument(userId: String) {
+    override suspend fun createInfoDocument(userId: String) : String {
         val pregnancyInfoData = hashMapOf(
             "userId" to userId,
             "nutritionInfo" to emptyList<NutritionInfo>(),
             "contractionsInfo" to emptyList<ContractionsInfo>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
         )
-        collection.add(pregnancyInfoData).await()
+        val documentReference = collection.add(pregnancyInfoData).await()
+        return documentReference.id
     }
+    override suspend fun fetchQuestionnaireResults(): List<QuestionnaireResult>? {
+        val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
+        return if (documentSnapshots.isNotEmpty()) {
+            val document = documentSnapshots.firstOrNull()
+            val pregnancyInfo = document?.toObject(PregnancyInfo::class.java)
+            pregnancyInfo?.questionnaireResults
+        } else {
+            null
+        }
+    }
+
+    override suspend fun updateSelectedAnswer(
+        questionnaireId: String?,
+        questionId: String,
+        answer: Answer?
+    ) {
+        TODO("Not yet implemented")
+    }
+
 }

@@ -11,12 +11,14 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.type.DateTime
+import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.QandA
 import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
@@ -61,7 +63,7 @@ class NewbornInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun createInfoDocument(userId: String) {
+    override suspend fun createInfoDocument(userId: String) : String {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
             "breastfeedingInfo" to emptyList<BreastfeedingInfo>(),
@@ -69,7 +71,8 @@ class NewbornInfoRepository @Inject constructor(
             "growthAndDevelopmentResults" to emptyList<GrowthAndDevelopmentResult>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
         )
-        collection.add(newbornInfoData).await()
+        val documentReference = collection.add(newbornInfoData).await()
+        return documentReference.id
     }
 
     suspend fun addGrowthAndDevelopmentResult(
@@ -150,6 +153,75 @@ class NewbornInfoRepository @Inject constructor(
             } else {
                 throw IndexOutOfBoundsException("Invalid index for growthAndDevelopmentResults")
             }
+        }
+    }
+
+    override suspend fun fetchQuestionnaireResults(): List<QuestionnaireResult>? {
+        val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
+        return if (documentSnapshots.isNotEmpty()) {
+            val document = documentSnapshots.firstOrNull()
+            val newbornInfo = document?.toObject(NewbornInfo::class.java)
+            newbornInfo?.questionnaireResults
+        } else {
+            null
+        }
+    }
+
+    override suspend fun updateSelectedAnswer(questionnaireId: String?, questionId: String, answer: Answer?) {
+        val userId = accountService.currentUserId
+        val documentSnapshots = getDocumentsByField("userId", userId)
+
+        if (documentSnapshots.isNotEmpty()) {
+            val document = documentSnapshots.firstOrNull()
+            document?.let {
+                val documentReference = it.reference
+
+                // Fetch current newborn info
+                val currentNewbornInfo = it.toObject(NewbornInfo::class.java) ?: NewbornInfo(userId = userId)
+
+                // Create a new QandA entry
+                val newQandA = QandA(questionId = questionId, selectedAnswer = answer)
+
+                // Find the specific QuestionnaireResult by id
+                val questionnaireResultIndex = currentNewbornInfo.questionnaireResults.indexOfFirst { it.id == questionnaireId }
+
+                if (questionnaireResultIndex != -1) {
+                    // QuestionnaireResult exists, update it
+                    val currentResult = currentNewbornInfo.questionnaireResults[questionnaireResultIndex]
+                    val updatedResults = currentResult.results?.toMutableList() ?: mutableListOf()
+
+                    val existingQandAIndex = updatedResults.indexOfFirst { it.questionId == questionId }
+                    if (existingQandAIndex != -1) {
+                        // Update existing QandA
+                        updatedResults[existingQandAIndex] = newQandA
+                    } else {
+                        // Add new QandA
+                        updatedResults.add(newQandA)
+                    }
+
+                    currentNewbornInfo.questionnaireResults[questionnaireResultIndex] = currentResult.copy(
+                        results = updatedResults
+                    )
+                } else {
+                    // QuestionnaireResult doesn't exist, create a new one
+                    val newResult = QuestionnaireResult(
+                        id = questionnaireId,
+                        date = Timestamp.now(),
+                        results = listOf(newQandA)
+                    )
+                    currentNewbornInfo.questionnaireResults.add(newResult)
+                }
+
+                // Save the updated newborn info to Firestore
+                try {
+                    documentReference.set(currentNewbornInfo).await()
+                    Log.d("Firestore Update", "Successfully updated Firestore with new answer.")
+                } catch (e: Exception) {
+                    Log.e("Firestore Update", "Error updating Firestore with new answer", e)
+                }
+            }
+        } else {
+            Log.e("Firestore Update", "No document found for user $userId")
         }
     }
 }

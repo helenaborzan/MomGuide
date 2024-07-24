@@ -1,6 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire
 
 import android.content.Context
+import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -12,8 +13,9 @@ import javax.inject.Inject
 class DepressionQuestionnaireViewModel @Inject constructor(
     questionnaireRepository: QuestionnaireRepository,
     pregnancyInfoRepository: PregnancyInfoRepository,
-    @ApplicationContext context: Context
-) : BaseQuestionnaireViewModel(questionnaireRepository, pregnancyInfoRepository, context) {
+    @ApplicationContext context: Context,
+    savedStateHandle: SavedStateHandle
+) : BaseQuestionnaireViewModel(questionnaireRepository, pregnancyInfoRepository, context, savedStateHandle) {
 
     override fun getResultMessageResource(score: Int?): Int? {
         return when {
