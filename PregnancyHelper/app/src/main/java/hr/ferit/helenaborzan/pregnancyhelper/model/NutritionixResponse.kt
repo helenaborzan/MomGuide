@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model
 
 data class NutritionixResponse(
-    val hits : List<Hit>
+    val common: List<FoodItem> = emptyList(),
+    val branded: List<FoodItem> = emptyList()
 )
