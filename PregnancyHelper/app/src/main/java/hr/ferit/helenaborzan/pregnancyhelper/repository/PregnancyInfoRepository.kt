@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.type.Date
 import com.google.type.DateTime
 import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
@@ -20,6 +21,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 class PregnancyInfoRepository @Inject constructor(
@@ -30,6 +34,7 @@ class PregnancyInfoRepository @Inject constructor(
         get() = "pregnancyInfo"
     val pregnancyInfoCollection = firestore.collection(collectionName)
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getUsersPregnancyInfo(): Flow<List<PregnancyInfo>> = callbackFlow {
         val userId = accountService.currentUserId
         val listenerRegistration = pregnancyInfoCollection
@@ -53,9 +58,11 @@ class PregnancyInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun createInfoDocument(userId: String) : String {
         val pregnancyInfoData = hashMapOf(
             "userId" to userId,
+            "pregnancyStartDate" to LocalDate.now(),
             "nutritionInfo" to emptyList<NutritionInfo>(),
             "contractionsInfo" to emptyList<ContractionsInfo>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
@@ -63,23 +70,45 @@ class PregnancyInfoRepository @Inject constructor(
         val documentReference = collection.add(pregnancyInfoData).await()
         return documentReference.id
     }
-    override suspend fun fetchQuestionnaireResults(): List<QuestionnaireResult>? {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult? {
         val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
         return if (documentSnapshots.isNotEmpty()) {
             val document = documentSnapshots.firstOrNull()
             val pregnancyInfo = document?.toObject(PregnancyInfo::class.java)
-            pregnancyInfo?.questionnaireResults
+            pregnancyInfo?.questionnaireResults?.find { it.id == questionnaireId }
         } else {
             null
         }
     }
 
-    override suspend fun updateSelectedAnswer(
-        questionnaireId: String?,
+
+        override suspend fun updateSelectedAnswer(
+        questionnaireId: String,
         questionId: String,
         answer: Answer?
     ) {
         TODO("Not yet implemented")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun addPregnancyStartDate(pregnancyStartDate : LocalDate){
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+
+            val documentReference = collection.document(documentId)
+
+            val seconds = pregnancyStartDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()
+            val nanos = 0
+            val pregnancyStartTimeTimestamp = Timestamp(seconds, nanos)
+
+
+            documentReference.update("pregnancyStartTime", pregnancyStartTimeTimestamp).await()
+        }
     }
 
 }

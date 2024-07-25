@@ -63,7 +63,7 @@ class NewbornInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun createInfoDocument(userId: String) : String {
+    override suspend fun createInfoDocument(userId: String): String {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
             "breastfeedingInfo" to emptyList<BreastfeedingInfo>(),
@@ -91,13 +91,16 @@ class NewbornInfoRepository @Inject constructor(
             )
 
             val documentReference = collection.document(documentId)
-            documentReference.update("growthAndDevelopmentResults", FieldValue.arrayUnion(newResult)).await()
+            documentReference.update(
+                "growthAndDevelopmentResults",
+                FieldValue.arrayUnion(newResult)
+            ).await()
         }
     }
 
     suspend fun addBreastfeedingInfo(
         breastfeedingInfo: BreastfeedingInfo
-    ){
+    ) {
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -117,7 +120,7 @@ class NewbornInfoRepository @Inject constructor(
 
     suspend fun addBottleInfo(
         bottleInfo: BottleInfo
-    ){
+    ) {
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -142,7 +145,8 @@ class NewbornInfoRepository @Inject constructor(
             val document = querySnapshot.documents[0]
             val documentId = document.id
 
-            val currentResults = document.get("growthAndDevelopmentResults") as? List<Map<String, Any>> ?: listOf()
+            val currentResults =
+                document.get("growthAndDevelopmentResults") as? List<Map<String, Any>> ?: listOf()
 
             if (growthAndDevelopmentResultIndex in currentResults.indices) {
                 val updatedResults = currentResults.toMutableList()
@@ -156,72 +160,68 @@ class NewbornInfoRepository @Inject constructor(
         }
     }
 
-    override suspend fun fetchQuestionnaireResults(): List<QuestionnaireResult>? {
+    override suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult? {
         val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
         return if (documentSnapshots.isNotEmpty()) {
             val document = documentSnapshots.firstOrNull()
             val newbornInfo = document?.toObject(NewbornInfo::class.java)
-            newbornInfo?.questionnaireResults
+            newbornInfo?.questionnaireResults?.find { it.id == questionnaireId }
         } else {
             null
         }
     }
 
-    override suspend fun updateSelectedAnswer(questionnaireId: String?, questionId: String, answer: Answer?) {
+
+    override suspend fun updateSelectedAnswer(questionnaireId: String, questionId: String, answer: Answer?) {
+        Log.d("Repository", "updateSelectedAnswer called with questionnaireId: $questionnaireId, questionId: $questionId, answer: $answer")
+
         val userId = accountService.currentUserId
+        Log.d("Repository", "Current userId: $userId")
+
         val documentSnapshots = getDocumentsByField("userId", userId)
+        Log.d("Repository", "Number of documents found: ${documentSnapshots.size}")
 
         if (documentSnapshots.isNotEmpty()) {
             val document = documentSnapshots.firstOrNull()
             document?.let {
-                val documentReference = it.reference
+                Log.d("Repository", "Document found, attempting to update")
 
-                // Fetch current newborn info
+                val documentReference = it.reference
                 val currentNewbornInfo = it.toObject(NewbornInfo::class.java) ?: NewbornInfo(userId = userId)
 
-                // Create a new QandA entry
-                val newQandA = QandA(questionId = questionId, selectedAnswer = answer)
-
-                // Find the specific QuestionnaireResult by id
                 val questionnaireResultIndex = currentNewbornInfo.questionnaireResults.indexOfFirst { it.id == questionnaireId }
+                Log.d("Repository", "QuestionnaireResult index: $questionnaireResultIndex")
 
                 if (questionnaireResultIndex != -1) {
-                    // QuestionnaireResult exists, update it
+                    // Update existing questionnaire result
                     val currentResult = currentNewbornInfo.questionnaireResults[questionnaireResultIndex]
                     val updatedResults = currentResult.results?.toMutableList() ?: mutableListOf()
 
                     val existingQandAIndex = updatedResults.indexOfFirst { it.questionId == questionId }
                     if (existingQandAIndex != -1) {
-                        // Update existing QandA
-                        updatedResults[existingQandAIndex] = newQandA
+                        updatedResults[existingQandAIndex] = QandA(questionId = questionId, selectedAnswer = answer)
+                        Log.d("Repository", "Updated existing QandA")
                     } else {
-                        // Add new QandA
-                        updatedResults.add(newQandA)
+                        updatedResults.add(QandA(questionId = questionId, selectedAnswer = answer))
+                        Log.d("Repository", "Added new QandA")
                     }
 
                     currentNewbornInfo.questionnaireResults[questionnaireResultIndex] = currentResult.copy(
                         results = updatedResults
                     )
-                } else {
-                    // QuestionnaireResult doesn't exist, create a new one
-                    val newResult = QuestionnaireResult(
-                        id = questionnaireId,
-                        date = Timestamp.now(),
-                        results = listOf(newQandA)
-                    )
-                    currentNewbornInfo.questionnaireResults.add(newResult)
-                }
 
-                // Save the updated newborn info to Firestore
-                try {
-                    documentReference.set(currentNewbornInfo).await()
-                    Log.d("Firestore Update", "Successfully updated Firestore with new answer.")
-                } catch (e: Exception) {
-                    Log.e("Firestore Update", "Error updating Firestore with new answer", e)
+                    try {
+                        documentReference.set(currentNewbornInfo).await()
+                        Log.d("Repository", "Document updated successfully")
+                    } catch (e: Exception) {
+                        Log.e("Repository", "Error updating document", e)
+                    }
+                } else {
+                    Log.e("Repository", "No questionnaire result found with id $questionnaireId")
                 }
-            }
+            } ?: Log.e("Repository", "Document is null")
         } else {
-            Log.e("Firestore Update", "No document found for user $userId")
+            Log.e("Repository", "No document found for user $userId")
         }
     }
-}
+    }

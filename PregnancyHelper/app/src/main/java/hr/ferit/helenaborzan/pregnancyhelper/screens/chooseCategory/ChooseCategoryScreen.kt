@@ -67,7 +67,7 @@ fun ChooseCategoryScreen(
                 borderColor = Pink,
                 onClick = {
                     viewModel.onPregnancyCategoryClick()
-                    navController.navigate(Screen.PregnancyHomeScreen.route)
+                    navController.navigate(Screen.PregnancyStartQuestion.route)
                 }
             )
             Spacer(modifier = Modifier.height(24.dp))

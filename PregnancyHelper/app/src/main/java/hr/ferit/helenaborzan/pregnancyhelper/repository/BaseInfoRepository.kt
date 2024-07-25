@@ -23,6 +23,8 @@ abstract class BaseInfoRepository(
     protected abstract val collectionName: String
     protected val collection by lazy { firestore.collection(collectionName) }
 
+     val questionnaireName : String
+        get() = collectionName
 
     suspend fun ensureInfoDocument():String {
         val userId = accountService.currentUserId
@@ -45,29 +47,25 @@ abstract class BaseInfoRepository(
         if (!querySnapshot.isEmpty) {
             val document = querySnapshot.documents[0]
             val documentId = document.id
-            val newResult = hashMapOf(
-                "id" to questionnaireResultId,
-                "resultMessage" to resultMessage,
-                "score" to score,
-                "date" to Timestamp.now()
-            )
-
             val documentReference = collection.document(documentId)
 
-            // First, we'll check if a result with this ID already exists
             val currentData = document.data
             val questionnaireResults = currentData?.get("questionnaireResults") as? List<Map<String, Any>> ?: listOf()
 
             val existingResultIndex = questionnaireResults.indexOfFirst { it["id"] == questionnaireResultId }
 
             if (existingResultIndex != -1) {
-                // If the result exists, update it
                 val updatedResults = questionnaireResults.toMutableList()
-                updatedResults[existingResultIndex] = newResult
+                val existingResult = updatedResults[existingResultIndex] as? MutableMap<String, Any>
+                existingResult?.let {
+                    it["score"] = score
+                    it["resultMessage"] = resultMessage
+                    it["date"] = Timestamp.now()
+                    updatedResults[existingResultIndex] = it
+                }
                 documentReference.update("questionnaireResults", updatedResults).await()
             } else {
-                // If the result doesn't exist, add it
-                documentReference.update("questionnaireResults", FieldValue.arrayUnion(newResult)).await()
+                Log.e("Firestore Update", "No questionnaire result found with id $questionnaireResultId")
             }
         }
     }
@@ -102,6 +100,6 @@ abstract class BaseInfoRepository(
         val documentReference = collection.document(documentId)
         documentReference.update("questionnaireResults", FieldValue.arrayUnion(initialResult)).await()
     }
-    abstract suspend fun fetchQuestionnaireResults(): List<QuestionnaireResult>?
-    abstract suspend fun updateSelectedAnswer(questionnaireId: String?,questionId: String, answer: Answer?)
+    abstract suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult?
+    abstract suspend fun updateSelectedAnswer(questionnaireId: String,questionId: String, answer: Answer?)
 }

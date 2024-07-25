@@ -127,4 +127,7 @@
     <string name="milkQuantityMl">Količina mlijeka [ml]</string>
     <string name="today">Danas</string>
     <string name="seeAll">Vidi sve</string>
+
+    <string name="pregnancyStartQuestion">Unesite datum početka trudnoće</string>
+    <string name="wrongDateInput">Unesite ispravan datum</string>
 </resources>

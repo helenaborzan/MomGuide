@@ -26,12 +26,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+@RequiresApi(Build.VERSION_CODES.O)
 abstract class BaseQuestionnaireViewModel(
     private val questionnaireRepository: QuestionnaireRepository,
     private val repository: BaseInfoRepository,
     @ApplicationContext private val context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
 
     var uiState = mutableStateOf(QuestionnaireUiState())
         protected set
@@ -46,41 +48,44 @@ abstract class BaseQuestionnaireViewModel(
 
     private var questionnaireId: String? = null
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun initializeQuestionnaire(questionnaireName: String) {
         viewModelScope.launch {
             try {
                 // Generate a new questionnaire ID
                 questionnaireId = UUID.randomUUID().toString()
-
+                Log.d("InitializeQuestionnaire", "Generated questionnaireId: $questionnaireId")
                 // Save the initial questionnaire result to Firestore
                 repository.initializeQuestionnaireResult(questionnaireId!!)
 
                 // Fetch the questionnaire questions
                 getQuestionnaire(questionnaireName)
 
-                // Fetch initial answers if any
-                fetchInitialAnswers()
             } catch (e: Exception) {
                 Log.e("BaseQuestionnaireViewModel", "Error initializing questionnaire", e)
             }
         }
     }
      suspend fun fetchInitialAnswers() {
-        viewModelScope.launch {
-            try {
-                val results = repository.fetchQuestionnaireResults()
-                val answersMap = mutableMapOf<String, Answer?>()
-                results?.forEach { result ->
-                    result.results?.forEach { qanda ->
-                        answersMap[qanda.questionId] = qanda.selectedAnswer
-                    }
-                }
-                _selectedAnswers.value = answersMap
-            } catch (e: Exception) {
-                Log.e("BaseQuestionnaireViewModel", "Error fetching questionnaire results", e)
-            }
-        }
-    }
+         viewModelScope.launch {
+             try {
+                 questionnaireId?.let { id ->
+                     val result = repository.fetchQuestionnaireResult(id)
+                     val answersMap = mutableMapOf<String, Answer?>()
+                     result?.results?.forEach { qanda ->
+                         answersMap[qanda.questionId] = qanda.selectedAnswer
+                     }
+                     _selectedAnswers.value = answersMap
+                 } ?: run {
+                     Log.e("BaseQuestionnaireViewModel", "QuestionnaireId is null")
+                 }
+             } catch (e: Exception) {
+                 Log.e("BaseQuestionnaireViewModel", "Error fetching questionnaire results", e)
+             }
+         }
+
+     }
 
     fun getQuestionnaire(questionnaireName: String) {
         viewModelScope.launch {
@@ -95,22 +100,37 @@ abstract class BaseQuestionnaireViewModel(
     }
 
     fun updateScore(questionId: String, answer: Answer?) {
-        if(answer!=null) {
+        Log.d("UpdateScore", "Function called with questionId: $questionId, answer: $answer")
+
+        if (answer != null) {
             val currentAnswers = _selectedAnswers.value ?: mutableMapOf()
+            Log.d("UpdateScore", "Current answers before update: $currentAnswers")
+
             val previousPoints = currentAnswers[questionId]?.points
             finalScore.value -= previousPoints ?: 0
             currentAnswers[questionId] = answer
-            finalScore.value += answer?.points ?: 0
+            finalScore.value += answer.points ?: 0
             _selectedAnswers.value = currentAnswers
-            Log.e("selected answers", "$currentAnswers")
+
+            Log.d("UpdateScore", "Updated answers: $currentAnswers")
+            Log.d("UpdateScore", "Updated finalScore: ${finalScore.value}")
 
             viewModelScope.launch {
                 try {
-                    repository.updateSelectedAnswer(questionnaireId = questionnaireId, questionId = questionId, answer = answer)
+                    Log.d("UpdateScore", "Attempting to update answer in repository")
+                    questionnaireId?.let { id ->
+                        Log.d("UpdateScore", "QuestionnaireId: $id")
+                        repository.updateSelectedAnswer(questionnaireId = id, questionId = questionId, answer = answer)
+                        Log.d("UpdateScore", "Answer updated successfully in repository")
+                    } ?: run {
+                        Log.e("UpdateScore", "Error: questionnaireId is null")
+                    }
                 } catch (e: Exception) {
-                    Log.e("Update Score", "Error updating selected answer", e)
+                    Log.e("UpdateScore", "Error updating selected answer", e)
                 }
             }
+        } else {
+            Log.e("UpdateScore", "Answer is null")
         }
     }
 
