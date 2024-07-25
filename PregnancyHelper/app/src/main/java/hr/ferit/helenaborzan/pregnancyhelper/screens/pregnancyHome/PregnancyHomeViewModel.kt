@@ -1,6 +1,8 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -30,6 +32,7 @@ class PregnancyHomeViewModel @Inject constructor(
     var uiState = mutableStateOf(PregnancyHomeUiState())
         private set
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getUsersPregnancyInfo() {
         viewModelScope.launch {
             pregnancyInfoRepository.getUsersPregnancyInfo()

@@ -19,6 +19,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "NUTRITIONIX_APP_ID", "\"${project.findProperty("NUTRITIONIX_APP_ID") ?: ""}\"")
+        buildConfigField("String", "NUTRITIONIX_APP_KEY", "\"${project.findProperty("NUTRITIONIX_APP_KEY") ?: ""}\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -106,6 +109,10 @@ dependencies {
     implementation("io.data2viz.charts:core:1.1.0-eap1")
     implementation("io.data2viz.d2v:viz:0.8.12")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
 }
 
 

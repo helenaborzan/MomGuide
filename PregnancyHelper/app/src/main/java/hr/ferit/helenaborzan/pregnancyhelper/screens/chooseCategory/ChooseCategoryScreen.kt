@@ -1,7 +1,9 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory
 
 import android.graphics.fonts.FontStyle
+import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +41,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChooseCategoryScreen(
     navController: NavController,
@@ -67,7 +70,12 @@ fun ChooseCategoryScreen(
                 borderColor = Pink,
                 onClick = {
                     viewModel.onPregnancyCategoryClick()
-                    navController.navigate(Screen.PregnancyStartQuestion.route)
+                    if(viewModel.doesPregnancyStartTimeExists()){
+                        navController.navigate(Screen.PregnancyHomeScreen.route)
+                    }
+                    else {
+                        navController.navigate(Screen.PregnancyStartQuestionScreen.route)
+                    }
                 }
             )
             Spacer(modifier = Modifier.height(24.dp))

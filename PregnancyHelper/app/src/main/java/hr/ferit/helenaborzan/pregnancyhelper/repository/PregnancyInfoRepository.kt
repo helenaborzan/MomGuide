@@ -62,7 +62,6 @@ class PregnancyInfoRepository @Inject constructor(
     override suspend fun createInfoDocument(userId: String) : String {
         val pregnancyInfoData = hashMapOf(
             "userId" to userId,
-            "pregnancyStartDate" to LocalDate.now(),
             "nutritionInfo" to emptyList<NutritionInfo>(),
             "contractionsInfo" to emptyList<ContractionsInfo>(),
             "questionnaireResults" to emptyList<QuestionnaireResult>()
@@ -92,7 +91,7 @@ class PregnancyInfoRepository @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun addPregnancyStartDate(pregnancyStartDate : LocalDate){
+    suspend fun addPregnancyStartDate(pregnancyStartDate : Timestamp){
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -102,12 +101,8 @@ class PregnancyInfoRepository @Inject constructor(
 
             val documentReference = collection.document(documentId)
 
-            val seconds = pregnancyStartDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()
-            val nanos = 0
-            val pregnancyStartTimeTimestamp = Timestamp(seconds, nanos)
 
-
-            documentReference.update("pregnancyStartTime", pregnancyStartTimeTimestamp).await()
+            documentReference.update("pregnancyStartDate", pregnancyStartDate).await()
         }
     }
 

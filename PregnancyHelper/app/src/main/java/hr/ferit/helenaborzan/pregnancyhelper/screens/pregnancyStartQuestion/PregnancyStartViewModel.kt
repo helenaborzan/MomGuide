@@ -5,12 +5,14 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 
@@ -24,7 +26,10 @@ class PregnancyStartViewModel @Inject constructor(
         protected set
 
     fun onPregnancyStartDateChange(startDate : LocalDate){
-        uiState.value = uiState.value.copy(pregnancyStartDate = startDate)
+        val seconds = startDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()
+        val nanos = 0
+        val pregnancyStartTimeTimestamp = Timestamp(seconds, nanos)
+        uiState.value = uiState.value.copy(pregnancyStartDate = pregnancyStartTimeTimestamp)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun onWrongDateInput(){

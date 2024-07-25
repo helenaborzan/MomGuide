@@ -20,7 +20,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationSc
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.ContractionsTimerSection
+import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.NutritionSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition.NutritionScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyStartQuestion.PregnancyStartQuestion
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.BaseQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
@@ -111,8 +113,11 @@ fun NavigationController() {
         composable(Screen.BreastfeedingInfoScreen.route){
             BreastfeedingInfoScreen(navController = navController)
         }
-        composable(Screen.PregnancyStartQuestion.route){
+        composable(Screen.PregnancyStartQuestionScreen.route){
             PregnancyStartQuestion(navController = navController)
+        }
+        composable(Screen.NutritionScreen.route){
+            NutritionScreen()
         }
 
     }
