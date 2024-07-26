@@ -38,16 +38,19 @@ class NutritionViewModel @Inject constructor(
 
                 if (searchResult.isSuccess) {
                     val commonFoods = searchResult.getOrNull()?.common
-                    Log.d("NutritionViewModel", "Common foods: ${commonFoods?.size}")
+                    val brandedFoods = searchResult.getOrNull()?.branded
+                    Log.d("NutritionViewModel", "Common foods: ${commonFoods?.size}, Branded foods: ${brandedFoods?.size}")
 
-                    if (commonFoods != null) {
-                        val detailedFoods = commonFoods.map { commonFood ->
+                    val allFoods = (commonFoods ?: emptyList()) + (brandedFoods ?: emptyList())
+
+                    if (allFoods.isNotEmpty()) {
+                        val detailedFoods = allFoods.map { food ->
                             async {
                                 try {
-                                    foodRepository.getFoodDetails(commonFood.food_name ?: "")
+                                    foodRepository.getFoodDetails(food.food_name ?: "")
                                         .getOrNull()?.foods?.firstOrNull() // Take the first food item from the response
                                 } catch (e: Exception) {
-                                    Log.e("NutritionViewModel", "Error fetching details for ${commonFood.food_name}", e)
+                                    Log.e("NutritionViewModel", "Error fetching details for ${food.food_name}", e)
                                     null
                                 }
                             }

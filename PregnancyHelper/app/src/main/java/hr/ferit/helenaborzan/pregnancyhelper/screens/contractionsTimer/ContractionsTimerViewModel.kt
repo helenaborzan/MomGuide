@@ -2,12 +2,15 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
 import android.graphics.Insets.add
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertInstantToTemporal
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertTimestampToTemporal
 import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
 import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationUiState
 import kotlinx.coroutines.CoroutineScope
@@ -22,13 +25,17 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.time.temporal.Temporal
 import javax.inject.Inject
 
 
 @HiltViewModel
 class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private val _uiState = MutableStateFlow(ContractionsTimerUiState())
+    @RequiresApi(Build.VERSION_CODES.O)
     val uiState: StateFlow<ContractionsTimerUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
@@ -136,5 +143,17 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
                 averageContractionFrequency = averageFrequency
             )
         }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun shouldGoToTheHospital() : Boolean{
+
+        val currentDuration = if (uiState.value.contractions.isEmpty()) Duration.ZERO
+        else Duration.between(convertTimestampToTemporal(Timestamp.now()), convertInstantToTemporal(uiState.value.contractions[0].startTime))
+        Log.e("Contractions", "$currentDuration")
+        return (currentDuration.toMinutes() > 2)
+                && (uiState.value.averageContractionDuration.toSeconds() in 5..10)
+                && (uiState.value.averageContractionDuration.toSeconds() in 10..15)
     }
 }

@@ -11,6 +11,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
+import java.time.temporal.Temporal
 import java.util.Calendar
 import java.util.Date
 
@@ -145,5 +146,12 @@ fun getString(date : Any) : String{
     val day = getDate(date).get("day")
 
     return "$day.$month.$year."
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun convertTimestampToTemporal(timestamp: Timestamp): Temporal {
+    val instant = timestamp.toInstant()
+
+    return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
 }
 

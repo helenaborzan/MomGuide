@@ -103,6 +103,10 @@
     <string name="start">POČETAK</string>
     <string name="duration">TRAJANJE</string>
     <string name="frequency">UČESTALOST</string>
+    <string name="hospitalRecomendationExplanation">Trudovi Vam traju već sat vremena sa prosječnim trajanjem blizu 5 minuta te prosječnom učestalosti blizu 1 minute.</string>
+    <string name="hospitalRecomendation">Krenite u bolnicu!</string>
+    <string name="contractionTimerStart">Kliknite za korištenje mjerača trudova!</string>
+    <string name="contractionsTimerDetails">Saznajte kada je vrijeme za otići u bolnicu.</string>
 
     <string name="breastfeedingType">Dojenje</string>
     <string name="formulaType">Bočica</string>
@@ -130,4 +134,5 @@
 
     <string name="pregnancyStartQuestion">Unesite datum početka trudnoće</string>
     <string name="wrongDateInput">Unesite ispravan datum</string>
+
 </resources>

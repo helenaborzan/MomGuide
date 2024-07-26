@@ -2,6 +2,11 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,8 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,16 +59,24 @@ import java.time.Instant
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 
-@RequiresApi(Build.VERSION_CODES.O)
+
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ContractionsTimerScreen(
     navController: NavController,
     viewModel : ContractionsTimerViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsState()
+    var shouldGoToTheHospital by remember { mutableStateOf(false) }
+
 
     Column (
         verticalArrangement = Arrangement.Top,
@@ -70,6 +85,11 @@ fun ContractionsTimerScreen(
             .fillMaxSize()
             .background(color = DirtyWhite)
     ){
+        LaunchedEffect(Unit){
+            if (viewModel.shouldGoToTheHospital()){
+                shouldGoToTheHospital = true
+            }
+        }
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,22 +103,47 @@ fun ContractionsTimerScreen(
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         TimedContractions(modifier = Modifier.weight(0.3f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+        if (shouldGoToTheHospital){
+            HospitalRecomendation()
+        }
+
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ContractionButton(
-    modifier : Modifier = Modifier,
+    modifier: Modifier = Modifier,
     uiState: ContractionsTimerUiState,
-    viewModel: ContractionsTimerViewModel) {
+    viewModel: ContractionsTimerViewModel
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
+
+    val animatedModifier = if (uiState.isTimerRunning) {
+        modifier.scale(scale)
+    } else {
+        modifier
+    }
+
     Box(
-        contentAlignment= Alignment.Center,
-        modifier = modifier
+        contentAlignment = Alignment.Center,
+        modifier = animatedModifier
             .size(300.dp)
             .border(
                 width = 10.dp,
-                brush = Brush.linearGradient(0.2f to LilaPink, 1.0f to Purple),
+                brush = if (uiState.isTimerRunning)
+                    Brush.linearGradient(0.2f to LilaPink, 1.0f to Purple)
+                else
+                    Brush.linearGradient(0.2f to Color.LightGray, 1.0f to Blue),
                 shape = CircleShape
             )
             .clip(shape = CircleShape)
@@ -107,7 +152,7 @@ fun ContractionButton(
     ) {
         Text(
             text = if (uiState.isTimerRunning) stringResource(id = R.string.contractionEnded)
-                    else stringResource(id = R.string.contractionStarted),
+            else stringResource(id = R.string.contractionStarted),
             modifier = Modifier.padding(8.dp)
         )
     }
@@ -228,4 +273,32 @@ fun TextLabel(text : String, modifier : Modifier  = Modifier) {
         textAlign = TextAlign.Center,
         modifier = modifier
     )
+}
+
+@Composable
+fun HospitalRecomendation() {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            text = "🚑",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Red
+        )
+        Column (modifier = Modifier.fillMaxWidth()){
+            Text(
+                text = stringResource(id = R.string.hospitalRecomendation),
+                style = TextStyle(color = Blue, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = stringResource(id = R.string.hospitalRecomendationExplanation),
+                style = TextStyle(color = DarkGray, fontSize = 16.sp)
+            )
+        }
+    }
 }

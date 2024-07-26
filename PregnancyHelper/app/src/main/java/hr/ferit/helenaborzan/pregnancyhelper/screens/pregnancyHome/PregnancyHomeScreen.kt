@@ -8,10 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -30,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,6 +44,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.QuestionnaireSe
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.Recomendations
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.ResultDialog
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.SignOutErrorDialog
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
@@ -143,13 +147,44 @@ fun ContractionsTimerSection(navController: NavController) {
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        Column (
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
-                    .clickable{ navController.navigate(Screen.ContractionsTimerScreen.route)}
-        ){}
+        Spacer(modifier = Modifier.height(12.dp))
+        GoToContractionsTimer(navController)
+    }
+}
+
+@Composable
+fun GoToContractionsTimer(navController: NavController) {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White, shape = RoundedCornerShape(8.dp)),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_timer_24),
+            contentDescription = null,
+            tint = Blue,
+            modifier = Modifier.weight(0.2f).size(40.dp)
+        )
+        Column (modifier = Modifier.weight(0.6f).padding(12.dp)){
+            Text(
+                text = stringResource(id = R.string.contractionTimerStart),
+                style = TextStyle(color = DarkGray, fontSize = 18.sp)
+            )
+            Text(
+                text = stringResource(id = R.string.contractionsTimerDetails),
+                style = TextStyle(color = Color.LightGray, fontSize = 16.sp)
+            )
+        }
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+            contentDescription = null,
+            modifier = Modifier.weight(0.2f).padding(12.dp)
+                .clickable {
+                    navController.navigate(Screen.ContractionsTimerScreen.route)
+                }
+        )
     }
 }
 
