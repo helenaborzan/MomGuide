@@ -1,12 +1,13 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
-import android.util.Size
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,12 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
@@ -43,6 +41,15 @@ import io.data2viz.charts.config.ChartConfig
 import io.data2viz.viz.TextAlign
 import io.data2viz.viz.VizContainerView
 
+
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun GrowthPercentileChart(
@@ -89,9 +96,9 @@ fun GrowthPercentileChart(
         drawLine(Color.Black, Offset(padding, canvasHeight - padding), Offset(padding, padding))
 
         // Draw percentile lines
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p3 }, "3. percentil", minXValue)
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p50 }, "50. percentil", minXValue)
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p97 }, "97. percentil", minXValue)
+        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p3 }, "3", minXValue)
+        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p50 }, "50", minXValue)
+        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p97 }, "97", minXValue)
 
         // Draw labels
         drawLabels(minXValue.toInt(), maxXValue.toInt(), maxYValue, padding, canvasWidth, canvasHeight)
@@ -114,13 +121,35 @@ private fun DrawScope.drawPercentileLine(
     minXValue: Int
 ) {
     val path = Path()
+    var lastPoint: Offset? = null
+
     data.forEachIndexed { index, point ->
         val x = padding + (point.value - minXValue) * xScale
         val y = canvasHeight - padding - heightSelector(point) * yScale
-        if (index == 0) path.moveTo(x, y) else path.lineTo(x, y)
+        if (index == 0) {
+            path.moveTo(x, y)
+        } else {
+            path.lineTo(x, y)
+        }
+        lastPoint = Offset(x, y)
     }
     drawPath(path, color, style = Stroke(width = 2.dp.toPx()))
+
+    // Draw label at the end of the line
+    lastPoint?.let {
+        drawContext.canvas.nativeCanvas.drawText(
+            label,
+            it.x + 10f,  // Adjusted to place the label slightly to the right of the point
+            it.y,
+            android.graphics.Paint().apply {
+                textSize = 15f
+                textAlign = android.graphics.Paint.Align.LEFT
+            }
+        )
+    }
 }
+
+
 
 private fun DrawScope.drawLabels(
     minXValue: Int,

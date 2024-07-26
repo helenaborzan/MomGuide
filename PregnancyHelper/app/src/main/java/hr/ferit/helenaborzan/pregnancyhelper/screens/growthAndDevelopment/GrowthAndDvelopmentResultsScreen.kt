@@ -96,7 +96,7 @@ fun GrowthAndDevelopmentResultsScreen(
             points = points,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.4f)
+                .weight(0.5f)
                 .align(Alignment.CenterHorizontally)
                 .padding(24.dp),
             )
