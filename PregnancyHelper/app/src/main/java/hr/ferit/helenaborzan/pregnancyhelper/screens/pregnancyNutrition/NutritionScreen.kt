@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,9 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import hr.ferit.helenaborzan.pregnancyhelper.model.FoodItem
-import hr.ferit.helenaborzan.pregnancyhelper.model.Item
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.Food
 
 @Composable
 fun NutritionScreen(
@@ -43,6 +43,8 @@ fun NutritionScreen(
 ) {
     val foodDataState by viewModel.foodData.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val foodDetails by viewModel.foodDetails.collectAsState()
+    Log.d("NutritionScreen", "Food details size: ${foodDetails.size}")
 
     Column(
         modifier = Modifier
@@ -61,7 +63,9 @@ fun NutritionScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { viewModel.searchFood(query) },
+            onClick = {
+                viewModel.searchFood(query)
+            },
             enabled = query.isNotBlank()
         ) {
             Text("Search")
@@ -73,61 +77,61 @@ fun NutritionScreen(
             isLoading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            foodDataState?.isSuccess == true -> {
-                val nutritionixResponse = foodDataState?.getOrNull()
-                if (nutritionixResponse != null) {
-                    Text("Common results: ${nutritionixResponse.common.size}, Branded results: ${nutritionixResponse.branded.size}")
-                    LazyColumn {
-                        items(nutritionixResponse.common) { item ->
-                            FoodItem(item, isCommon = true)
-                        }
-                        items(nutritionixResponse.branded) { item ->
-                            FoodItem(item, isCommon = false)
+            foodDetails.isNotEmpty() -> {
+                LazyColumn {
+                    items(foodDetails) { item ->
+                        if (item != null) {
+                            FoodItem(item)
+                        } else {
+                            Text("Null item", modifier = Modifier.padding(16.dp))
                         }
                     }
-                } else {
-                    Text("No results found", modifier = Modifier.padding(16.dp))
                 }
             }
             foodDataState?.isFailure == true -> {
                 val error = foodDataState?.exceptionOrNull()
                 Text("Error: ${error?.message}", color = Color.Red)
             }
+            else -> {
+                Text("No results found", modifier = Modifier.padding(16.dp))
+            }
         }
     }
 }
 
 @Composable
-fun FoodItem(item: FoodItem, isCommon: Boolean) {
+fun FoodItem(item: Food) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            AsyncImage(
-                model = item.photo?.thumb,
-                contentDescription = "Food thumbnail",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column {
-                Text(
-                    text = item.food_name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AsyncImage(
+                    model = item.photo?.thumb,
+                    contentDescription = "Food thumbnail",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(RoundedCornerShape(8.dp))
                 )
-                if (!isCommon) {
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column {
+                    Text(
+                        text = item.food_name ?: "",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                     item.brand_name?.let { brand ->
                         Text(
                             text = "Brand: $brand",
@@ -135,19 +139,42 @@ fun FoodItem(item: FoodItem, isCommon: Boolean) {
                         )
                     }
                 }
-                item.nf_calories?.let { calories ->
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Detailed nutritional information
+            item.nf_calories?.let { calories ->
+                Text("Calories: $calories", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_total_fat?.let { fat ->
+                Text("Total Fat: ${fat}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_total_carbohydrate?.let { carbs ->
+                Text("Total Carbohydrates: ${carbs}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_protein?.let { protein ->
+                Text("Protein: ${protein}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_dietary_fiber?.let { fiber ->
+                Text("Dietary Fiber: ${fiber}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_sugars?.let { sugars ->
+                Text("Sugars: ${sugars}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_sodium?.let { sodium ->
+                Text("Sodium: ${sodium}mg", style = MaterialTheme.typography.bodyMedium)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            item.serving_qty?.let { qty ->
+                item.serving_unit?.let { unit ->
                     Text(
-                        text = "Calories: $calories",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "Serving: $qty $unit",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                }
-                item.serving_qty?.let { qty ->
-                    item.serving_unit?.let { unit ->
-                        Text(
-                            text = "Serving: $qty $unit",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
                 }
             }
         }
