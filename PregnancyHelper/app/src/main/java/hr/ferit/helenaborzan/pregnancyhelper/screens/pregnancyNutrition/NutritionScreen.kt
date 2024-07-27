@@ -41,15 +41,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.model.Food
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 
 @Composable
 fun NutritionScreen(
-    viewModel: NutritionViewModel = hiltViewModel()
+    viewModel: NutritionViewModel = hiltViewModel(),
+    navController : NavController
 ) {
     val foodDataState by viewModel.foodData.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -59,10 +62,18 @@ fun NutritionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         var query by remember { mutableStateOf("") }
-
+        GoBackIconBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp)
+                .weight(0.1f),
+            navController = navController
+        )
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
@@ -91,7 +102,7 @@ fun NutritionScreen(
                 LazyColumn {
                     items(foodDetails) { item ->
                         if (item != null) {
-                            FoodItem(item)
+                            FoodItem(item = item, viewModel = viewModel)
                         } else {
                             Text("Null item", modifier = Modifier.padding(16.dp))
                         }
@@ -103,14 +114,25 @@ fun NutritionScreen(
                 Text("Error: ${error?.message}", color = Color.Red)
             }
             else -> {
-                Text("No results found", modifier = Modifier.padding(16.dp))
+                Column (modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text("No results found", modifier = Modifier.padding(16.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun FoodItem(item: Food) {
+fun FoodItem(
+    item: Food,
+    viewModel: NutritionViewModel
+){
+    var showMore by remember {
+        mutableStateOf(false)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,8 +150,12 @@ fun FoodItem(item: Food) {
             ) {
                 FoodImage(item = item)
                 Spacer(modifier = Modifier.width(16.dp))
-                FoodNutrientsValues(item = item)
-                AddFoodAndMore()
+                FoodNutrientsValues(item = item, showMore = showMore)
+                AddFoodAndMore(
+                    onButtonClick = { viewModel.addUsersFoodIntake(food = item) },
+                    onMoreIconClick = { showMore = ! showMore },
+                    showMore = showMore
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -137,7 +163,10 @@ fun FoodItem(item: Food) {
 }
 
 @Composable
-fun FoodNutrientsValues(item : Food) {
+fun FoodNutrientsValues(
+    item : Food,
+    showMore: Boolean
+) {
     Column {
         Text(
             text = item.food_name ?: "",
@@ -153,30 +182,31 @@ fun FoodNutrientsValues(item : Food) {
         item.nf_calories?.let { calories ->
             Text("Calories: $calories", style = MaterialTheme.typography.bodyMedium)
         }
-        item.nf_total_fat?.let { fat ->
-            Text("Total Fat: ${fat}g", style = MaterialTheme.typography.bodyMedium)
-        }
-        item.nf_total_carbohydrate?.let { carbs ->
-            Text("Total Carbohydrates: ${carbs}g", style = MaterialTheme.typography.bodyMedium)
-        }
-        item.nf_protein?.let { protein ->
-            Text("Protein: ${protein}g", style = MaterialTheme.typography.bodyMedium)
-        }
-        item.nf_dietary_fiber?.let { fiber ->
-            Text("Dietary Fiber: ${fiber}g", style = MaterialTheme.typography.bodyMedium)
-        }
-        item.nf_sugars?.let { sugars ->
-            Text("Sugars: ${sugars}g", style = MaterialTheme.typography.bodyMedium)
-        }
-        item.nf_sodium?.let { sodium ->
-            Text("Sodium: ${sodium}mg", style = MaterialTheme.typography.bodyMedium)
+        if (showMore) {
+            item.nf_total_fat?.let { fat ->
+                Text("Total Fat: ${fat}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_total_carbohydrate?.let { carbs ->
+                Text("Total Carbohydrates: ${carbs}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_protein?.let { protein ->
+                Text("Protein: ${protein}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_dietary_fiber?.let { fiber ->
+                Text("Dietary Fiber: ${fiber}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_sugars?.let { sugars ->
+                Text("Sugars: ${sugars}g", style = MaterialTheme.typography.bodyMedium)
+            }
+            item.nf_sodium?.let { sodium ->
+                Text("Sodium: ${sodium}mg", style = MaterialTheme.typography.bodyMedium)
+            }
         }
         item.serving_qty?.let { qty ->
             item.serving_unit?.let { unit ->
                 Text(
                     text = "Serving: $qty $unit",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -195,7 +225,12 @@ fun FoodImage(item : Food) {
 }
 
 @Composable
-fun AddFoodAndMore() {
+fun AddFoodAndMore(
+    onButtonClick : () -> Unit,
+    onMoreIconClick : () -> Unit,
+    showMore : Boolean
+) {
+
     Row (modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically){
@@ -209,15 +244,18 @@ fun AddFoodAndMore() {
                 contentColor = DarkGray,
                 disabledContainerColor = LightPink,
                 disabledContentColor = DarkGray),
-            onClick = {  }
+            onClick = { onButtonClick() }
         ) {
             Text(text = stringResource(id = R.string.add))
         }
         Icon(
-            painter = painterResource(id = R.drawable.baseline_more_horiz_24),
+            painter = if (showMore) painterResource(id = R.drawable.baseline_expand_less_24)
+                    else painterResource(id = R.drawable.baseline_more_horiz_24),
             contentDescription = stringResource(id = R.string.moreIconDescription),
             tint = DarkGray,
-            modifier = Modifier.clickable {  }
+            modifier = Modifier.clickable {
+                onMoreIconClick()
+            }
         )
 
     }

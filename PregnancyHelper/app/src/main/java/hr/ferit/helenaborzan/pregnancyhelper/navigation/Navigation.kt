@@ -32,7 +32,8 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationSc
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 
 
-@RequiresApi(Build.VERSION_CODES.O)
+
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun NavigationController() {
     val navController = rememberNavController()
@@ -117,7 +118,7 @@ fun NavigationController() {
             PregnancyStartQuestion(navController = navController)
         }
         composable(Screen.NutritionScreen.route){
-            NutritionScreen()
+            NutritionScreen(navController = navController)
         }
 
     }

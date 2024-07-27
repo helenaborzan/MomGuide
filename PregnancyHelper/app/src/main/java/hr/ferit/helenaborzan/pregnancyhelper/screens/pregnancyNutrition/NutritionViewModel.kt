@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.model.Food
 import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
 import hr.ferit.helenaborzan.pregnancyhelper.repository.FoodRepository
+import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NutritionViewModel @Inject constructor(
-    private val foodRepository: FoodRepository
+    private val foodRepository: FoodRepository,
+    private val pregnancyInfoRepository: PregnancyInfoRepository
 ) : ViewModel() {
 
     private val _foodData = MutableStateFlow<Result<NutritionixResponse>?>(null)
@@ -67,6 +69,16 @@ class NutritionViewModel @Inject constructor(
                 Log.e("NutritionViewModel", "Error in searchFood", e)
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun addUsersFoodIntake(food : Food){
+        viewModelScope.launch {
+            if (food != null) {
+                pregnancyInfoRepository.addUsersFoodIntake(
+                    food = food
+                )
             }
         }
     }

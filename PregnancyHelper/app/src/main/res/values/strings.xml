@@ -90,6 +90,8 @@
     <string name="contractionsTimerTitle">Mjerač trudova</string>
     <string name="depressionTitle">Depresija</string>
     <string name="stressTitle">Stres</string>
+    <string name="dailyCalorieIntake">Unešeno kalorija danas:</string>
+    <string name="goal">Cilj:</string>
 
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
     <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>

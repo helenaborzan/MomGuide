@@ -4,9 +4,9 @@ import com.google.firebase.Timestamp
 import java.util.Date
 
 data class NutritionInfo(
-    val timestamp: Timestamp = Timestamp.now(),
+    val date: Timestamp = Timestamp.now(),
     val foodName : String = "",
-    val kcal : Double? = null,
+    val calories : Double? = null,
     val totalFat : Double? = null,
     val carbohydrate : Double? = null,
     val protein : Double? = null,
@@ -15,5 +15,5 @@ data class NutritionInfo(
     val sodium : Double? = null,
     val servingQuantity : Double? = null,
     val servingUnit : String? = null,
-    val resultMessage : String = ""
+    val servingWeight : Int? = null
 )

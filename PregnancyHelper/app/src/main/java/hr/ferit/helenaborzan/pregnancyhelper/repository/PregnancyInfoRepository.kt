@@ -11,6 +11,7 @@ import com.google.type.Date
 import com.google.type.DateTime
 import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.Food
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionInfo
@@ -59,7 +60,7 @@ class PregnancyInfoRepository @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun createInfoDocument(userId: String) : String {
+    override suspend fun createInfoDocument(userId: String): String {
         val pregnancyInfoData = hashMapOf(
             "userId" to userId,
             "nutritionInfo" to emptyList<NutritionInfo>(),
@@ -69,6 +70,7 @@ class PregnancyInfoRepository @Inject constructor(
         val documentReference = collection.add(pregnancyInfoData).await()
         return documentReference.id
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult? {
         val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
@@ -82,7 +84,7 @@ class PregnancyInfoRepository @Inject constructor(
     }
 
 
-        override suspend fun updateSelectedAnswer(
+    override suspend fun updateSelectedAnswer(
         questionnaireId: String,
         questionId: String,
         answer: Answer?
@@ -91,7 +93,7 @@ class PregnancyInfoRepository @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun addPregnancyStartDate(pregnancyStartDate : Timestamp){
+    suspend fun addPregnancyStartDate(pregnancyStartDate: Timestamp) {
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -106,4 +108,32 @@ class PregnancyInfoRepository @Inject constructor(
         }
     }
 
+    suspend fun addUsersFoodIntake(food: Food) {
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+            val newResult = hashMapOf(
+                "date" to Timestamp.now(),
+                "foodName" to food.food_name,
+                "calories" to food.nf_calories,
+                "totalFat" to food.nf_total_fat,
+                "carbohydrate" to food.nf_total_carbohydrate,
+                "protein" to food.nf_protein,
+                "dietaryFiber" to food.nf_dietary_fiber,
+                "sugars" to food.nf_sugars,
+                "sodium" to food.nf_sodium,
+                "servingQuantity" to food.serving_qty,
+                "servingUnit" to food.serving_unit,
+                "servingWeight" to food.serving_weight_grams
+            )
+            val documentReference = collection.document(documentId)
+            documentReference.update(
+                "nutritionInfo",
+                FieldValue.arrayUnion(newResult)
+            ).await()
+        }
+    }
 }

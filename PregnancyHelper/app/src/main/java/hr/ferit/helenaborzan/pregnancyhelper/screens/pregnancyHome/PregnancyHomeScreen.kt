@@ -2,18 +2,23 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -28,25 +33,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.navArgument
+import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
-
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.QuestionnaireSection
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.Recomendations
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.ResultDialog
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.SignOutErrorDialog
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -57,6 +70,7 @@ fun PregnancyHomeScreen(
 ) {
     val pregnancyInfo by viewModel.pregnancyInfo.collectAsState(initial = emptyList())
 
+    val pregnancyStartDate = pregnancyInfo.firstOrNull()?.pregnancyStartDate ?: Timestamp.now()
     val questionnaireResults = remember(pregnancyInfo) {
         pregnancyInfo.flatMap { it.questionnaireResults }
     }
@@ -71,7 +85,15 @@ fun PregnancyHomeScreen(
     ) {
         item {
             IconBar(viewModel = viewModel)
-            Recomendations()
+            Spacer(modifier = Modifier.height(40.dp))
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                PregnancyProgressCircle(viewModel.getWeeksPregnant(pregnancyStartDate))
+            }
+            Spacer(modifier = Modifier.height(40.dp))
             NutritionSection(navController = navController)
             ContractionsTimerSection(navController)
             QuestionnaireSection(
@@ -126,12 +148,104 @@ fun NutritionSection(navController: NavController) {
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .border(width = 1.dp, color = DarkGray, shape = RoundedCornerShape(8.dp))
-                .clickable {
-                    navController.navigate(Screen.NutritionScreen.route)
-                }
-        ){}
+                .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+        ){
+            Row (modifier = Modifier
+                .padding(24.dp)
+                .height(160.dp)
+            ){
+                AddFoodButton(modifier = Modifier.weight(0.3f), navController = navController)
+                Spacer(modifier = Modifier.weight(0.2f))
+                DailyCaloriesInfo(modifier = Modifier.weight(0.5f))
+            }
+            CaloriesRecomendation()
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+fun AddFoodButton(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
+    Column (
+        modifier = modifier
+            .background(color = LightestPink, shape = RoundedCornerShape(8.dp))
+            .fillMaxHeight()
+            .clickable { navController.navigate(Screen.NutritionScreen.route) },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "+",
+            style = TextStyle(color = DarkGray, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+        )
+        Text(
+            text = stringResource(id = R.string.add),
+            style = TextStyle(color = DarkGray, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        )
+    }
+}
+
+@Composable
+fun DailyCaloriesInfo(modifier: Modifier = Modifier){
+    Column (
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        CaloriesWithLabel(
+            labelId = R.string.dailyCalorieIntake,
+            value = 220.32,
+            valueColor = Blue
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CaloriesWithLabel(
+            labelId = R.string.goal,
+            value = 1500.0,
+            valueColor = Pink
+        )
+    }
+}
+
+@Composable
+fun CaloriesWithLabel(
+    @StringRes labelId : Int,
+    value : Double,
+    valueColor : Color
+) {
+    Column (
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = stringResource(id = labelId)
+        )
+        Text(
+            text = "$value",
+            style = TextStyle(color = valueColor, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+        )
+    }
+}
+
+@Composable
+fun CaloriesRecomendation(trimester : Int = 1) {
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ){
+
+        Text(
+            text = "$trimester. tromjesečje",
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            text = "U prvom tromjesečju nije potreban dodatan unos kalorija."
+        )
     }
 }
 
@@ -165,9 +279,13 @@ fun GoToContractionsTimer(navController: NavController) {
             painter = painterResource(id = R.drawable.baseline_timer_24),
             contentDescription = null,
             tint = Blue,
-            modifier = Modifier.weight(0.2f).size(40.dp)
+            modifier = Modifier
+                .weight(0.2f)
+                .size(40.dp)
         )
-        Column (modifier = Modifier.weight(0.6f).padding(12.dp)){
+        Column (modifier = Modifier
+            .weight(0.6f)
+            .padding(12.dp)){
             Text(
                 text = stringResource(id = R.string.contractionTimerStart),
                 style = TextStyle(color = DarkGray, fontSize = 18.sp)
@@ -180,7 +298,9 @@ fun GoToContractionsTimer(navController: NavController) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_navigate_next_24),
             contentDescription = null,
-            modifier = Modifier.weight(0.2f).padding(12.dp)
+            modifier = Modifier
+                .weight(0.2f)
+                .padding(12.dp)
                 .clickable {
                     navController.navigate(Screen.ContractionsTimerScreen.route)
                 }
@@ -234,5 +354,62 @@ fun ResultDialog(uiState : PregnancyHomeUiState, navController : NavController) 
                 }
             }
         )
+    }
+}
+
+
+@Composable
+fun PregnancyProgressCircle(
+    weeksPregnant: Int,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = LightestPink,
+    progressColor: Color = Pink,
+    strokeWidth: Dp = 20.dp
+) {
+    val progress = weeksPregnant / 40f * 360
+
+    Box(
+        modifier = modifier.size(300.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidthPx = strokeWidth.toPx()
+            val diameter = size.minDimension - strokeWidthPx
+            val topLeft = Offset(strokeWidthPx / 2, strokeWidthPx / 2)
+            val size = Size(diameter, diameter)
+
+            drawArc(
+                color = backgroundColor,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = size,
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Butt)
+            )
+
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = progress,
+                useCenter = false,
+                topLeft = topLeft,
+                size = size,
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Butt)
+            )
+        }
+        Column ( horizontalAlignment = Alignment.CenterHorizontally){
+            Text(
+                text = "$weeksPregnant.",
+                color = DarkGray,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "tjedan trudnoće",
+                color = DarkGray,
+                fontSize = 24.sp
+            )
+        }
     }
 }
