@@ -14,6 +14,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.Breastfeeding
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInputScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory.ChooseCategoryScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.dailyCalorieGoal.DailyCalorieGoalScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationScreen
@@ -119,6 +120,9 @@ fun NavigationController() {
         }
         composable(Screen.NutritionScreen.route){
             NutritionScreen(navController = navController)
+        }
+        composable(Screen.DailyCalorieGoalScreen.route){
+            DailyCalorieGoalScreen(navController = navController)
         }
 
     }

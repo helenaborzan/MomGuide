@@ -74,6 +74,12 @@ fun PregnancyHomeScreen(
     val questionnaireResults = remember(pregnancyInfo) {
         pregnancyInfo.flatMap { it.questionnaireResults }
     }
+    val nutritionInfo = remember(pregnancyInfo){
+        pregnancyInfo.flatMap { it.nutritionInfo }
+    }
+
+    val todaysCalories by viewModel.todaysCalories.collectAsState()
+
 
     val uiState by viewModel.uiState
     LazyColumn(
@@ -94,7 +100,11 @@ fun PregnancyHomeScreen(
                 PregnancyProgressCircle(viewModel.getWeeksPregnant(pregnancyStartDate))
             }
             Spacer(modifier = Modifier.height(40.dp))
-            NutritionSection(navController = navController)
+            NutritionSection(
+                navController = navController,
+                todaysCalorieIntake = todaysCalories,
+                calorieGoal = pregnancyInfo.map { it.dailyCalorieGoal }.firstOrNull()
+            )
             ContractionsTimerSection(navController)
             QuestionnaireSection(
                 navigate = {navController.navigate(Screen.DepressionQuestionnaireScreen.route)},
@@ -105,6 +115,9 @@ fun PregnancyHomeScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.getUsersPregnancyInfo()
+    }
+    LaunchedEffect(nutritionInfo){
+        viewModel.calculateTodaysCalorieIntake(nutritionInfo)
     }
 
     SignOutErrorDialog(viewModel = viewModel, uiState = uiState)
@@ -134,7 +147,11 @@ fun IconBar(viewModel: PregnancyHomeViewModel) {
 }
 
 @Composable
-fun NutritionSection(navController: NavController) {
+fun NutritionSection(
+    navController: NavController,
+    todaysCalorieIntake : Double,
+    calorieGoal : Double?
+    ) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -156,7 +173,12 @@ fun NutritionSection(navController: NavController) {
             ){
                 AddFoodButton(modifier = Modifier.weight(0.3f), navController = navController)
                 Spacer(modifier = Modifier.weight(0.2f))
-                DailyCaloriesInfo(modifier = Modifier.weight(0.5f))
+                DailyCaloriesInfo(
+                    modifier = Modifier.weight(0.5f),
+                    todaysCalorieIntake = todaysCalorieIntake,
+                    calorieGoal = calorieGoal,
+                    navController = navController
+                )
             }
             CaloriesRecomendation()
             Spacer(modifier = Modifier.height(24.dp))
@@ -179,7 +201,7 @@ fun AddFoodButton(
     ){
         Text(
             text = "+",
-            style = TextStyle(color = DarkGray, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+            style = TextStyle(color = DarkGray, fontSize = 36.sp, fontWeight = FontWeight.Bold)
         )
         Text(
             text = stringResource(id = R.string.add),
@@ -189,7 +211,12 @@ fun AddFoodButton(
 }
 
 @Composable
-fun DailyCaloriesInfo(modifier: Modifier = Modifier){
+fun DailyCaloriesInfo(
+    modifier: Modifier = Modifier,
+    todaysCalorieIntake : Double,
+    calorieGoal : Double?,
+    navController: NavController
+){
     Column (
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -197,14 +224,16 @@ fun DailyCaloriesInfo(modifier: Modifier = Modifier){
     ){
         CaloriesWithLabel(
             labelId = R.string.dailyCalorieIntake,
-            value = 220.32,
-            valueColor = Blue
+            value = todaysCalorieIntake,
+            valueColor = Blue,
+            navController = navController
         )
         Spacer(modifier = Modifier.height(8.dp))
         CaloriesWithLabel(
             labelId = R.string.goal,
-            value = 1500.0,
-            valueColor = Pink
+            value = calorieGoal,
+            valueColor = Pink,
+            navController = navController
         )
     }
 }
@@ -212,8 +241,9 @@ fun DailyCaloriesInfo(modifier: Modifier = Modifier){
 @Composable
 fun CaloriesWithLabel(
     @StringRes labelId : Int,
-    value : Double,
-    valueColor : Color
+    value : Double?,
+    valueColor : Color,
+    navController: NavController
 ) {
     Column (
         verticalArrangement = Arrangement.Center,
@@ -222,10 +252,33 @@ fun CaloriesWithLabel(
         Text(
             text = stringResource(id = labelId)
         )
-        Text(
-            text = "$value",
-            style = TextStyle(color = valueColor, fontSize = 40.sp, fontWeight = FontWeight.Bold)
-        )
+        if (value!=null) {
+            Text(
+                text = "${String.format("%.1f", value)}",
+                style = TextStyle(
+                    color = valueColor,
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable {
+                    navController.navigate(Screen.DailyCalorieGoalScreen.route)
+                }
+            )
+        }
+        else{
+            Text(
+                text = stringResource(id = R.string.calculateDailyCalorieGoal),
+                style = TextStyle(
+                    color = Color.LightGray,
+                    fontSize = 20.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.padding(vertical = 8.dp)
+                    .clickable {
+                    navController.navigate(Screen.DailyCalorieGoalScreen.route)
+                }
+            )
+        }
     }
 }
 
@@ -364,7 +417,7 @@ fun PregnancyProgressCircle(
     modifier: Modifier = Modifier,
     backgroundColor: Color = LightestPink,
     progressColor: Color = Pink,
-    strokeWidth: Dp = 20.dp
+    strokeWidth: Dp = 24.dp
 ) {
     val progress = weeksPregnant / 40f * 360
 

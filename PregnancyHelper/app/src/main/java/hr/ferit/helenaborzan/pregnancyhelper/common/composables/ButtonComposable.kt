@@ -32,7 +32,7 @@ fun BasicButton(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
-       modifier = modifier
+        modifier = modifier
 
     ) {
         Text (

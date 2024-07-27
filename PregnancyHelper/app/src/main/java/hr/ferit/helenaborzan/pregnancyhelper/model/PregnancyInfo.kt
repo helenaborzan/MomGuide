@@ -11,6 +11,7 @@ import java.time.LocalDate
 data class PregnancyInfo(
     var id : String = "",
     val pregnancyStartDate : Timestamp? = null,
+    var dailyCalorieGoal : Double? =null,
     val userId : String = "",
     val nutritionInfo : MutableList<NutritionInfo> = mutableListOf<NutritionInfo>(),
     val contractionsInfo : MutableList<ContractionsInfo> = mutableListOf<ContractionsInfo>(),

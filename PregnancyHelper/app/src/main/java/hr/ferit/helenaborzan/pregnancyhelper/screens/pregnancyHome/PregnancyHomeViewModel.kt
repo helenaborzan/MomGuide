@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.PregnancyInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.Calendar
 import javax.inject.Inject
 
 
@@ -31,6 +33,8 @@ class PregnancyHomeViewModel @Inject constructor(
     val pregnancyInfo: StateFlow<List<PregnancyInfo>> = _pregnancyInfo.asStateFlow()
     var uiState = mutableStateOf(PregnancyHomeUiState())
         private set
+    private val _todaysCalories = MutableStateFlow(0.0)
+    val todaysCalories: StateFlow<Double> = _todaysCalories.asStateFlow()
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getUsersPregnancyInfo() {
@@ -75,6 +79,23 @@ class PregnancyHomeViewModel @Inject constructor(
             in 27..45 -> 3
             else -> -1
         }
+    }
+
+     suspend fun calculateTodaysCalorieIntake(nutritionInfo: List<NutritionInfo>) {
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        val todaysCalories = nutritionInfo
+            .find { it.date.toDate().time == today.time }
+            ?.foodInfo
+            ?.sumOf { it.calories ?: 0.0 }
+            ?: 0.0
+
+        _todaysCalories.value = todaysCalories
     }
 
 }

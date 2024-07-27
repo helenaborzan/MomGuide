@@ -53,7 +53,9 @@ class ChooseCategoryViewModel @Inject constructor(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun doesPregnancyStartTimeExists() : Boolean{
+        getUsersPregnancyInfo()
         return _pregnancyInfo.value.any { it.pregnancyStartDate != null }
     }
 }

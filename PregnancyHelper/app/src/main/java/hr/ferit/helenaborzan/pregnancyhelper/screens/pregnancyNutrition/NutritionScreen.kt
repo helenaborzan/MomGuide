@@ -46,6 +46,7 @@ import coil.compose.AsyncImage
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.model.Food
+import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 
@@ -70,8 +71,7 @@ fun NutritionScreen(
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
-                .weight(0.1f),
+                .padding(24.dp),
             navController = navController
         )
         OutlinedTextField(
@@ -102,7 +102,11 @@ fun NutritionScreen(
                 LazyColumn {
                     items(foodDetails) { item ->
                         if (item != null) {
-                            FoodItem(item = item, viewModel = viewModel)
+                            FoodItem(
+                                item = item,
+                                viewModel = viewModel,
+                                navController = navController
+                            )
                         } else {
                             Text("Null item", modifier = Modifier.padding(16.dp))
                         }
@@ -128,7 +132,8 @@ fun NutritionScreen(
 @Composable
 fun FoodItem(
     item: Food,
-    viewModel: NutritionViewModel
+    viewModel: NutritionViewModel,
+    navController: NavController
 ){
     var showMore by remember {
         mutableStateOf(false)
@@ -152,7 +157,9 @@ fun FoodItem(
                 Spacer(modifier = Modifier.width(16.dp))
                 FoodNutrientsValues(item = item, showMore = showMore)
                 AddFoodAndMore(
-                    onButtonClick = { viewModel.addUsersFoodIntake(food = item) },
+                    onButtonClick = {
+                        viewModel.addUsersFoodIntake(food = item)
+                                    navController.navigate(Screen.PregnancyHomeScreen.route)},
                     onMoreIconClick = { showMore = ! showMore },
                     showMore = showMore
                 )

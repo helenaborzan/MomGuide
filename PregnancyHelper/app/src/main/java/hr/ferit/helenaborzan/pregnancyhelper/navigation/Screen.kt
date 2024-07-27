@@ -16,4 +16,5 @@ sealed class Screen(val route : String){
     object BreastfeedingInfoScreen : Screen ("BreastfeedingInfoScreen")
     object PregnancyStartQuestionScreen : Screen("PregnancyStartQuestionScreen")
     object NutritionScreen : Screen("NutritionScreen")
+    object DailyCalorieGoalScreen : Screen("DailyCalorieGoalScreen")
 }

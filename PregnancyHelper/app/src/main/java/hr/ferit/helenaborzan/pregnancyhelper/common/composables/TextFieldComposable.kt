@@ -39,6 +39,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import io.data2viz.charts.core.Padding
@@ -195,7 +196,8 @@ fun LabeledTextField(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = stringResource(id = unitId),
-                style = TextStyle(color = Color.Black, fontSize = 16.sp)
+                style = TextStyle(color = Color.Black, fontSize = 16.sp),
+                textAlign = TextAlign.Center
             )
         }
     }

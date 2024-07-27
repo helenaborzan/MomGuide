@@ -137,4 +137,16 @@
     <string name="pregnancyStartQuestion">Unesite datum početka trudnoće</string>
     <string name="wrongDateInput">Unesite ispravan datum</string>
 
+    <string name="heightLabel">Unesite svoju visinu</string>
+    <string name="weightLabel">Unesite svoju tjelesnu težinu</string>
+    <string name="ageLabel">Unesite svoju dob</string>
+    <string name="yearsLabel">godina</string>
+    <string name="littleOrNoActivity">Malo ili bez aktivnosti (1-3 sata tjedno)</string>
+    <string name="lowActivity">Laka aktivnost (3-6 sati tjedno)</string>
+    <string name="moderateActivity">Umjerena aktivnost (6-10 sati tjedno)</string>
+    <string name="highActivity">Visoka aktivnost (10-15 sati tjedno)</string>
+    <string name="extremeActivity">Ekstremna aktivnost (>15 sati tjedno)</string>
+    <string name="calculateDailyCalorieGoal">Izračunaj kalorijski cilj</string>
+    <string name="chooseActivityLevel">Odaberite razinu fizičke aktivnosti</string>
+
 </resources>
