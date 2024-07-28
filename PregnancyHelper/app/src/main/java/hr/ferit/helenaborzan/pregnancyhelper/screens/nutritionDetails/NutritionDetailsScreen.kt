@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,8 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -46,6 +51,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.ChooseDate
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.DatePickerDialog
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -65,21 +73,23 @@ fun NutritionDetailsScreen(
         anyToLocalDate(info.date)
     }.distinct()
 
-    val nutritionDetailsByDate = viewModel.getTodaysNutritionDetails(nutritionInfo)
+    val nutritionDetailsByDate = viewModel.getNutritionDetailsByDate(nutritionInfo)
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .background(color = LightBlue),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(24.dp)
+                .weight(0.1f),
             navController = navController
         )
         ChooseNutritionDetailsDate(
+            modifier = Modifier.weight(0.1f),
             onClick = { showDatePicker = true },
             viewModel = viewModel,
             uiState = uiState
@@ -94,8 +104,11 @@ fun NutritionDetailsScreen(
             availableDates = availableNutritionDetailsDates
         )
         NutritionDetailsHistory(
+            modifier = Modifier.weight(0.6f),
             foodInfo = nutritionDetailsByDate.flatMap { it.foodInfo },
-            viewModel = viewModel)
+            viewModel = viewModel
+        )
+        Spacer(modifier = Modifier.weight(0.2f))
     }
     LaunchedEffect(Unit){
         viewModel.getUsersPregnancyInfo()
@@ -105,12 +118,13 @@ fun NutritionDetailsScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChooseNutritionDetailsDate(
+    modifier: Modifier = Modifier,
     onClick : () -> Unit,
     viewModel: PregnancyHomeViewModel,
     uiState: NutritionDetailsUiState
 ) {
     Row (
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -140,28 +154,93 @@ fun NutritionDetailsHistory(
     foodInfo : List<FoodInfo>,
     viewModel: PregnancyHomeViewModel
 ) {
-    if (foodInfo.size > 0) {
-        Column (modifier = Modifier
+        Column (modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)){
-            Text(text = "Kalorije: ${foodInfo.sumOf { it.calories ?: 0.0 }}kcal")
-            Text(text = "Proteini: ${foodInfo.sumOf { it.protein ?: 0.0 }}g")
-            Text(text = "Ugljikohidrati: ${foodInfo.sumOf { it.carbohydrate ?: 0.0 }}g")
-            Text(text = "Šećeri: ${foodInfo.sumOf { it.sugars ?: 0.0 }}g")
-            Text(text = "Masti: ${foodInfo.sumOf { it.totalFat ?: 0.0 }}g")
-            Text(text = "Vlakna: ${foodInfo.sumOf { it.dietaryFiber ?: 0.0 }}g")
-            Text(text = "Natrij: ${foodInfo.sumOf { it.sodium ?: 0.0 }}mg")
+            .padding(24.dp)
+            .background(Color.White, shape = RoundedCornerShape(8.dp))
+        ) {
+            if (foodInfo.size > 0) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "${String.format("%.1f", foodInfo.sumOf { it.calories ?: 0.0 })}",
+                        style = TextStyle(
+                            color = Blue,
+                            fontSize = 44.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(top=24.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.kcal),
+                        style = TextStyle(
+                            color = Color.Black,
+                            fontSize = 34.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(bottom = 24.dp)
+                    )
+                }
+                HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
+
+                Text(
+                    text = "Proteini: ${
+                        String.format(
+                            "%.1f",
+                            foodInfo.sumOf { it.protein ?: 0.0 })
+                    }g",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+                Text(
+                    text = "Ugljikohidrati: ${String.format("%.1f", foodInfo.sumOf { it.carbohydrate ?: 0.0 })}g",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+                Text(
+                    text = "Šećeri: ${
+                        String.format(
+                            "%.1f",
+                            foodInfo.sumOf { it.sugars ?: 0.0 })
+                    }g",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+                Text(
+                    text = "Masti: ${
+                        String.format(
+                            "%.1f",
+                            foodInfo.sumOf { it.totalFat ?: 0.0 })
+                    }g",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+                Text(
+                    text = "Vlakna: ${
+                        String.format(
+                            "%.1f",
+                            foodInfo.sumOf { it.dietaryFiber ?: 0.0 })
+                    }g",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+                Text(
+                    text = "Natrij: ${
+                        String.format(
+                            "%.1f",
+                            foodInfo.sumOf { it.sodium ?: 0.0 })
+                    }mg",
+                    style = TextStyle(color = DarkGray, fontSize = 24.sp),
+                    modifier = Modifier.padding(24.dp)
+                )
+            } else {
+                Text(
+                    text = stringResource(id = R.string.noNutritionHistory),
+                    style = TextStyle(color = Color.Black, fontSize = 24.sp)
+                )
+            }
         }
-    }
-    else{
-    Column (modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-            Text(
-                text = stringResource(id = R.string.noNutritionHistory),
-                modifier = modifier
-            )
-        }
-    }
-}
+     }

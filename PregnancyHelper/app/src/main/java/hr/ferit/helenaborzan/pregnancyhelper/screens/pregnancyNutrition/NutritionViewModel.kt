@@ -53,7 +53,7 @@ class NutritionViewModel @Inject constructor(
                                 try {
                                     delay(100)
                                     foodRepository.getFoodDetails(food.food_name ?: "")
-                                        .getOrNull()?.foods?.firstOrNull() // Take the first food item from the response
+                                        .getOrNull()?.foods?.firstOrNull()
                                 } catch (e: Exception) {
                                     Log.e("NutritionViewModel", "Error fetching details for ${food.food_name}", e)
                                     null
@@ -61,7 +61,6 @@ class NutritionViewModel @Inject constructor(
                             }
                         }.awaitAll()
 
-                        // Flatten the list of lists into a single list of Food?
                         _foodDetails.value = detailedFoods.filterNotNull()
                         Log.d("NutritionViewModel", "Food details size: ${_foodDetails.value.size}")
                     }

@@ -90,7 +90,7 @@
     <string name="contractionsTimerTitle">Mjerač trudova</string>
     <string name="depressionTitle">Depresija</string>
     <string name="stressTitle">Stres</string>
-    <string name="dailyCalorieIntake">Unešeno kalorija danas:</string>
+    <string name="dailyCalorieIntake">Uneseno kalorija danas:</string>
     <string name="goal">Cilj:</string>
     <string name="firstTrimesterCalories">U prvom tromjesečju nije potreban dodatan unos kalorija</string>
     <string name="secondTrimesterCalories">U drugom se tromjesečju preporučuje unos dodatnih 350 kalorija na dan. Dodatni unos već je uračunat u dnevni cilj.</string>
@@ -154,5 +154,6 @@
     <string name="chooseActivityLevel">Odaberite razinu fizičke aktivnosti</string>
 
     <string name="noNutritionHistory">Još niste ništa unijeli danas.</string>
+    <string name="kcal">kcal</string>
 
 </resources>
