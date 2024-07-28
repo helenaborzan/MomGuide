@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.navArgument
 import com.google.firebase.Timestamp
@@ -80,7 +81,6 @@ fun PregnancyHomeScreen(
 
     val todaysCalories by viewModel.todaysCalories.collectAsState()
 
-
     val uiState by viewModel.uiState
     LazyColumn(
         verticalArrangement = Arrangement.Top,
@@ -103,7 +103,9 @@ fun PregnancyHomeScreen(
             NutritionSection(
                 navController = navController,
                 todaysCalorieIntake = todaysCalories,
-                calorieGoal = pregnancyInfo.map { it.dailyCalorieGoal }.firstOrNull()
+                calorieGoal = pregnancyInfo.map { it.dailyCalorieGoal }.firstOrNull(),
+                trimester = viewModel.getTrimester(pregnancyStartDate),
+                viewModel = viewModel
             )
             ContractionsTimerSection(navController)
             QuestionnaireSection(
@@ -118,6 +120,7 @@ fun PregnancyHomeScreen(
     }
     LaunchedEffect(nutritionInfo){
         viewModel.calculateTodaysCalorieIntake(nutritionInfo)
+        viewModel.getTrimester(pregnancyInfo.map { it.pregnancyStartDate}.firstOrNull() ?: Timestamp.now())
     }
 
     SignOutErrorDialog(viewModel = viewModel, uiState = uiState)
@@ -150,7 +153,9 @@ fun IconBar(viewModel: PregnancyHomeViewModel) {
 fun NutritionSection(
     navController: NavController,
     todaysCalorieIntake : Double,
-    calorieGoal : Double?
+    calorieGoal : Double?,
+    trimester: Int,
+    viewModel: PregnancyHomeViewModel
     ) {
     Column (
         modifier = Modifier
@@ -169,7 +174,7 @@ fun NutritionSection(
         ){
             Row (modifier = Modifier
                 .padding(24.dp)
-                .height(160.dp)
+                .height(184.dp)
             ){
                 AddFoodButton(modifier = Modifier.weight(0.3f), navController = navController)
                 Spacer(modifier = Modifier.weight(0.2f))
@@ -177,10 +182,12 @@ fun NutritionSection(
                     modifier = Modifier.weight(0.5f),
                     todaysCalorieIntake = todaysCalorieIntake,
                     calorieGoal = calorieGoal,
-                    navController = navController
+                    trimester = trimester,
+                    navController = navController,
+                    viewModel = viewModel
                 )
             }
-            CaloriesRecomendation()
+            CaloriesRecomendation(trimester = trimester, viewModel = viewModel)
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
@@ -215,7 +222,9 @@ fun DailyCaloriesInfo(
     modifier: Modifier = Modifier,
     todaysCalorieIntake : Double,
     calorieGoal : Double?,
-    navController: NavController
+    trimester : Int,
+    navController: NavController,
+    viewModel: PregnancyHomeViewModel
 ){
     Column (
         modifier = modifier,
@@ -226,14 +235,23 @@ fun DailyCaloriesInfo(
             labelId = R.string.dailyCalorieIntake,
             value = todaysCalorieIntake,
             valueColor = Blue,
-            navController = navController
+            navController = navController,
+            viewModel = viewModel
         )
         Spacer(modifier = Modifier.height(8.dp))
         CaloriesWithLabel(
             labelId = R.string.goal,
             value = calorieGoal,
+            trimester = trimester,
             valueColor = Pink,
-            navController = navController
+            navController = navController,
+            viewModel = viewModel
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(id = R.string.seeDetails),
+            style = TextStyle(color = Color.LightGray, textDecoration = TextDecoration.Underline),
+            modifier = Modifier.clickable { navController.navigate(Screen.NutritionDetailsScreen.route) }
         )
     }
 }
@@ -241,9 +259,58 @@ fun DailyCaloriesInfo(
 @Composable
 fun CaloriesWithLabel(
     @StringRes labelId : Int,
+    trimester: Int,
     value : Double?,
     valueColor : Color,
-    navController: NavController
+    navController: NavController,
+    viewModel: PregnancyHomeViewModel
+) {
+    Column (
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = stringResource(id = labelId)
+        )
+        if (value!=null) {
+            Text(
+                text = if (trimester == 1) "${String.format("%.1f", value)}"
+                    else if(trimester == 2) "${String.format("%.1f", value+350)}"
+                    else "${String.format("%.1f", value+450)}",
+                    style = TextStyle(
+                        color = valueColor,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.DailyCalorieGoalScreen.route)
+                    }
+                        )
+        }
+        else{
+            Text(
+                text = stringResource(id = R.string.calculateDailyCalorieGoal),
+                style = TextStyle(
+                    color = Color.LightGray,
+                    fontSize = 20.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clickable {
+                        navController.navigate(Screen.DailyCalorieGoalScreen.route)
+                    }
+            )
+        }
+    }
+}
+@Composable
+fun CaloriesWithLabel(
+    @StringRes labelId : Int,
+    value : Double?,
+    valueColor : Color,
+    navController: NavController,
+    viewModel: PregnancyHomeViewModel
 ) {
     Column (
         verticalArrangement = Arrangement.Center,
@@ -273,17 +340,20 @@ fun CaloriesWithLabel(
                     fontSize = 20.sp,
                     textDecoration = TextDecoration.Underline
                 ),
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
                     .clickable {
-                    navController.navigate(Screen.DailyCalorieGoalScreen.route)
-                }
+                        navController.navigate(Screen.DailyCalorieGoalScreen.route)
+                    }
             )
         }
     }
 }
 
 @Composable
-fun CaloriesRecomendation(trimester : Int = 1) {
+fun CaloriesRecomendation(
+    trimester : Int,
+    viewModel: PregnancyHomeViewModel) {
     Column (modifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 24.dp),
@@ -297,7 +367,7 @@ fun CaloriesRecomendation(trimester : Int = 1) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            text = "U prvom tromjesečju nije potreban dodatan unos kalorija."
+            text = stringResource(id = viewModel.getTrimesterCalorieRecomendation(trimester) )
         )
     }
 }

@@ -171,7 +171,7 @@ class NewbornHomeViewModel @Inject constructor(
         breastfeedingInfoUiState.value = breastfeedingInfoUiState.value.copy(
                 selectedDate = currentDate?.plusDays(1) ?: LocalDate.now().plusDays(1)
             )
-        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getBreastfeedingInfoByDate(breastfeedingInfo: List<BreastfeedingInfo>) : MutableList<BreastfeedingInfo>{
@@ -192,6 +192,7 @@ class NewbornHomeViewModel @Inject constructor(
         return breastfeedingInfoByDate
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getTodaysBreastfeedingInfo(breastfeedingInfo: List<BreastfeedingInfo>) : MutableList<BreastfeedingInfo>{
         val date = LocalDate.now()
         val selectedYear = getDate(date).get("year")
@@ -228,6 +229,7 @@ class NewbornHomeViewModel @Inject constructor(
         return todaysBottleInfo
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getTodaysBottleInfo(bottleInfo: List<BottleInfo>) : MutableList<BottleInfo>{
         val date = LocalDate.now()
         val selectedYear = getDate(date).get("year")

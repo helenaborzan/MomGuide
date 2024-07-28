@@ -20,6 +20,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.Growth
 import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.ContractionsTimerSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.NutritionSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
@@ -123,6 +124,9 @@ fun NavigationController() {
         }
         composable(Screen.DailyCalorieGoalScreen.route){
             DailyCalorieGoalScreen(navController = navController)
+        }
+        composable(Screen.NutritionDetailsScreen.route){
+            NutritionDetailsScreen(navController = navController)
         }
 
     }

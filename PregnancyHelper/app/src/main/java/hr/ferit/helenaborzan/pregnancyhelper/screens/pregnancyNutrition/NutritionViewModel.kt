@@ -10,6 +10,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.repository.FoodRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,11 +45,13 @@ class NutritionViewModel @Inject constructor(
                     Log.d("NutritionViewModel", "Common foods: ${commonFoods?.size}, Branded foods: ${brandedFoods?.size}")
 
                     val allFoods = (commonFoods ?: emptyList()) + (brandedFoods ?: emptyList())
+                    Log.d("NutritionViewModel", "All food: ${allFoods.size}")
 
                     if (allFoods.isNotEmpty()) {
                         val detailedFoods = allFoods.map { food ->
                             async {
                                 try {
+                                    delay(100)
                                     foodRepository.getFoodDetails(food.food_name ?: "")
                                         .getOrNull()?.foods?.firstOrNull() // Take the first food item from the response
                                 } catch (e: Exception) {

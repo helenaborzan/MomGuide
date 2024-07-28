@@ -92,6 +92,10 @@
     <string name="stressTitle">Stres</string>
     <string name="dailyCalorieIntake">Unešeno kalorija danas:</string>
     <string name="goal">Cilj:</string>
+    <string name="firstTrimesterCalories">U prvom tromjesečju nije potreban dodatan unos kalorija</string>
+    <string name="secondTrimesterCalories">U drugom se tromjesečju preporučuje unos dodatnih 350 kalorija na dan. Dodatni unos već je uračunat u dnevni cilj.</string>
+    <string name="thirdTrimesterCalories">U trećem se tromjesečju preporučuje unos dodatnih 450 kalorija na dan. Dodatni unos već je uračunat u dnevni cilj. </string>
+    <string name="seeDetails">Vidi detalje</string>
 
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
     <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>
@@ -148,5 +152,7 @@
     <string name="extremeActivity">Ekstremna aktivnost (>15 sati tjedno)</string>
     <string name="calculateDailyCalorieGoal">Izračunaj kalorijski cilj</string>
     <string name="chooseActivityLevel">Odaberite razinu fizičke aktivnosti</string>
+
+    <string name="noNutritionHistory">Još niste ništa unijeli danas.</string>
 
 </resources>
