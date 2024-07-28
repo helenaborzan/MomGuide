@@ -410,8 +410,7 @@ fun GrowthAndDevelopmentSection(
             )
             GrowthAndDevelopmentButton(
                 text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
-                onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) },
-                modifier = Modifier.weight(1f)
+                onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) }
             )
         }
     }
@@ -447,13 +446,13 @@ fun GrowthAndDevelopmentButton(
     borderColor : Color = LightestPink,
     containerColor : Color = LightestPink,
     onClick : () -> Unit,
-    modifier : Modifier
+    modifier : Modifier = Modifier
 ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor),
         shape = RoundedCornerShape(8.dp),
-        modifier = Modifier.padding(4.dp)
+        modifier = modifier.padding(4.dp)
     ) {
         Text (
             text = text,

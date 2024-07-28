@@ -7,7 +7,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import com.google.type.DateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -20,7 +19,6 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.Point
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,9 +48,6 @@ class NewbornHomeViewModel @Inject constructor(
 
     private val _showDialog = mutableStateOf(false)
     val showDialog : State<Boolean> = _showDialog
-
-    private val _isDeleted = mutableStateOf(false)
-    val isDeleted : State<Boolean> = _isDeleted
 
     private val _selectedChartType = MutableStateFlow("lengthForAge")
     val selectedChartType: StateFlow<String> = _selectedChartType
@@ -141,12 +136,13 @@ class NewbornHomeViewModel @Inject constructor(
         _showDialog.value = !_showDialog.value
     }
 
-    fun deletePercentileResult(growthAndDevelopmentResultIndex: Int){
+    fun deletePercentileResult(
+        growthAndDevelopmentResultIndex: Int,
+        growthAndDevelopmentResults: List<GrowthAndDevelopmentResult>
+    ){
         viewModelScope.launch {
             newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResultIndex)
-            _isDeleted.value = true
         }
-
     }
     fun onDeleteResultDialogDismiss(){
         _showDialog.value = false

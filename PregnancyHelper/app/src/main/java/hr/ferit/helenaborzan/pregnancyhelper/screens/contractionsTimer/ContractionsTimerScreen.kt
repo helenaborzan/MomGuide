@@ -85,10 +85,8 @@ fun ContractionsTimerScreen(
             .fillMaxSize()
             .background(color = DirtyWhite)
     ){
-        LaunchedEffect(Unit){
-            if (viewModel.shouldGoToTheHospital()){
-                shouldGoToTheHospital = true
-            }
+        LaunchedEffect(uiState){
+            shouldGoToTheHospital = viewModel.shouldGoToTheHospital(uiState)
         }
         GoBackIconBar(
             modifier = Modifier
@@ -288,9 +286,10 @@ fun HospitalRecomendation() {
             text = "🚑",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Red
+            color = Color.Red,
+            modifier = Modifier.weight(0.3f)
         )
-        Column (modifier = Modifier.fillMaxWidth()){
+        Column (modifier = Modifier.weight(0.7f)){
             Text(
                 text = stringResource(id = R.string.hospitalRecomendation),
                 style = TextStyle(color = Blue, fontSize = 24.sp, fontWeight = FontWeight.Bold)

@@ -45,6 +45,7 @@
     <string name="lessIconDescription">Vidi manje</string>
     <string name="seeAllGrowthAndDevelopmentResults">Vidi sve rezultate</string>
     <string name="noGrowthAndDevelopmentResults">Još nema rezultata</string>
+    <string name="noPreviousResults">Nema prijašnih rezultata</string>
 
     <string name="positiveEPDStest">Vrlo je vjerojatno da patite od postporođajne depresije. Savjetujemo Vam da potražite <b>pomoć liječnika</b></string>
     <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>

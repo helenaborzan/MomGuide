@@ -17,7 +17,6 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.PregnancyInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

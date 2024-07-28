@@ -43,10 +43,12 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.Point
+import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.repository.headCircumferenceForAgeData
 import hr.ferit.helenaborzan.pregnancyhelper.repository.heightForAgeData
 import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForAgeData
 import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForHeightData
+import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.GrowthAndDevelopmentButton
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
@@ -100,31 +102,75 @@ fun GrowthAndDevelopmentResultsScreen(
                 .align(Alignment.CenterHorizontally)
                 .padding(24.dp),
             )
-        LazyColumn(modifier = Modifier
-            .padding(24.dp)
-            .weight(0.9f)) {
-            items(growthAndDevelopmentResults.withIndex().toList()) {(index, result) ->
-                PercentilesResult(growthAndDevelopmentResult = result, growthAndDevelopmentResultIndex = index, viewModel = viewModel)
-                Spacer(modifier = Modifier.height(24.dp))
+        if(growthAndDevelopmentResults.size > 0) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(0.9f)
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                items(growthAndDevelopmentResults.withIndex().toList()) { (index, result) ->
+                    PercentilesResult(
+                        growthAndDevelopmentResult = result,
+                        growthAndDevelopmentResultIndex = index,
+                        viewModel = viewModel,
+                        growthAndDevelopmentResults = growthAndDevelopmentResults
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
             }
         }
+        else{
+            EmptyResults(
+                navController = navController,
+                modifier = Modifier.weight(0.9f)
+            )
+        }
     }
+
     LaunchedEffect(Unit) {
         viewModel.getUsersNewbornInfo()
     }
+
 }
 
 @Composable
-fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult,  growthAndDevelopmentResultIndex : Int, viewModel: NewbornHomeViewModel) {
+fun EmptyResults(navController: NavController, modifier : Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth()
+
+    ){
+        Text(
+            text = stringResource(id = R.string.noPreviousResults),
+            style = TextStyle(fontSize = 20.sp)
+        )
+        Spacer(modifier = Modifier.height(40.dp))
+        GrowthAndDevelopmentButton(
+            text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
+            onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) },
+            modifier = Modifier.height(60.dp)
+        )
+    }
+}
+@Composable
+fun PercentilesResult(
+    growthAndDevelopmentResult: GrowthAndDevelopmentResult,
+    growthAndDevelopmentResultIndex : Int, viewModel: NewbornHomeViewModel,
+    growthAndDevelopmentResults : List<GrowthAndDevelopmentResult>
+    ) {
     val date = growthAndDevelopmentResult.growthAndDevelopmentInfo.date
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(4.dp))
             .background(Color.White)
-    ){
-        Row(horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,11 +196,16 @@ fun PercentilesResult(growthAndDevelopmentResult: GrowthAndDevelopmentResult,  g
                     .clickable { viewModel.onDeleteResultClick() }
             )
         }
-            PercentileResultSection(growthAndDevelopmentPercentiles = growthAndDevelopmentResult.growthAndDevelopmentPercentiles)
-            DeleteResultDialog(showDialog = viewModel.showDialog.value,
-                onConfirm = { viewModel.deletePercentileResult(growthAndDevelopmentResultIndex) },
-                onDismiss = { viewModel.onDeleteResultDialogDismiss() }
-            )
+        PercentileResultSection(growthAndDevelopmentPercentiles = growthAndDevelopmentResult.growthAndDevelopmentPercentiles)
+        DeleteResultDialog(showDialog = viewModel.showDialog.value,
+            onConfirm = {
+                viewModel.deletePercentileResult(
+                    growthAndDevelopmentResultIndex,
+                    growthAndDevelopmentResults
+                )
+            },
+            onDismiss = { viewModel.onDeleteResultDialogDismiss() }
+        )
     }
 }
 

@@ -35,6 +35,7 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val _uiState = MutableStateFlow(ContractionsTimerUiState())
+
     @RequiresApi(Build.VERSION_CODES.O)
     val uiState: StateFlow<ContractionsTimerUiState> = _uiState.asStateFlow()
 
@@ -147,13 +148,18 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
 
 
     @RequiresApi(Build.VERSION_CODES.S)
-    fun shouldGoToTheHospital() : Boolean{
+    suspend fun shouldGoToTheHospital(uiState: ContractionsTimerUiState): Boolean {
+        val currentDuration = if (uiState.contractions.isEmpty()) Duration.ZERO
+        else Duration.between(convertInstantToTemporal(uiState.contractions[0].startTime), convertTimestampToTemporal(Timestamp.now()))
 
-        val currentDuration = if (uiState.value.contractions.isEmpty()) Duration.ZERO
-        else Duration.between(convertTimestampToTemporal(Timestamp.now()), convertInstantToTemporal(uiState.value.contractions[0].startTime))
-        Log.e("Contractions", "$currentDuration")
-        return (currentDuration.toMinutes() > 2)
-                && (uiState.value.averageContractionDuration.toSeconds() in 5..10)
-                && (uiState.value.averageContractionDuration.toSeconds() in 10..15)
+        Log.e("Contractions", "Current Duration: ${currentDuration.seconds}")
+
+        if (uiState.averageContractionDuration == Duration.ZERO || uiState.averageContractionFrequency == Duration.ZERO) {
+            return false
+        }
+
+        return (currentDuration.seconds >= 60)
+                && (uiState.averageContractionDuration.seconds in 5..10)
+                && (uiState.averageContractionFrequency.seconds in 10..15)
     }
 }
