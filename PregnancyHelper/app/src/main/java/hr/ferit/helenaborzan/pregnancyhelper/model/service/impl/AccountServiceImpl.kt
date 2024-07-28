@@ -6,6 +6,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import hr.ferit.helenaborzan.pregnancyhelper.model.User
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
@@ -55,5 +56,21 @@ class AccountServiceImpl @Inject constructor(
     override suspend fun signIn(email: String, password: String){
         auth.createUserWithEmailAndPassword(email, password)
         }
+
+    override suspend fun checkIfAccountExists(email: String): Boolean {
+        return try {
+            auth.signInWithEmailAndPassword(email, "dummyPassword").await()
+            // Sign-in successful means account exists
+            auth.signOut()
+            true
+        } catch (e: FirebaseAuthInvalidUserException) {
+            // No such user exists
+            false
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            // Invalid credentials means account exists but wrong password
+            auth.signOut()
+            true
+        }
+    }
 
 }

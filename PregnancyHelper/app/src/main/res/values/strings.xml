@@ -25,6 +25,7 @@
     <string name="signOut">Odjava</string>
     <string name="signOutError">Greška prilikom odjave. Pokuštajte ponovno.</string>
     <string name="succesfulSignOut">Uspješno ste se odjavili.</string>
+    <string name="accountAlreadyExistsError">Račun s ovim e-mailom već postoji. Prijavite se.</string>
 
     <string name="chooseCategory">Odaberite</string>
     <string name="pregnancyCategory">Trudnoća</string>

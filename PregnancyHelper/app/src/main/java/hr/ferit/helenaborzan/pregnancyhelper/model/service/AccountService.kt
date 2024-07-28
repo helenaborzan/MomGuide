@@ -18,4 +18,6 @@ interface AccountService {
 
     suspend fun sendRecoveryEmail(email: String)
 
+    suspend fun checkIfAccountExists(email: String): Boolean
+
 }

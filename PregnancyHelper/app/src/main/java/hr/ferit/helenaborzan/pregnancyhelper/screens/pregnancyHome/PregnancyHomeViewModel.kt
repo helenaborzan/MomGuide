@@ -81,7 +81,7 @@ class PregnancyHomeViewModel @Inject constructor(
         val startInstant: Instant = pregnancyStartTime.toInstant()
         val nowInstant: Instant = Instant.now()
         val daysPregnant = ChronoUnit.DAYS.between(startInstant, nowInstant)
-        return (daysPregnant / 7).toInt()
+        return (daysPregnant / 7).toInt() + 1
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

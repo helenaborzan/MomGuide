@@ -56,11 +56,21 @@ class RegistrationViewModel @Inject constructor(
 
         launchCatching {
             try {
-                accountService.signIn(email = email, password = password)
-                uiState.value = uiState.value.copy(isRegistrationSuccessful = true)
+                val accountExists = accountService.checkIfAccountExists(email)
+                if (accountExists) {
+                    uiState.value = uiState.value.copy(
+                        errorMessage = R.string.accountAlreadyExistsError,
+                        isRegistrationSuccessful = false)
+                }
+                else {
+                    accountService.signIn(email = email, password = password)
+                    uiState.value = uiState.value.copy(isRegistrationSuccessful = true)
+                }
             }catch (e : Exception){
                 Log.e("RegistrationViewModel", "Error during registration", e)
-                uiState.value = uiState.value.copy(errorMessage = R.string.registrationError, isRegistrationSuccessful = false)
+                uiState.value = uiState.value.copy(errorMessage = R.string.registrationError,
+                    isRegistrationSuccessful = false
+                )
             }
         }
     }
