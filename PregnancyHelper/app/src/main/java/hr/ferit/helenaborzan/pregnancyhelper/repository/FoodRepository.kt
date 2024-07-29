@@ -8,6 +8,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.BuildConfig
 import hr.ferit.helenaborzan.pregnancyhelper.model.Food
 import hr.ferit.helenaborzan.pregnancyhelper.model.FoodDetailsResponse
 import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.service.FoodQuery
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.NutritionixApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -30,8 +31,12 @@ class FoodRepository @Inject constructor(
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body != null) {
+                        val limitedBody = body.copy(
+                            common = body.common.take(5),
+                            branded = body.branded.take(5)
+                        )
                         Log.d("FoodRepository", "Common items: ${body.common.size}, Branded items: ${body.branded.size}")
-                        Result.success(body)
+                        Result.success(limitedBody)
                     } else {
                         Log.e("FoodRepository", "Response body is null")
                         Result.failure(Exception("Empty response body"))
@@ -55,7 +60,7 @@ class FoodRepository @Inject constructor(
             try {
                 Log.d("FoodRepository", "Sending request to getFoodDetails with query: $query")
                 val response: Response<FoodDetailsResponse> = nutritionixApi.getFoodDetails(
-                    query = mapOf("query" to query),
+                    body = FoodQuery(query),
                     appId = BuildConfig.NUTRITIONIX_APP_ID,
                     appKey = BuildConfig.NUTRITIONIX_APP_KEY
                 ).execute()

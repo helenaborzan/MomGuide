@@ -11,6 +11,6 @@ data class FoodInfo(
     val sodium : Double? = null,
     val servingQuantity : Double? = null,
     val servingUnit : String? = null,
-    val servingWeight : Int? = null
+    val servingWeight : Double? = null
 )
 

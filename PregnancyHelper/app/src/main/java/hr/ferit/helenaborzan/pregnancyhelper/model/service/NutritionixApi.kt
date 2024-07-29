@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -18,10 +19,13 @@ interface NutritionixApi {
     ): Call<NutritionixResponse>
 
     @POST("natural/nutrients")
+    @Headers("Content-Type: application/json")
     fun getFoodDetails(
-        @Body query: Map<String, String>,
+        @Body body: FoodQuery,
         @Header("x-app-id") appId: String,
         @Header("x-app-key") appKey: String
     ): Call<FoodDetailsResponse>
 
 }
+
+data class FoodQuery(val query: String)

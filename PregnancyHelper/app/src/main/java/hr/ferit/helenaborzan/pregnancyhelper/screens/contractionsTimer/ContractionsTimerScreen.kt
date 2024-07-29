@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Green
 
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -102,9 +103,11 @@ fun ContractionsTimerScreen(
         TimedContractions(modifier = Modifier.weight(0.3f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         if (shouldGoToTheHospital){
-            HospitalRecomendation()
+            GoToHospital()
         }
-
+        else{
+            DontGoToHospital()
+        }
     }
 }
 
@@ -274,7 +277,7 @@ fun TextLabel(text : String, modifier : Modifier  = Modifier) {
 }
 
 @Composable
-fun HospitalRecomendation() {
+fun GoToHospital() {
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -296,6 +299,28 @@ fun HospitalRecomendation() {
             )
             Text(
                 text = stringResource(id = R.string.hospitalRecomendationExplanation),
+                style = TextStyle(color = DarkGray, fontSize = 16.sp)
+            )
+        }
+    }
+}
+
+@Composable
+fun DontGoToHospital() {
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Column (){
+            Text(
+                text = stringResource(id = R.string.dontGoToHospital),
+                style = TextStyle(color = Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            )
+            Text(
+                text = stringResource(id = R.string.dontGoToHospitalExplanation),
                 style = TextStyle(color = DarkGray, fontSize = 16.sp)
             )
         }
