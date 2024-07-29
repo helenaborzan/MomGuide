@@ -54,6 +54,8 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHome
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
+import kotlinx.coroutines.selects.select
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -92,7 +94,8 @@ fun NutritionDetailsScreen(
             modifier = Modifier.weight(0.1f),
             onClick = { showDatePicker = true },
             viewModel = viewModel,
-            uiState = uiState
+            uiState = uiState,
+            availableDates = availableNutritionDetailsDates
         )
         DatePickerDialog(
             showDialog = showDatePicker,
@@ -121,28 +124,36 @@ fun ChooseNutritionDetailsDate(
     modifier: Modifier = Modifier,
     onClick : () -> Unit,
     viewModel: PregnancyHomeViewModel,
-    uiState: NutritionDetailsUiState
+    uiState: NutritionDetailsUiState,
+    availableDates : List<LocalDate>
 ) {
     Row (
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_navigate_before_24),
-            contentDescription = stringResource(id = R.string.previousDate),
-            modifier = Modifier.clickable { viewModel.onPreviousDayClick() }
-        )
+        val selectedDay = uiState.selectedDate
+        val previousDate = selectedDay.minusDays(1)
+        val nextDay = selectedDay.plusDays(1)
+        if (availableDates.contains(previousDate)) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_before_24),
+                contentDescription = stringResource(id = R.string.previousDate),
+                modifier = Modifier.clickable { viewModel.onPreviousDayClick() }
+            )
+        }
         Text(
             text = if (viewModel.isSelectedDayToday(uiState.selectedDate)) "Danas" else getString(uiState.selectedDate),
             style = TextStyle(textDecoration = TextDecoration.Underline),
             modifier = Modifier.clickable { onClick() }
         )
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-            contentDescription = stringResource(id = R.string.nextDay),
-            modifier = Modifier.clickable { viewModel.onNextDayClick() }
-        )
+        if (availableDates.contains(nextDay)) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                contentDescription = stringResource(id = R.string.nextDay),
+                modifier = Modifier.clickable { viewModel.onNextDayClick() }
+            )
+        }
     }
 
 }

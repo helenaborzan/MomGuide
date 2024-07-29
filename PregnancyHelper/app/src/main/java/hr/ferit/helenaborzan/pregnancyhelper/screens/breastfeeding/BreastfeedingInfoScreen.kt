@@ -113,7 +113,12 @@ fun BreastfeedingInfoScreen(
                 .weight(0.1f),
             navController = navController
         )
-        ChooseDate(onClick = { showDatePicker = true }, viewModel = viewModel, uiState = uiState)
+        ChooseDate(
+            onClick = { showDatePicker = true },
+            viewModel = viewModel,
+            uiState = uiState,
+            availableDates = if(uiState.feedingType == "Dojenje") availableBreastfeedingDates
+        else availableBottleDates)
         DatePickerDialog(
             showDialog = showDatePicker,
             onDismiss = { showDatePicker = false },
@@ -221,28 +226,36 @@ fun BreastfeedingHistory(
 fun ChooseDate(
     onClick : () -> Unit,
     viewModel: NewbornHomeViewModel,
-    uiState: BreastfeedingInfoUiState
+    uiState: BreastfeedingInfoUiState,
+    availableDates: List<LocalDate>
 ) {
+    val selectedDate = uiState.selectedDate
+    val previousDate = selectedDate.minusDays(1)
+    val nextDate = selectedDate.plusDays(1)
     Row (
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_navigate_before_24),
-            contentDescription = stringResource(id = R.string.previousDate),
-            modifier = Modifier.clickable { viewModel.onPreviousDayClick() }
-        )
+        if (availableDates.contains(previousDate)) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_before_24),
+                contentDescription = stringResource(id = R.string.previousDate),
+                modifier = Modifier.clickable { viewModel.onPreviousDayClick() }
+            )
+        }
         Text(
             text = if (viewModel.isSelectedDayToday(uiState.selectedDate)) "Danas" else getString(uiState.selectedDate),
             style = TextStyle(textDecoration = TextDecoration.Underline),
             modifier = Modifier.clickable { onClick() }
         )
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-            contentDescription = stringResource(id = R.string.nextDay),
-            modifier = Modifier.clickable { viewModel.onNextDayClick() }
-        )
+        if (availableDates.contains(nextDate)) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                contentDescription = stringResource(id = R.string.nextDay),
+                modifier = Modifier.clickable { viewModel.onNextDayClick() }
+            )
+        }
     }
 
 }

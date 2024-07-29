@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class ChooseCategoryViewModel @Inject constructor(
     @Named("newborn") private val newbornRepository: BaseInfoRepository,
@@ -27,10 +28,15 @@ class ChooseCategoryViewModel @Inject constructor(
 ) : ViewModel(){
 
     private val _pregnancyInfo = MutableStateFlow<List<PregnancyInfo>>(emptyList())
+    val pregnancyInfo: StateFlow<List<PregnancyInfo>> = _pregnancyInfo.asStateFlow()
     fun onNewbornsCategoryClick(){
         viewModelScope.launch{
             newbornRepository.ensureInfoDocument()
         }
+    }
+
+    init{
+        getUsersPregnancyInfo()
     }
     @RequiresApi(Build.VERSION_CODES.O)
     fun onPregnancyCategoryClick(){
@@ -51,11 +57,5 @@ class ChooseCategoryViewModel @Inject constructor(
                     _pregnancyInfo.value = pregnancyInfo
                 }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun doesPregnancyStartTimeExists() : Boolean{
-        getUsersPregnancyInfo()
-        return _pregnancyInfo.value.any { it.pregnancyStartDate != null }
     }
 }

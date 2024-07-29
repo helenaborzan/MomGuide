@@ -78,6 +78,10 @@ class BreastfeedingViewModel @Inject constructor(
             uiState.value = uiState.value.copy(errorMessageResource = R.string.emptyInput)
             return false
         }
+        else if(uiState.value.quantity.toIntOrNull() == null){
+            uiState.value = uiState.value.copy(errorMessageResource = R.string.notIntegerError)
+            return false
+        }
         else if (uiState.value.quantity.toInt() <= 0){
             uiState.value = uiState.value.copy(errorMessageResource = R.string.milkQuantityNotInLimits)
             return false

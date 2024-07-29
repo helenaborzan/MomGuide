@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,23 +63,30 @@ fun PregnancyStartQuestion(
     val uiState by remember { viewModel.uiState }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PregnancyStartDatePicker(
-            modifier = Modifier.weight(0.9f),
+            modifier = Modifier.weight(0.5f),
             labelId = R.string.pregnancyStartQuestion,
             onDateSelected = { newDate ->
                 viewModel.onPregnancyStartDateChange(newDate)
             },
             viewModel = viewModel
         )
-        AddButton(
-            uiState = uiState,
-            viewModel = viewModel,
-            navController = navController
-        )
+        Column(modifier = Modifier.weight(0.4f),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AddButton(
+                uiState = uiState,
+                viewModel = viewModel,
+                navController = navController
+            )
+        }
     }
 }
 
@@ -97,21 +105,15 @@ fun PregnancyStartDatePicker(
     var dateText by remember { mutableStateOf(initialDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))) }
 
     val dateFormatter = remember { DateTimeFormatter.ofPattern("dd.MM.yyyy") }
-
-    Column(
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    ) {
+    Column (modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.Start){
         Text(
             text = stringResource(id = labelId),
-            style = TextStyle(color = Color.Black, fontSize = 16.sp),
-            modifier = Modifier.padding(vertical = 8.dp)
+            style = TextStyle(color = DarkGray, fontSize = 20.sp),
+            modifier = Modifier.padding(vertical = 24.dp)
         )
         Row(
-            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(

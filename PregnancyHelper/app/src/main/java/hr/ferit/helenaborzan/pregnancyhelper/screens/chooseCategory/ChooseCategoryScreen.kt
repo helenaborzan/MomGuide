@@ -2,6 +2,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory
 
 import android.graphics.fonts.FontStyle
 import android.os.Build
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
@@ -21,6 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,16 +39,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
+import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChooseCategoryScreen(
     navController: NavController,
-    viewModel: ChooseCategoryViewModel = hiltViewModel()) {
+    viewModel: ChooseCategoryViewModel = hiltViewModel()
+) {
+    val pregnancyInfo by viewModel.pregnancyInfo.collectAsState(initial = emptyList())
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -70,7 +79,8 @@ fun ChooseCategoryScreen(
                 borderColor = Pink,
                 onClick = {
                     viewModel.onPregnancyCategoryClick()
-                    if(viewModel.doesPregnancyStartTimeExists()){
+                    Log.d("ChooseCategoryScreen", "Pregnancy Info: $pregnancyInfo")
+                    if(pregnancyInfo.map { it.pregnancyStartDate }.firstOrNull() != null){
                         navController.navigate(Screen.PregnancyHomeScreen.route)
                     }
                     else {
