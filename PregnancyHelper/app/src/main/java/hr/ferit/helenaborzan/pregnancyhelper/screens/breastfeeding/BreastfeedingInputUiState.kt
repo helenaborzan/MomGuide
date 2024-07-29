@@ -13,5 +13,6 @@ data class BreastfeedingInputUiState constructor(
     val breast : String = "",
     val time : LocalTime = LocalTime.now(),
     val quantity : String = "",
-    @StringRes val errorMessageResource : Int? = null
+    @StringRes val errorMessageResource : Int? = null,
+    val isAddingSuccesful : Boolean = false
 )

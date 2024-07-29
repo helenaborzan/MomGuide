@@ -116,8 +116,12 @@ class BreastfeedingViewModel @Inject constructor(
                     newbornInfoRepository.addBreastfeedingInfo(
                         breastfeedingInfo = breastfeedingInfo
                     )
+                    uiState.value = uiState.value.copy(isAddingSuccesful = true)
                 }
             }
+        }
+        else{
+            uiState.value = uiState.value.copy(isAddingSuccesful = false)
         }
     }
 
@@ -137,8 +141,12 @@ class BreastfeedingViewModel @Inject constructor(
                     newbornInfoRepository.addBottleInfo(
                         bottleInfo = bottleInfo
                     )
+                    uiState.value = uiState.value.copy(isAddingSuccesful = true)
                 }
             }
+        }
+        else{
+            uiState.value = uiState.value.copy(isAddingSuccesful = true)
         }
     }
 

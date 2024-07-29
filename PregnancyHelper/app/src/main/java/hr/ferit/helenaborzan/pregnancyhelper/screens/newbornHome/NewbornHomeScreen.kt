@@ -194,7 +194,6 @@ fun BreastfeedingSection(
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
                 .background(color = Color.White, shape = RoundedCornerShape(4.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -215,7 +214,7 @@ fun BreastfeedingSection(
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -236,7 +235,7 @@ fun Breastfeeding(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -272,7 +271,8 @@ fun Breastfeeding(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.noFeedingHistoryToday)
+                text = stringResource(id = R.string.noFeedingHistoryToday),
+                modifier = Modifier.padding(12.dp)
             )
             Text(
                 text = stringResource(id = R.string.seeAll),
@@ -280,7 +280,8 @@ fun Breastfeeding(
                     color = Color.LightGray,
                     textDecoration = TextDecoration.Underline
                 ),
-                modifier = Modifier.clickable {
+                modifier = Modifier.padding(12.dp)
+                    .clickable {
                     navController.navigate(Screen.BreastfeedingInfoScreen.route)
                 }
             )
@@ -299,7 +300,7 @@ fun Bottle(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){

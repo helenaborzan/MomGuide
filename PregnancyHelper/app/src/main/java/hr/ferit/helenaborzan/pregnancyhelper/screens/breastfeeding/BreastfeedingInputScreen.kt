@@ -385,7 +385,9 @@ fun AddButton(
             onClick = {
                 if (uiState.errorMessageResource == null) {
                     viewModel.onSubmitClick()
-                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                    if(uiState.isAddingSuccesful) {
+                        navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                    }
                 }
              },
             borderColor = Pink,

@@ -98,9 +98,6 @@ fun BreastfeedingInfoScreen(
     val breastfeedingInfoByDate = viewModel.getBreastfeedingInfoByDate(breastfeedingInfo)
     val bottleInfoByDate = viewModel.getBottleInfoByDate(bottleInfo)
 
-    val milkQuantity = remember (bottleInfoByDate){
-        bottleInfo.map { it.quantity }
-    }
     
     Column (
         modifier = Modifier
@@ -143,15 +140,14 @@ fun BreastfeedingInfoScreen(
             }
             BreastfeedingHistory(
                 breastfeedingInfo = breastfeedingInfoByDate,
-                modifier = Modifier.weight(0.8f),
-                viewModel = viewModel
+                modifier = Modifier.weight(0.8f)
             )
         }
         else{
             if(bottleInfoByDate.size > 0) {
                 ScatterPlot(
                     times = timesToTimePoints(bottleInfoByDate.map { it.time }),
-                    yValues = milkQuantity,
+                    yValues = bottleInfoByDate.map { it.quantity },
                     xlabel = stringResource(id = R.string.time),
                     ylabel = stringResource(id = R.string.milkQuantityMl)
                 )
@@ -198,16 +194,15 @@ fun ChooseFeedingType(viewModel: NewbornHomeViewModel, uiState: BreastfeedingInf
 fun BreastfeedingHistory(
     modifier: Modifier = Modifier,
     breastfeedingInfo : List<BreastfeedingInfo>,
-    viewModel: NewbornHomeViewModel
 ) {
     if (breastfeedingInfo.size > 0) {
         LazyColumn(modifier = modifier) {
             items(breastfeedingInfo.size) {
-                val startHours = getHoursAndMins(breastfeedingInfo[it].startTime)?.get("hours") ?: 0
+                val startHours = String.format("%02d",getHoursAndMins(breastfeedingInfo[it].startTime)?.get("hours") ?: 0)
                 val startMins =
-                    getHoursAndMins(breastfeedingInfo[it].startTime)?.get("minutes") ?: 0
-                val endHours = getHoursAndMins(breastfeedingInfo[it].endTime)?.get("hours") ?: 0
-                val endMins = getHoursAndMins(breastfeedingInfo[it].endTime)?.get("minutes") ?: 0
+                    String.format("%02d",getHoursAndMins(breastfeedingInfo[it].startTime)?.get("minutes") ?: 0)
+                val endHours = String.format("%02d",getHoursAndMins(breastfeedingInfo[it].endTime)?.get("hours") ?: 0)
+                val endMins = String.format("%02d",getHoursAndMins(breastfeedingInfo[it].endTime)?.get("minutes") ?: 0)
                 BreastfeedingCard(
                     text = "$startHours:$startMins - $endHours:$endMins, ${breastfeedingInfo[it].getMinutesDifference()}min, ${breastfeedingInfo[it].breast}"
                 )
@@ -264,8 +259,8 @@ fun BottleHistory(
         )
         {
             items(bottleInfo.size) {
-                val hours = getHoursAndMins(bottleInfo[it].time)?.get("hours") ?: 0
-                val mins = getHoursAndMins(bottleInfo[it].time)?.get("minutes") ?: 0
+                val hours = String.format("%02d",getHoursAndMins(bottleInfo[it].time)?.get("hours") ?: 0)
+                val mins = String.format("%02d",getHoursAndMins(bottleInfo[it].time)?.get("minutes") ?: 0)
                 BreastfeedingCard(
                     text = "$hours:$mins, ${bottleInfo[it].quantity}ml"
                 )
