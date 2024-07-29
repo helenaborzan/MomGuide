@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -100,13 +101,18 @@ fun ContractionsTimerScreen(
         Spacer(modifier = Modifier.height(40.dp))
         AverageResults(modifier = Modifier.weight(0.1f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-        TimedContractions(modifier = Modifier.weight(0.3f), uiState = uiState)
+        TimedContractions(modifier = Modifier.weight(0.4f), uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-        if (shouldGoToTheHospital){
-            GoToHospital()
-        }
-        else{
-            DontGoToHospital()
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+            if (shouldGoToTheHospital) {
+                GoToHospital()
+            } else {
+                DontGoToHospital()
+            }
         }
     }
 }
@@ -281,13 +287,13 @@ fun GoToHospital() {
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(40.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
             text = "🚑",
-            fontSize = 32.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Red,
             modifier = Modifier.weight(0.3f)

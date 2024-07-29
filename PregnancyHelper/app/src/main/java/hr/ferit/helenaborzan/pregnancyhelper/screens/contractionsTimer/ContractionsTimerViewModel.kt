@@ -158,8 +158,8 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
             return false
         }
 
-        return (currentDuration.seconds >= 60)
-                && (uiState.averageContractionDuration.seconds in 5..10)
-                && (uiState.averageContractionFrequency.seconds in 10..15)
+        return (currentDuration.toMinutes() >= 60)
+                && (uiState.averageContractionDuration.seconds in 45..75)
+                && (uiState.averageContractionFrequency.toMinutes() in 4..6)
     }
 }
