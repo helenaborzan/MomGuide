@@ -30,6 +30,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.BaseQuestionn
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.recipe.RecipeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 
@@ -127,6 +128,9 @@ fun NavigationController() {
         }
         composable(Screen.NutritionDetailsScreen.route){
             NutritionDetailsScreen(navController = navController)
+        }
+        composable(Screen.RecipeScreen.route){
+            RecipeScreen()
         }
 
     }

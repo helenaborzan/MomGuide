@@ -1,35 +1,22 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
-import android.content.ContentValues
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.type.DateTime
-import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.QandA
-import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QandA
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.tasks.await
-import java.time.Instant
-import java.time.format.DateTimeParseException
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 class NewbornInfoRepository @Inject constructor(

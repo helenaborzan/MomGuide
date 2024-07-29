@@ -11,11 +11,11 @@ import com.google.type.DateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.Point
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.Point
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoUiState

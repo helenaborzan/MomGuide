@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,16 +32,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
-import hr.ferit.helenaborzan.pregnancyhelper.model.ActivityLevel
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.ActivityLevel
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.RadioButtonWithLabel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink

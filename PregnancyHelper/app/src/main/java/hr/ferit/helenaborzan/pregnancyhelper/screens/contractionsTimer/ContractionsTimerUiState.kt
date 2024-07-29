@@ -2,8 +2,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
-import hr.ferit.helenaborzan.pregnancyhelper.model.ContractionsInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.contractions.ContractionsInfo
 import java.time.Duration
 
 @RequiresApi(Build.VERSION_CODES.O)

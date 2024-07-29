@@ -2,9 +2,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.common.ext
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.TimePoint
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.TimePoint
 
 
 @RequiresApi(Build.VERSION_CODES.O)

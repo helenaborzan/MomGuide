@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,7 +43,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -52,16 +50,13 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ScatterPlot
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.timesToTimePoints
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
-import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.AddFeeding
-import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.map.MapSection
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireUiState
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink

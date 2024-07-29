@@ -2,13 +2,11 @@ package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import com.google.firebase.firestore.FirebaseFirestore
-import hr.ferit.helenaborzan.pregnancyhelper.model.Question
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class QuestionnaireRepository @Inject constructor(

@@ -1,6 +1,5 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory
 
-import android.graphics.fonts.FontStyle
 import android.os.Build
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -8,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,21 +30,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

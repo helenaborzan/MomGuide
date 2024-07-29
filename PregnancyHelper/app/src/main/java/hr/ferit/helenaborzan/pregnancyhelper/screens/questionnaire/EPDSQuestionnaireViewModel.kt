@@ -4,11 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.R
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.QuestionnaireRepository
 import kotlinx.coroutines.flow.MutableStateFlow

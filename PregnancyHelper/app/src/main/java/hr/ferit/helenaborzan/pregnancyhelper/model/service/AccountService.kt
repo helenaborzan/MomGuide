@@ -1,6 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model.service
 
-import hr.ferit.helenaborzan.pregnancyhelper.model.User
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.User
 import kotlinx.coroutines.flow.Flow
 
 

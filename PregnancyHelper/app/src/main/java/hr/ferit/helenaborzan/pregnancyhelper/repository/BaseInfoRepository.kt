@@ -7,13 +7,10 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
-import hr.ferit.helenaborzan.pregnancyhelper.model.QandA
-import hr.ferit.helenaborzan.pregnancyhelper.model.QuestionnaireResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QandA
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 abstract class BaseInfoRepository(

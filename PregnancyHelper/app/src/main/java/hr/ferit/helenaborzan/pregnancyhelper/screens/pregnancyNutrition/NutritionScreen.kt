@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +44,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
-import hr.ferit.helenaborzan.pregnancyhelper.model.Food
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.Food
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink

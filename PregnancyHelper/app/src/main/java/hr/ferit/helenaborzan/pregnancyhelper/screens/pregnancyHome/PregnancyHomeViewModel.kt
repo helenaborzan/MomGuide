@@ -3,7 +3,6 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.annotation.StringRes
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,9 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.PregnancyInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.pregnancy.PregnancyInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsUiState

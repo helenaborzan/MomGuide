@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertToTimestamp
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import kotlinx.coroutines.launch
 import java.time.LocalTime

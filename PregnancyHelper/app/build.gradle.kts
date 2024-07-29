@@ -21,6 +21,8 @@ android {
 
         buildConfigField("String", "NUTRITIONIX_APP_ID", "\"${project.findProperty("NUTRITIONIX_APP_ID") ?: ""}\"")
         buildConfigField("String", "NUTRITIONIX_APP_KEY", "\"${project.findProperty("NUTRITIONIX_APP_KEY") ?: ""}\"")
+        buildConfigField("String", "EDAMAM_APP_ID", "\"${project.findProperty("EDAMAM_APP_ID") ?: ""}\"")
+        buildConfigField("String", "EDAMAM_APP_KEY", "\"${project.findProperty("EDAMAM_APP_KEY") ?: ""}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,10 +68,9 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.activity:activity-compose:1.9.1")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -93,28 +94,28 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.47")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
-    implementation("androidx.activity:activity-ktx:1.9.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.1")
+    implementation("androidx.activity:activity-ktx:1.9.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.2")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("org.apache.commons:commons-math3:3.6.1")
     implementation("androidx.compose.ui:ui:1.6.8")
     implementation("androidx.compose.ui:ui-tooling:1.6.8")
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.activity:activity-compose:1.9.1")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.maps.android:maps-compose:2.2.0")
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     implementation("io.data2viz.charts:core:1.1.0-eap1")
     implementation("io.data2viz.d2v:viz:0.8.12")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
 
 

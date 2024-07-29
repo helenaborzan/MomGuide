@@ -191,6 +191,10 @@ fun NutritionSection(
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
+    Text(text = "Recepti",
+        modifier = Modifier.clickable {
+            navController.navigate(Screen.RecipeScreen.route)
+        })
 }
 
 @Composable

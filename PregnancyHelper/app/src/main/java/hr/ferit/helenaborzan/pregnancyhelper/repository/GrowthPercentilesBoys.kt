@@ -1,7 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 
-import hr.ferit.helenaborzan.pregnancyhelper.model.Percentile
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.Percentile
 
 val heightForAgeData = listOf(
     Percentile(0, 46.1f, 49.9f, 53.7f),   // Pri rođenju

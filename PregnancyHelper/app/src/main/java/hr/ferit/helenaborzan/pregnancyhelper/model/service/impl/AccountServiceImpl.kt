@@ -1,13 +1,10 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model.service.impl
 
-import androidx.compose.ui.util.trace
 import com.google.android.gms.nearby.connection.AuthenticationException
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import hr.ferit.helenaborzan.pregnancyhelper.model.User
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.User
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow

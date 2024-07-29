@@ -1,10 +1,9 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.map
 
-import com.google.android.libraries.places.api.model.Place
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
-import hr.ferit.helenaborzan.pregnancyhelper.model.Hospital
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Hospital
 
 data class MapState(
     val properties: MapProperties = MapProperties(isMyLocationEnabled = false),

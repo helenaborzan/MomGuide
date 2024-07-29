@@ -6,10 +6,8 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.model.NewbornInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.PregnancyInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.pregnancy.PregnancyInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.BaseInfoRepository
-import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,6 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.common.utils
 
-import hr.ferit.helenaborzan.pregnancyhelper.model.ActivityLevel
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.ActivityLevel
 
 
 fun calculateBMR(weightKg: Double, heightCm: Double, age: Int): Double {

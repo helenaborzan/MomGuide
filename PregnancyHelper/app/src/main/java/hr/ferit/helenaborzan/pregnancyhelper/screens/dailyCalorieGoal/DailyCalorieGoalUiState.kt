@@ -1,6 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.dailyCalorieGoal
 
-import hr.ferit.helenaborzan.pregnancyhelper.model.ActivityLevel
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.ActivityLevel
 
 data class DailyCalorieGoalUiState(
     val height : String = "",

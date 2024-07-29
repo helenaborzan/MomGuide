@@ -2,13 +2,10 @@ package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 import android.util.Log
 import com.google.gson.Gson
-import com.squareup.okhttp.MediaType
-import com.squareup.okhttp.ResponseBody
 import hr.ferit.helenaborzan.pregnancyhelper.BuildConfig
-import hr.ferit.helenaborzan.pregnancyhelper.model.Food
-import hr.ferit.helenaborzan.pregnancyhelper.model.FoodDetailsResponse
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
-import hr.ferit.helenaborzan.pregnancyhelper.model.service.FoodQuery
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodDetailsResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodQuery
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionixResponse
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.NutritionixApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

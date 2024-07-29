@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -40,21 +37,13 @@ import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
-import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getHoursAndMins
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getString
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.FoodInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionInfo
-import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingCard
-import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoUiState
-import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.ChooseDate
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodInfo
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.DatePickerDialog
-import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
-import kotlinx.coroutines.selects.select
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)

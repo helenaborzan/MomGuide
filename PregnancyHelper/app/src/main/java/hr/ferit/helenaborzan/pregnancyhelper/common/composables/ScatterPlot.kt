@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -18,9 +17,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import hr.ferit.helenaborzan.pregnancyhelper.model.TimePoint
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.TimePoint
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-import kotlin.math.roundToInt
 
 @Composable
 fun ScatterPlot(

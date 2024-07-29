@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +39,8 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
-import hr.ferit.helenaborzan.pregnancyhelper.model.Point
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.repository.headCircumferenceForAgeData
 import hr.ferit.helenaborzan.pregnancyhelper.repository.heightForAgeData

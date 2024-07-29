@@ -1,12 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
-import android.content.Context
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -15,8 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.PercentileCalculator
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentPercentiles
-import hr.ferit.helenaborzan.pregnancyhelper.model.GrowthAndDevelopmentResult
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject

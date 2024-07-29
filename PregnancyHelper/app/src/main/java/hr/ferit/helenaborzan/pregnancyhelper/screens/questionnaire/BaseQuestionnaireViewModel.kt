@@ -4,9 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,8 +12,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.R
-import hr.ferit.helenaborzan.pregnancyhelper.model.Answer
-import hr.ferit.helenaborzan.pregnancyhelper.model.Question
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
 import hr.ferit.helenaborzan.pregnancyhelper.repository.BaseInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.QuestionnaireRepository
 import kotlinx.coroutines.flow.MutableStateFlow

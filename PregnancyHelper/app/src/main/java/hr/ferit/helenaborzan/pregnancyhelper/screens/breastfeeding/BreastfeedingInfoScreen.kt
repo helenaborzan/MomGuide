@@ -8,7 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,16 +51,14 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getHoursAndMins
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getString
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.timesToTimePoints
-import hr.ferit.helenaborzan.pregnancyhelper.model.BottleInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.BreastfeedingInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
-import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-import io.data2viz.charts.core.Padding
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

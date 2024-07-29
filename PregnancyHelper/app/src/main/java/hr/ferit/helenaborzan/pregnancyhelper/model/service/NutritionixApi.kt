@@ -1,7 +1,8 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model.service
 
-import hr.ferit.helenaborzan.pregnancyhelper.model.FoodDetailsResponse
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodDetailsResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodQuery
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionixResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,5 +28,3 @@ interface NutritionixApi {
     ): Call<FoodDetailsResponse>
 
 }
-
-data class FoodQuery(val query: String)

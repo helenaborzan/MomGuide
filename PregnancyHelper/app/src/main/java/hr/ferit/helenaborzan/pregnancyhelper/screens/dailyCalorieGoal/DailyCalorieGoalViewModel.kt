@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.calculateTDEE
-import hr.ferit.helenaborzan.pregnancyhelper.model.ActivityLevel
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.ActivityLevel
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
-import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationUiState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

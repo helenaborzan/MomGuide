@@ -2,54 +2,24 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text2.input.TextFieldState.Saver.restore
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import hr.ferit.helenaborzan.pregnancyhelper.model.Percentile
-import hr.ferit.helenaborzan.pregnancyhelper.model.Point
-import hr.ferit.helenaborzan.pregnancyhelper.repository.heightForAgeData
-import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
-import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.Percentile
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.Point
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
-import io.data2viz.charts.*
-import io.data2viz.charts.chart.Chart
-import io.data2viz.charts.config.ChartConfig
-import io.data2viz.viz.TextAlign
-import io.data2viz.viz.VizContainerView
 
 
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun GrowthPercentileChart(

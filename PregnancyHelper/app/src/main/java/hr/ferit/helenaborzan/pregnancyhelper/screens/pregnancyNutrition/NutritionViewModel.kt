@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.model.Food
-import hr.ferit.helenaborzan.pregnancyhelper.model.NutritionixResponse
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.Food
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionixResponse
 import hr.ferit.helenaborzan.pregnancyhelper.repository.FoodRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import kotlinx.coroutines.async
