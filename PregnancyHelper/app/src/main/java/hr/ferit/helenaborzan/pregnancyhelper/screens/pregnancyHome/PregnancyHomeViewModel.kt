@@ -11,15 +11,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.Recipe
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.pregnancy.PregnancyInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
+import hr.ferit.helenaborzan.pregnancyhelper.repository.RecipeRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -31,7 +36,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PregnancyHomeViewModel @Inject constructor(
     private val pregnancyInfoRepository: PregnancyInfoRepository,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val recipeRepository: RecipeRepository
 ) : ViewModel(){
     private val _pregnancyInfo = MutableStateFlow<List<PregnancyInfo>>(emptyList())
     val pregnancyInfo: StateFlow<List<PregnancyInfo>> = _pregnancyInfo.asStateFlow()
@@ -182,5 +188,37 @@ class PregnancyHomeViewModel @Inject constructor(
         return ((selectedYear == getDate(today).get("year")) &&
                 (selectedMonth == getDate(today).get("month")) &&
                 (selectedDay == getDate(today).get("day")))
+    }
+
+    private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
+    val recipes: StateFlow<List<Recipe>> = _recipes
+
+    fun fetchRecipes(query: String) {
+        viewModelScope.launch {
+            val result = recipeRepository.searchRecipes(query)
+            if (result.isSuccess) {
+                _recipes.value = result.getOrNull()?.hits?.map { it.recipe } ?: emptyList()
+            } else {
+                // Handle the failure case
+                Log.e("RecipeViewModel", "Failed to fetch recipes: ${result.exceptionOrNull()}")
+            }
+        }
+    }
+    val favoriteRecipes = recipeRepository.getFavoriteRecipes()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun toggleFavorite(recipeInfo: RecipeInfo) {
+        viewModelScope.launch {
+            Log.d("RecipeViewModel", "Toggling favorite for ${recipeInfo.label}")
+            recipeRepository.toggleFavorite(recipeInfo)
+        }
+    }
+
+    fun isFavourite(recipe : RecipeInfo, favoriteRecipes :  List<RecipeInfo>) : Boolean{
+        for (favouriteRecipe in favoriteRecipes){
+            if (recipe.url == favouriteRecipe.url)
+                return true
+        }
+        return false
     }
 }

@@ -130,7 +130,7 @@ fun NavigationController() {
             NutritionDetailsScreen(navController = navController)
         }
         composable(Screen.RecipeScreen.route){
-            RecipeScreen()
+            RecipeScreen(navController = navController)
         }
 
     }

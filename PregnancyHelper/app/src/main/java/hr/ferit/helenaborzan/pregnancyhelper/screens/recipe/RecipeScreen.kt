@@ -2,24 +2,20 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.recipe
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -27,17 +23,15 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,17 +43,32 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.navArgument
 import coil.compose.rememberImagePainter
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.Recipe
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 
 @Composable
-fun RecipeScreen(viewModel: RecipeViewModel = hiltViewModel()) {
+fun RecipeScreen(
+    viewModel: RecipeViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val recipes by viewModel.recipes.collectAsState()
+    val favoriteRecipes by viewModel.favoriteRecipes.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     Column {
         var query by rememberSaveable { mutableStateOf("") }
+        GoBackIconBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            navController = navController
+        )
         TextField(
             value = query,
             onValueChange = { query = it },
@@ -68,32 +77,51 @@ fun RecipeScreen(viewModel: RecipeViewModel = hiltViewModel()) {
                 .padding(16.dp)
                 .fillMaxWidth()
         )
-        Row (modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Button(
                 onClick = { viewModel.fetchRecipes(query) },
-                enabled = query.isNotBlank(),
+                enabled = query.isNotBlank() && !isLoading,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text("Search")
             }
         }
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            content = {
-                items(recipes.size) { index ->
-                    RecipeItem(recipes[index])
-                }
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-        )
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(4),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                content = {
+                    items(recipes.size) { index ->
+                        RecipeItem(
+                            recipe = recipes[index],
+                            viewModel = viewModel,
+                            isFavourite = viewModel.isFavourite(recipe = recipes[index], favoriteRecipes = favoriteRecipes)
+                        )
+                    }
+                }
+            )
+        }
     }
 }
-
 @Composable
-fun RecipeItem(recipe: Recipe) {
+fun RecipeItem(
+    recipe: Recipe,
+    isFavourite : Boolean,
+    viewModel: RecipeViewModel
+) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
@@ -114,19 +142,22 @@ fun RecipeItem(recipe: Recipe) {
                     style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold),
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .padding(end = 40.dp) // Dodajemo padding s desne strane
+                        .padding(end = 40.dp)
                         .fillMaxWidth()
                 )
                 IconButton(
-                    onClick = { /* Dodajte akciju za favorite */ },
+                    onClick = {
+                        Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
+                        viewModel.toggleFavorite(RecipeInfo(label = recipe.label, image = recipe.image, url = recipe.url))
+                              },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .size(40.dp)
                 ) {
                     Icon(
-                        imageVector = if (true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Favorite",
-                        tint = if (false) Color.Red else Color.Gray
+                        tint = if (isFavourite) Color.Red else Color.Gray
                     )
                 }
             }

@@ -99,6 +99,9 @@
     <string name="secondTrimesterCalories">U drugom se tromjesečju preporučuje unos dodatnih 350 kalorija na dan. Dodatni unos već je uračunat u dnevni cilj.</string>
     <string name="thirdTrimesterCalories">U trećem se tromjesečju preporučuje unos dodatnih 450 kalorija na dan. Dodatni unos već je uračunat u dnevni cilj. </string>
     <string name="seeDetails">Vidi detalje</string>
+    <string name="recipes">Moji recepti</string>
+    <string name="discover">Istražite</string>
+    <string name="noFavoriteRecipes">Još nemate omiljenih recepata.</string>
 
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
     <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>

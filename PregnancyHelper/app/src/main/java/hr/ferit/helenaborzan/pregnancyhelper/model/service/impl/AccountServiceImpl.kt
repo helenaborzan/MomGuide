@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.model.service.impl
 
+import android.util.Log
 import com.google.android.gms.nearby.connection.AuthenticationException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -59,14 +60,21 @@ class AccountServiceImpl @Inject constructor(
             auth.signInWithEmailAndPassword(email, "dummyPassword").await()
             // Sign-in successful means account exists
             auth.signOut()
+            Log.d("AccountService", "Account exists for email: $email")
             true
         } catch (e: FirebaseAuthInvalidUserException) {
             // No such user exists
+            Log.d("AccountService", "No account exists for email: $email")
             false
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             // Invalid credentials means account exists but wrong password
             auth.signOut()
+            Log.d("AccountService", "Account exists for email: $email but invalid credentials used")
             true
+        } catch (e: Exception) {
+            // Catch any other exceptions and log them
+            Log.e("AccountService", "Error checking account existence for email: $email", e)
+            false
         }
     }
 

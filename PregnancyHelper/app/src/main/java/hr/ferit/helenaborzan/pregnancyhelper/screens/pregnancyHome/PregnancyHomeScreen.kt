@@ -1,17 +1,21 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,11 +24,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,33 +46,40 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.navArgument
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import com.android.volley.toolbox.ImageRequest
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
+
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.QuestionnaireSection
+
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
@@ -80,6 +100,9 @@ fun PregnancyHomeScreen(
     }
 
     val todaysCalories by viewModel.todaysCalories.collectAsState()
+
+    val favoriteRecipes by viewModel.favoriteRecipes.collectAsState()
+
 
     val uiState by viewModel.uiState
     LazyColumn(
@@ -107,6 +130,7 @@ fun PregnancyHomeScreen(
                 trimester = viewModel.getTrimester(pregnancyStartDate),
                 viewModel = viewModel
             )
+            RecipeSection(favoriteRecipes = favoriteRecipes, viewModel = viewModel, navController = navController)
             ContractionsTimerSection(navController)
             QuestionnaireSection(
                 navigate = {navController.navigate(Screen.DepressionQuestionnaireScreen.route)},
@@ -191,10 +215,6 @@ fun NutritionSection(
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
-    Text(text = "Recepti",
-        modifier = Modifier.clickable {
-            navController.navigate(Screen.RecipeScreen.route)
-        })
 }
 
 @Composable
@@ -393,6 +413,179 @@ fun ContractionsTimerSection(navController: NavController) {
     }
 }
 
+@Composable
+fun RecipeSection(
+    favoriteRecipes : List<RecipeInfo>,
+    viewModel: PregnancyHomeViewModel,
+    navController: NavController
+) {
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .padding(24.dp)){
+
+        Text(
+            text = stringResource(id = R.string.recipes),
+            style = TextStyle(color = Color.Black, fontSize = 20.sp),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        if (favoriteRecipes.size > 0) {
+            FavoriteRecipes(
+                favoriteRecipes = favoriteRecipes,
+                viewModel = viewModel,
+                navController = navController
+            )
+        }
+        else{
+            NoFavoriteRecipes(navController = navController)
+        }
+    }
+}
+
+
+@Composable
+fun NoFavoriteRecipes(navController: NavController) {
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Color.White, shape = RoundedCornerShape(8.dp)),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            text = stringResource(id = R.string.noFavoriteRecipes),
+            modifier = Modifier.padding(12.dp)
+            )
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(12.dp)
+                .clickable { navController.navigate(Screen.RecipeScreen.route) }
+        ){
+            Icon(
+                imageVector = Icons.Filled.Explore,
+                tint = Pink,
+                contentDescription = null,
+                )
+            Text(
+                text = stringResource(id = R.string.discover)
+            )
+        }
+    }
+}
+@Composable
+fun FavoriteRecipes(
+    favoriteRecipes : List<RecipeInfo>,
+    viewModel: PregnancyHomeViewModel,
+    navController: NavController
+) {
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+    ){
+        LazyRow(modifier = Modifier.padding(12.dp)) {
+            items(favoriteRecipes.size) { it ->
+                RecipeItem(
+                    recipe = favoriteRecipes[it],
+                    isFavourite = viewModel.isFavourite(
+                        recipe = favoriteRecipes[it], favoriteRecipes = favoriteRecipes
+                    ),
+                    viewModel = viewModel,
+                    modifier = Modifier.width(200.dp)
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row (modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 12.dp, end = 12.dp)
+            .clickable { navController.navigate(Screen.RecipeScreen.route) },
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Bottom
+        ){
+            Icon(
+                imageVector = Icons.Filled.Explore,
+                tint = DarkGray,
+                contentDescription = null,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+            Text(
+                text = stringResource(id = R.string.discover),
+                style  = TextStyle(color = DarkGray, textDecoration = TextDecoration.Underline
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun RecipeItem(
+    recipe: RecipeInfo,
+    isFavourite : Boolean,
+    viewModel: PregnancyHomeViewModel,
+    modifier : Modifier = Modifier
+) {
+    val context = LocalContext.current
+    Card(
+        modifier = modifier
+            .padding(4.dp)
+            .aspectRatio(0.7f),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardColors(containerColor = LightBlue, contentColor = DarkGray, disabledContainerColor = LightBlue, disabledContentColor = DarkGray)
+    ) {
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally){
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = recipe.label,
+                    style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(end = 40.dp) // Dodajemo padding s desne strane
+                        .fillMaxWidth()
+                )
+                IconButton(
+                    onClick = {
+                        Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
+                        viewModel.toggleFavorite(RecipeInfo(label = recipe.label, image = recipe.image, url = recipe.url))
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavourite) Color.Red else Color.Gray
+                    )
+                }
+            }
+            Image(
+                painter = rememberAsyncImagePainter(recipe.image),
+                contentDescription = null,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                contentScale = ContentScale.Crop
+            )
+            Button(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(recipe.url))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text("View Recipe")
+            }
+        }
+    }
+}
 @Composable
 fun GoToContractionsTimer(navController: NavController) {
     Row (
