@@ -281,11 +281,16 @@ fun DailyCaloriesInfo(
             viewModel = viewModel
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(id = R.string.seeDetails),
-            style = TextStyle(color = Color.LightGray, textDecoration = TextDecoration.Underline),
-            modifier = Modifier.clickable { navController.navigate(Screen.NutritionDetailsScreen.route) }
-        )
+        if (todaysCalorieIntake > 0.0) {
+            Text(
+                text = stringResource(id = R.string.seeDetails),
+                style = TextStyle(
+                    color = Color.LightGray,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier.clickable { navController.navigate(Screen.NutritionDetailsScreen.route) }
+            )
+        }
     }
 }
 
@@ -296,7 +301,8 @@ fun CaloriesWithLabel(
     value : Double?,
     valueColor : Color,
     navController: NavController,
-    viewModel: PregnancyHomeViewModel
+    viewModel: PregnancyHomeViewModel,
+    modifier: Modifier = Modifier
 ) {
     Column (
         verticalArrangement = Arrangement.Center,
@@ -359,25 +365,7 @@ fun CaloriesWithLabel(
                     color = valueColor,
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold
-                ),
-                modifier = Modifier.clickable {
-                    navController.navigate(Screen.DailyCalorieGoalScreen.route)
-                }
-            )
-        }
-        else{
-            Text(
-                text = stringResource(id = R.string.calculateDailyCalorieGoal),
-                style = TextStyle(
-                    color = Color.LightGray,
-                    fontSize = 20.sp,
-                    textDecoration = TextDecoration.Underline
-                ),
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .clickable {
-                        navController.navigate(Screen.DailyCalorieGoalScreen.route)
-                    }
+                )
             )
         }
     }

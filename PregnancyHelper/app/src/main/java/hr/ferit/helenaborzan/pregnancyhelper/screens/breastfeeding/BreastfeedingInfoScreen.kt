@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.NewbornHomeIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ScatterPlot
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getHoursAndMins
@@ -88,13 +89,13 @@ fun BreastfeedingInfoScreen(
     val availableBottleDates = bottleInfo.mapNotNull { info ->
         anyToLocalDate(info.time)
     }.distinct()
-    
+
     var showDatePicker by remember { mutableStateOf(false) }
-    
+
     val breastfeedingInfoByDate = viewModel.getBreastfeedingInfoByDate(breastfeedingInfo)
     val bottleInfoByDate = viewModel.getBottleInfoByDate(bottleInfo)
 
-    
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -102,19 +103,19 @@ fun BreastfeedingInfoScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        GoBackIconBar(
+        NewbornHomeIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
                 .weight(0.1f),
             navController = navController
         )
         ChooseDate(
+            modifier = Modifier.weight(0.05f),
             onClick = { showDatePicker = true },
             viewModel = viewModel,
             uiState = uiState,
             availableDates = if(uiState.feedingType == "Dojenje") availableBreastfeedingDates
-        else availableBottleDates)
+            else availableBottleDates)
         DatePickerDialog(
             showDialog = showDatePicker,
             onDismiss = { showDatePicker = false },
@@ -125,39 +126,53 @@ fun BreastfeedingInfoScreen(
             availableDates = if (uiState.feedingType == "Dojenje") availableBreastfeedingDates
             else availableBottleDates
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.weight(0.05f))
         ChooseFeedingType(viewModel = viewModel, uiState = uiState)
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.height(40.dp))
         if(uiState.feedingType == "Dojenje") {
             if(breastfeedingInfoByDate.size > 0) {
-                ScatterPlot(
-                    times = timesToTimePoints(breastfeedingInfoByDate.map { it.startTime }),
-                    yValues = viewModel.getFeedingDuration(breastfeedingInfoByDate),
-                    xlabel = stringResource(id = R.string.time),
-                    ylabel = stringResource(id = R.string.feedingDuration)
+                Column (modifier = Modifier.weight(0.4f).fillMaxWidth()) {
+                    ScatterPlot(
+                        times = timesToTimePoints(breastfeedingInfoByDate.map { it.startTime }),
+                        yValues = viewModel.getFeedingDuration(breastfeedingInfoByDate),
+                        xlabel = stringResource(id = R.string.time),
+                        ylabel = stringResource(id = R.string.feedingDuration)
+                    )
+                }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    BreastfeedingHistory(
+                        breastfeedingInfo = breastfeedingInfoByDate,
+                        modifier = Modifier.weight(0.3f)
+                    )
+            }else {
+                BreastfeedingHistory(
+                    breastfeedingInfo = breastfeedingInfoByDate,
+                    modifier = Modifier.weight(0.7f)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
             }
-            BreastfeedingHistory(
-                breastfeedingInfo = breastfeedingInfoByDate,
-                modifier = Modifier.weight(0.8f)
-            )
         }
         else{
             if(bottleInfoByDate.size > 0) {
-                ScatterPlot(
-                    times = timesToTimePoints(bottleInfoByDate.map { it.time }),
-                    yValues = bottleInfoByDate.map { it.quantity },
-                    xlabel = stringResource(id = R.string.time),
-                    ylabel = stringResource(id = R.string.milkQuantityMl)
+                Column (modifier = Modifier.weight(0.4f).fillMaxWidth()) {
+                    ScatterPlot(
+                        times = timesToTimePoints(bottleInfoByDate.map { it.time }),
+                        yValues = bottleInfoByDate.map { it.quantity },
+                        xlabel = stringResource(id = R.string.time),
+                        ylabel = stringResource(id = R.string.milkQuantityMl)
+                    )
+                }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    BottleHistory(
+                        bottleInfo = bottleInfoByDate,
+                        modifier = Modifier.weight(0.3f)
+                    )
+            }else {
+                BottleHistory(
+                    bottleInfo = bottleInfoByDate,
+                    modifier = Modifier.weight(0.7f)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
             }
-            BottleHistory(
-                bottleInfo = bottleInfoByDate,
-                modifier = Modifier.weight(0.8f)
-            )
         }
         AddFeeding(
             modifier = Modifier.weight(0.1f),
@@ -212,14 +227,23 @@ fun BreastfeedingHistory(
         }
     }
     else{
-        Text(text = stringResource(id = R.string.noFeedingHistory),
-            modifier = modifier)
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.noFeedingHistory),
+                modifier = modifier
+            )
+        }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChooseDate(
+    modifier: Modifier = Modifier,
     onClick : () -> Unit,
     viewModel: NewbornHomeViewModel,
     uiState: BreastfeedingInfoUiState,
@@ -229,7 +253,7 @@ fun ChooseDate(
     val previousDate = selectedDate.minusDays(1)
     val nextDate = selectedDate.plusDays(1)
     Row (
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -278,10 +302,15 @@ fun BottleHistory(
         }
     }
     else{
-        Text(
-            text = stringResource(id = R.string.noFeedingHistory),
-            modifier = modifier
-        )
+        Column(modifier = modifier,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.noFeedingHistory),
+                modifier = modifier
+            )
+        }
     }
 }
 @Composable

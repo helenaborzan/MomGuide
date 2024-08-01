@@ -56,6 +56,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButto
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.NewbornHomeIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
@@ -79,10 +80,9 @@ fun BreastfeedingInputScreen(
             .background(color = DirtyWhite)
             .padding(24.dp)
     ){
-        GoBackIconBar(
+        NewbornHomeIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
                 .weight(0.1f),
             navController = navController
         )

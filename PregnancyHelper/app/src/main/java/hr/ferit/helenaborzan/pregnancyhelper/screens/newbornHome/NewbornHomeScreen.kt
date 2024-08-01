@@ -331,7 +331,8 @@ fun Bottle(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id = R.string.noFeedingHistoryToday)
+                text = stringResource(id = R.string.noFeedingHistoryToday),
+                modifier = Modifier.padding(12.dp)
             )
             Text(
                 text = stringResource(id = R.string.seeAll),
@@ -339,7 +340,8 @@ fun Bottle(
                     color = Color.LightGray,
                     textDecoration = TextDecoration.Underline
                 ),
-                modifier = Modifier.clickable {
+                modifier = Modifier.padding(12.dp)
+                    .clickable {
                     navController.navigate(Screen.BreastfeedingInfoScreen.route)
                 }
             )
