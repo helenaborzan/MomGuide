@@ -46,6 +46,7 @@
     <string name="seeAllGrowthAndDevelopmentResults">Vidi sve rezultate</string>
     <string name="noGrowthAndDevelopmentResults">Još nema rezultata</string>
     <string name="noPreviousResults">Nema prijašnih rezultata</string>
+    <string name="mentalHealthTitle">Psihičko zdravlje</string>
 
     <string name="positiveEPDStest">Vrlo je vjerojatno da patite od postporođajne depresije. Savjetujemo Vam da potražite <b>pomoć liječnika</b></string>
     <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>
@@ -92,6 +93,7 @@
     <string name="nutritionTitle">Prehrana</string>
     <string name="contractionsTimerTitle">Mjerač trudova</string>
     <string name="depressionTitle">Depresija</string>
+    <string name="anxietyTitle">Anksioznost</string>
     <string name="stressTitle">Stres</string>
     <string name="dailyCalorieIntake">Uneseno kalorija danas:</string>
     <string name="goal">Cilj:</string>
@@ -106,6 +108,14 @@
     <string name="negativeDepressionTest">Rezultati pokazuju da ne patite od depresije.</string>
     <string name="borderlineDepressionTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>
     <string name="positiveDepressionTest">Rezultati pokazuju da bolujete od deresije. Preporuča se da se obratite liječniku.</string>
+    <string name="negativeAnxietyTest">Rezultati pokazuju da ne patite od anksioznosti.</string>
+    <string name="borderlineAnxietyTest">Rezultati pokazuju da ste na granici. Preporuča se da se obratite liječniku.</string>
+    <string name="positiveAnxietyTest">Rezultati pokazuju da bolujete od anksioznosti. Preporuča se da se obratite liječniku.</string>
+    <string name="negativeStressTest">Rezultati pokazuju da imate nisku razinu stresa.</string>
+    <string name="borderlineStressTest">Rezultati pokazuju da imate umjerenu količinu stresa.</string>
+    <string name="positiveStressTest">Rezultati pokazuju da imate visoku razinu stresa. Preporuča se da se obratite liječniku.</string>
+
+
 
     <string name="contractionStarted">Trud je započeo</string>
     <string name="contractionEnded">Trud je završio</string>

@@ -1,7 +1,9 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,24 +25,10 @@ import javax.inject.Inject
 class EPDSQuestionnaireViewModel @Inject constructor(
     questionnaireRepository: QuestionnaireRepository,
     newbornInfoRepository: NewbornInfoRepository,
-    @ApplicationContext context: Context,
-    savedStateHandle: SavedStateHandle
-) : BaseQuestionnaireViewModel(questionnaireRepository, newbornInfoRepository, context, savedStateHandle) {
+    @ApplicationContext context: Context
+) : BaseQuestionnaireViewModel(questionnaireRepository, newbornInfoRepository, context) {
 
-    private val _newbornInfoState = MutableStateFlow<List<NewbornInfo>>(emptyList())
-    val newbornInfoState: StateFlow<List<NewbornInfo>> = _newbornInfoState.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            newbornInfoRepository.getUsersNewbornInfo()
-                .catch { exception ->
-                    Log.e("EPDSViewModel", "Error fetching newborn info", exception)
-                }
-                .collect { newbornInfoList ->
-                    _newbornInfoState.value = newbornInfoList
-                }
-        }
-    }
+    override val fieldName: String = "questionnaireResults"
     override fun getResultMessageResource(score: Int?): Int? {
         return when {
             score == null -> null

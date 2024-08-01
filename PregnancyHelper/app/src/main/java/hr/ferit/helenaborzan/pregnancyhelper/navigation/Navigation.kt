@@ -26,10 +26,12 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.NutritionSect
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition.NutritionScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyStartQuestion.PregnancyStartQuestion
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.AnxietyQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.BaseQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.StressQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.recipe.RecipeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
@@ -40,8 +42,10 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 @Composable
 fun NavigationController() {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination =
-    Screen.HomeScreen.route) {
+    Screen.HomeScreen.route)
+    {
         composable(Screen.HomeScreen.route) {
             LoginAndRegistrationScreen(navController)
         }
@@ -57,26 +61,13 @@ fun NavigationController() {
         composable(Screen.NewbornHomeScreen.route){
             NewbornHomeScreen(navController = navController)
         }
-        composable(Screen.EPDSQuestionnaireScreen.route) {
+        composable(Screen.EPDSQuestionnaireScreen.route){
             val viewModel: EPDSQuestionnaireViewModel = hiltViewModel()
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                questionIndex = 0,
-                questionnaireName = "postPartumDepressionScale",
-                navigate = { navController.navigate(Screen.NewbornHomeScreen.route) }
-            )
-        }
-        composable("${Screen.EPDSQuestionnaireScreen.route}/{index}") { backStackEntry ->
-            val viewModel: EPDSQuestionnaireViewModel = hiltViewModel()
-            val index = backStackEntry.arguments?.getString("index")?.toInt() ?: 0
-            QuestionnaireScreen(
-                navController = navController,
-                viewModel = viewModel,
-                questionIndex = index,
-                questionnaireName = "postPartumDepressionScale",
-                navigate = { navController.navigate(Screen.NewbornHomeScreen.route) }
-            )
+                navigate = { navController.navigate(Screen.NewbornHomeScreen.route)},
+                questionnaireName = "postPartumDepressionScale")
         }
         composable(Screen.GrowthAndDevelopmentCalculationScreen.route){
             GrowthAndDevelopmentCalculationScreen(navController = navController)
@@ -87,26 +78,29 @@ fun NavigationController() {
         composable(Screen.PregnancyHomeScreen.route) {
             PregnancyHomeScreen(navController = navController)
         }
-        composable(Screen.DepressionQuestionnaireScreen.route) {
+        composable(Screen.DepressionQuestionnaireScreen.route){
             val viewModel: DepressionQuestionnaireViewModel = hiltViewModel()
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                questionIndex = 0,
-                questionnaireName = "depressionScale",
-                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route) }
-            )
+                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                questionnaireName = "depressionScale")
         }
-        composable("${Screen.DepressionQuestionnaireScreen.route}/{index}") { backStackEntry ->
-            val viewModel: DepressionQuestionnaireViewModel = hiltViewModel()
-            val index = backStackEntry.arguments?.getString("index")?.toInt() ?: 0
+        composable(Screen.AnxietyQuestionnnaireScreen.route){
+            val viewModel: AnxietyQuestionnaireViewModel = hiltViewModel()
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                questionIndex = index,
-                questionnaireName = "depressionScale",
-                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route) }
-            )
+                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                questionnaireName = "anxietyScale")
+        }
+        composable(Screen.StressQuestionnaireScreen.route){
+            val viewModel: StressQuestionnaireViewModel = hiltViewModel()
+            QuestionnaireScreen(
+                navController = navController,
+                viewModel = viewModel,
+                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                questionnaireName = "stressScale")
         }
         composable(Screen.ContractionsTimerScreen.route){
             ContractionsTimerScreen(navController = navController)

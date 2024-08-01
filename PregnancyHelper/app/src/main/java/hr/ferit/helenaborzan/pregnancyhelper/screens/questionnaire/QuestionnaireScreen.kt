@@ -1,6 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +46,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
@@ -52,147 +58,61 @@ fun QuestionnaireScreen(
     navController: NavController,
     navigate: () -> Unit,
     viewModel: BaseQuestionnaireViewModel,
-    questionnaireName : String,
-    questionIndex : Int
+    questionnaireName : String
 ) {
     val questionnaire by viewModel.questionnaire.collectAsState(initial = emptyList())
     val uiState by viewModel.uiState
-
-    LaunchedEffect(Unit){
-        viewModel.fetchInitialAnswers()
-    }
-
-    Column (modifier = Modifier.background(color = DirtyWhite)) {
-        GoBackIconBar(
+    Column (modifier = Modifier.background(color = DirtyWhite)){
+        GoBackIconBar(modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+            .weight(0.1f),
+            navController = navController
+        )
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp)
-                .weight(0.1f),
-            navController = navController
-        )
-        if (questionnaire.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.9f),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            val question = questionnaire.get(questionIndex)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                    .weight(0.9f),
-                verticalArrangement = Arrangement.Top
-            ) {
-                QandACard(question = question, viewModel = viewModel, modifier = Modifier.weight(0.8f))
-                QuestionsNavigation(
-                    navController = navController,
-                    questionIndex = questionIndex,
-                    questionnaireSize = questionnaire.size,
-                    questionnaireName = questionnaireName,
-                    modifier = Modifier.weight(0.2f)
-                )
-            }
-            if (questionIndex == questionnaire.size - 1) {
-                SubmitQuestionnaireButton(
-                    viewModel = viewModel, modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.15f)
-                        .padding(horizontal = 24.dp)
-                )
-            }
-        }
-        LaunchedEffect(Unit) {
-            viewModel.getQuestionnaire(questionnaireName)
-        }
-        ResultDialog(uiState = uiState, navigate = navigate)
-        ErrorDialog(uiState = uiState, viewModel = viewModel)
-    }
-}
-
-@Composable
-fun QuestionsNavigation(
-    navController: NavController,
-    questionIndex: Int,
-    questionnaireSize : Int,
-    questionnaireName: String,
-    modifier : Modifier = Modifier
-) {
-    Row (modifier = modifier
-        .fillMaxWidth()
-        .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Row (
-            modifier = Modifier.weight(0.5f),
-            horizontalArrangement = Arrangement.Start
-        ){
-            if (questionIndex > 0) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_navigate_before_24),
-                    contentDescription = stringResource(id = R.string.previousQuestion),
-                    tint = Pink,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable { navController.popBackStack() }
-                )
-            }
-        }
-        Row(
-            modifier = Modifier.weight(0.5f),
-            horizontalArrangement = Arrangement.End
+                .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                .weight(0.9f)
         ) {
-            if (questionIndex < questionnaireSize - 1) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                    contentDescription = stringResource(id = R.string.nextQuestion),
-                    tint = Pink,
+            items(questionnaire) { question ->
+                QandACard(question = question, viewModel = viewModel)
+                HorizontalDivider(
                     modifier = Modifier
-                        .size(48.dp)
-                        .clickable {
-                            navController.navigate("${getQuestionnaireRoute(questionnaireName)}/${questionIndex + 1}") {
-                                restoreState = true
-                            }
-                        }
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    thickness = 1.dp,
+                    color = LightGray
+
                 )
             }
         }
+        SubmitQuestionnaireButton(viewModel = viewModel, modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.15f)
+            .padding(horizontal = 24.dp)
+        )
     }
-}
+    LaunchedEffect(Unit) {
+        viewModel.getQuestionnaire(questionnaireName)
+    }
+    ResultDialog(uiState = uiState, navigate = navigate)
+    ErrorDialog(uiState = uiState, viewModel = viewModel)
 
-fun getQuestionnaireRoute(questionnaireName: String): String {
-    return when (questionnaireName) {
-        "postPartumDepressionScale" -> Screen.EPDSQuestionnaireScreen.route
-        "depressionScale" -> Screen.DepressionQuestionnaireScreen.route
-        else -> throw IllegalArgumentException("Unknown questionnaire name: $questionnaireName")
-    }
+
 }
 
 @Composable
 fun QandACard(
     question : Question,
-    viewModel : BaseQuestionnaireViewModel,
-    modifier: Modifier = Modifier
+    viewModel : BaseQuestionnaireViewModel
 ){
-    val selectedAnswer by remember { derivedStateOf { viewModel.getSelectedAnswer(question.id) } }
-
-    // Create a mutable state for the selected answer, to track changes locally
-    var localSelectedAnswer by remember { mutableStateOf(selectedAnswer) }
-
-    LaunchedEffect(localSelectedAnswer) {
-        viewModel.updateScore(question.id, localSelectedAnswer)
-    }
-
+    var selectedAnswer by remember { mutableStateOf<Answer?>(null) }
     Column (
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
-        modifier = modifier.padding(12.dp)
+        modifier = Modifier.padding(12.dp)
     ){
         Text(
             text = question.questionText,
@@ -207,10 +127,10 @@ fun QandACard(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     AnswerRadioButton(
-                        isSelected = localSelectedAnswer == answer,
+                        isSelected = selectedAnswer == answer,
                         onCheckedChange = {
-                            localSelectedAnswer = answer
-                            viewModel.updateScore(question.id, answer)
+                            selectedAnswer = if (it) answer else null
+                            viewModel.updateScore(questionId = question.id, selectedAnswer = selectedAnswer)
                         }
                     )
                     Text(
@@ -232,7 +152,7 @@ fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : BaseQue
         verticalAlignment = Alignment.CenterVertically
     ){
         BasicButton(
-            text = stringResource(id = R.string.submit),
+            text = "Podnesi",
             onClick = { viewModel.onSubmitQuestionnaire() },
             borderColor = Pink,
             containerColor = Color.White,
@@ -280,7 +200,6 @@ fun ErrorDialog(uiState: QuestionnaireUiState, viewModel: BaseQuestionnaireViewM
         )
     }
 }
-
 
 
 

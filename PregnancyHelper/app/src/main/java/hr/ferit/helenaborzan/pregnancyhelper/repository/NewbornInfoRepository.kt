@@ -1,6 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
@@ -50,16 +51,15 @@ class NewbornInfoRepository @Inject constructor(
         awaitClose { listenerRegistration.remove() }
     }
 
-    override suspend fun createInfoDocument(userId: String): String {
+    override suspend fun createInfoDocument(userId: String) {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
             "breastfeedingInfo" to emptyList<BreastfeedingInfo>(),
             "bottleInfo" to emptyList<BottleInfo>(),
             "growthAndDevelopmentResults" to emptyList<GrowthAndDevelopmentResult>(),
-            "questionnaireResults" to emptyList<QuestionnaireResult>()
+            "questionnaireResults" to listOf<QuestionnaireResult>()
         )
         val documentReference = collection.add(newbornInfoData).await()
-        return documentReference.id
     }
 
     suspend fun addGrowthAndDevelopmentResult(
@@ -146,69 +146,8 @@ class NewbornInfoRepository @Inject constructor(
             }
         }
     }
-
-    override suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult? {
-        val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
-        return if (documentSnapshots.isNotEmpty()) {
-            val document = documentSnapshots.firstOrNull()
-            val newbornInfo = document?.toObject(NewbornInfo::class.java)
-            newbornInfo?.questionnaireResults?.find { it.id == questionnaireId }
-        } else {
-            null
-        }
-    }
+}
 
 
-    override suspend fun updateSelectedAnswer(questionnaireId: String, questionId: String, answer: Answer?) {
-        Log.d("Repository", "updateSelectedAnswer called with questionnaireId: $questionnaireId, questionId: $questionId, answer: $answer")
 
-        val userId = accountService.currentUserId
-        Log.d("Repository", "Current userId: $userId")
 
-        val documentSnapshots = getDocumentsByField("userId", userId)
-        Log.d("Repository", "Number of documents found: ${documentSnapshots.size}")
-
-        if (documentSnapshots.isNotEmpty()) {
-            val document = documentSnapshots.firstOrNull()
-            document?.let {
-                Log.d("Repository", "Document found, attempting to update")
-
-                val documentReference = it.reference
-                val currentNewbornInfo = it.toObject(NewbornInfo::class.java) ?: NewbornInfo(userId = userId)
-
-                val questionnaireResultIndex = currentNewbornInfo.questionnaireResults.indexOfFirst { it.id == questionnaireId }
-                Log.d("Repository", "QuestionnaireResult index: $questionnaireResultIndex")
-
-                if (questionnaireResultIndex != -1) {
-                    // Update existing questionnaire result
-                    val currentResult = currentNewbornInfo.questionnaireResults[questionnaireResultIndex]
-                    val updatedResults = currentResult.results?.toMutableList() ?: mutableListOf()
-
-                    val existingQandAIndex = updatedResults.indexOfFirst { it.questionId == questionId }
-                    if (existingQandAIndex != -1) {
-                        updatedResults[existingQandAIndex] = QandA(questionId = questionId, selectedAnswer = answer)
-                        Log.d("Repository", "Updated existing QandA")
-                    } else {
-                        updatedResults.add(QandA(questionId = questionId, selectedAnswer = answer))
-                        Log.d("Repository", "Added new QandA")
-                    }
-
-                    currentNewbornInfo.questionnaireResults[questionnaireResultIndex] = currentResult.copy(
-                        results = updatedResults
-                    )
-
-                    try {
-                        documentReference.set(currentNewbornInfo).await()
-                        Log.d("Repository", "Document updated successfully")
-                    } catch (e: Exception) {
-                        Log.e("Repository", "Error updating document", e)
-                    }
-                } else {
-                    Log.e("Repository", "No questionnaire result found with id $questionnaireId")
-                }
-            } ?: Log.e("Repository", "Document is null")
-        } else {
-            Log.e("Repository", "No document found for user $userId")
-        }
-    }
-    }

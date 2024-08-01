@@ -13,10 +13,10 @@ import javax.inject.Inject
 class DepressionQuestionnaireViewModel @Inject constructor(
     questionnaireRepository: QuestionnaireRepository,
     pregnancyInfoRepository: PregnancyInfoRepository,
-    @ApplicationContext context: Context,
-    savedStateHandle: SavedStateHandle
-) : BaseQuestionnaireViewModel(questionnaireRepository, pregnancyInfoRepository, context, savedStateHandle) {
+    @ApplicationContext context: Context
+) : BaseQuestionnaireViewModel(questionnaireRepository, pregnancyInfoRepository, context) {
 
+    override val fieldName = "depressionQuestionnaireResults"
     override fun getResultMessageResource(score: Int?): Int? {
         return when {
             score == null -> null

@@ -16,5 +16,7 @@ data class PregnancyInfo(
     val userId : String = "",
     val nutritionInfo : MutableList<NutritionInfo> = mutableListOf<NutritionInfo>(),
     val contractionsInfo : MutableList<ContractionsInfo> = mutableListOf<ContractionsInfo>(),
-    val questionnaireResults : MutableList<QuestionnaireResult> = mutableListOf<QuestionnaireResult>()
+    val depressionQuestionnaireResults : MutableList<QuestionnaireResult> = mutableListOf<QuestionnaireResult>(),
+    val anxietyQuestionnaireResults : MutableList<QuestionnaireResult> = mutableListOf<QuestionnaireResult>(),
+    val stressQuestionnaireResults : MutableList<QuestionnaireResult> = mutableListOf<QuestionnaireResult>()
 )

@@ -53,39 +53,22 @@ class PregnancyInfoRepository @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun createInfoDocument(userId: String): String {
+    override suspend fun createInfoDocument(userId: String) {
         val pregnancyInfoData = hashMapOf(
             "userId" to userId,
             "pregnancyStartDate" to null,
             "dailyCalorieGoal" to null,
             "nutritionInfo" to emptyList<NutritionInfo>(),
             "contractionsInfo" to emptyList<ContractionsInfo>(),
-            "questionnaireResults" to emptyList<QuestionnaireResult>()
+            "depressionQuestionnaireResults" to emptyList<QuestionnaireResult>(),
+            "anxietyQuestionnaireResults" to emptyList<QuestionnaireResult>(),
+            "stressQuestionnaireResults" to emptyList<QuestionnaireResult>()
         )
         val documentReference = collection.add(pregnancyInfoData).await()
-        return documentReference.id
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override suspend fun fetchQuestionnaireResult(questionnaireId: String): QuestionnaireResult? {
-        val documentSnapshots = getDocumentsByField("userId", accountService.currentUserId)
-        return if (documentSnapshots.isNotEmpty()) {
-            val document = documentSnapshots.firstOrNull()
-            val pregnancyInfo = document?.toObject(PregnancyInfo::class.java)
-            pregnancyInfo?.questionnaireResults?.find { it.id == questionnaireId }
-        } else {
-            null
-        }
     }
 
 
-    override suspend fun updateSelectedAnswer(
-        questionnaireId: String,
-        questionId: String,
-        answer: Answer?
-    ) {
-        TODO("Not yet implemented")
-    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun addPregnancyStartDate(pregnancyStartDate: Timestamp) {

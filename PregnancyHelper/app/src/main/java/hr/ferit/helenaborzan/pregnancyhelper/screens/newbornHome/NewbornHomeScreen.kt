@@ -491,7 +491,7 @@ fun QuestionnaireSection(
                     .padding(start = 4.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                     .clickable { navigate() }
             )
-           showQuestionnaireResult(
+           ShowQuestionnaireResult(
                date = if (questionnaireResults.isNotEmpty())
                    questionnaireResults[questionnaireResults.size-1].date
                else
@@ -519,7 +519,7 @@ fun QuestionnaireSection(
                 )
             }
             if (showAllResults){
-                showAllQuestionnaireResults(questionnaireResult = questionnaireResults)
+                ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
             }
         }
     }
@@ -527,7 +527,7 @@ fun QuestionnaireSection(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun showQuestionnaireResult(date : Timestamp?, resultMessage : String) {
+fun ShowQuestionnaireResult(date : Timestamp?, resultMessage : String) {
     if (date != null) {
         val dateYMD = getDate(date)
         Text(
@@ -545,9 +545,9 @@ fun showQuestionnaireResult(date : Timestamp?, resultMessage : String) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun showAllQuestionnaireResults(questionnaireResult: List<QuestionnaireResult>) {
+fun ShowAllQuestionnaireResults(questionnaireResult: List<QuestionnaireResult>) {
     for (i in questionnaireResult.size - 2 downTo 0) {
-        showQuestionnaireResult(
+        ShowQuestionnaireResult(
             date = questionnaireResult[i].date,
             resultMessage = questionnaireResult[i].resultMessage)
     }
