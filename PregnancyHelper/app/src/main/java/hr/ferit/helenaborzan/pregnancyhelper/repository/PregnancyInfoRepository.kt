@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.contractions.ContractionsInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.Food
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.FoodInfo
@@ -22,14 +21,15 @@ import javax.inject.Inject
 
 class PregnancyInfoRepository @Inject constructor(
     accountService: AccountService,
-    firestore: FirebaseFirestore
-) : BaseInfoRepository(accountService, firestore) {
+    firestore: FirebaseFirestore,
+    questionnaireRepository: QuestionnaireRepository
+) : BaseInfoRepository(accountService, firestore, questionnaireRepository) {
     override val collectionName: String
         get() = "pregnancyInfo"
     val pregnancyInfoCollection = firestore.collection(collectionName)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getUsersPregnancyInfo(): Flow<List<PregnancyInfo>> = callbackFlow {
+    override fun getUserInfo(): Flow<List<PregnancyInfo>> = callbackFlow {
         val userId = accountService.currentUserId
         val listenerRegistration = pregnancyInfoCollection
             .whereEqualTo("userId", userId)

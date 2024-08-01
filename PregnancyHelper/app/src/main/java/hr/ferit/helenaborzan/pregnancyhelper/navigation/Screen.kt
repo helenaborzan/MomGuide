@@ -21,4 +21,10 @@ sealed class Screen(val route : String){
     object DailyCalorieGoalScreen : Screen("DailyCalorieGoalScreen")
     object NutritionDetailsScreen : Screen("NutritionDetailsScreen")
     object RecipeScreen : Screen("RecipeScreen")
+    object EPDSQuestionnaireStatisticsScreen : Screen("EPDSQuestionnaireStatisticsScreen")
+    object DepressionQuestionnaireStatisticsScreen : Screen("DepressionQuestionnaireStatisticsScreen")
+    object AnxietyQuestionnaireStatisticsScreen : Screen("AnxietyQuestionnaireStatisticsScreen")
+    object StressQuestionnaireStatisticsScreen : Screen("StressQuestionnaireStatisticsScreen")
+
+
 }

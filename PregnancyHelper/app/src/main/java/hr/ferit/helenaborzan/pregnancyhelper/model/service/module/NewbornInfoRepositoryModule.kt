@@ -14,7 +14,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.repository.QuestionnaireRepository
 @InstallIn(SingletonComponent::class)
 object NewbornInfoRepositoryModule {
     @Provides
-    fun provideNewbornInfoRepository(accountService: AccountService, firestore: FirebaseFirestore): NewbornInfoRepository {
-        return NewbornInfoRepository(accountService = accountService, firestore = firestore)
+    fun provideNewbornInfoRepository(accountService: AccountService, firestore: FirebaseFirestore, questionnaireRepository: QuestionnaireRepository): NewbornInfoRepository {
+        return NewbornInfoRepository(accountService = accountService, firestore = firestore, questionnaireRepository)
     }
 }

@@ -47,7 +47,7 @@ class ChooseCategoryViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getUsersPregnancyInfo() {
         viewModelScope.launch {
-            pregnancyInfoRepository.getUsersPregnancyInfo()
+            pregnancyInfoRepository.getUserInfo()
                 .catch { exception ->
                     Log.e("ChooseCategoryViewModel", "Error fetching Pregnancy Info", exception)
                 }

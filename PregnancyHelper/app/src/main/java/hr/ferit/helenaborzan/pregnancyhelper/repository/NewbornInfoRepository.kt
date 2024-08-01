@@ -1,17 +1,13 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
-import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
-import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QandA
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
@@ -22,13 +18,14 @@ import javax.inject.Inject
 
 class NewbornInfoRepository @Inject constructor(
     accountService: AccountService,
-    firestore: FirebaseFirestore
-) : BaseInfoRepository(accountService, firestore) {
+    firestore: FirebaseFirestore,
+    questionnaireRepository: QuestionnaireRepository
+) : BaseInfoRepository(accountService, firestore, questionnaireRepository) {
     override val collectionName: String
         get() = "newbornInfo"
     val newbornInfoCollection = firestore.collection(collectionName)
 
-    fun getUsersNewbornInfo(): Flow<List<NewbornInfo>> = callbackFlow {
+    override fun getUserInfo(): Flow<List<NewbornInfo>> = callbackFlow {
         val userId = accountService.currentUserId
         val listenerRegistration = newbornInfoCollection
             .whereEqualTo("userId", userId)

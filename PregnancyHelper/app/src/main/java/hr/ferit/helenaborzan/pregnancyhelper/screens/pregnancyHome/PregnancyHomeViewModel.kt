@@ -56,7 +56,7 @@ class PregnancyHomeViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun getUsersPregnancyInfo() {
         viewModelScope.launch {
-            pregnancyInfoRepository.getUsersPregnancyInfo()
+            pregnancyInfoRepository.getUserInfo()
                 .catch { exception ->
                     Log.e("PregnancyHomeViewModel", "Error fetching Pregnancy Info", exception)
                 }

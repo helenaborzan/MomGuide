@@ -65,7 +65,7 @@ abstract class BaseQuestionnaireViewModel(
     abstract fun getResultMessageResource(score: Int?): Int?
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onSubmitQuestionnaire() {
+    fun onSubmitQuestionnaire(questionnaireName: String) {
         if (areAllQuestionsAnswered()) {
             uiState.value = uiState.value.copy(
                 score = finalScore.value,
@@ -76,7 +76,8 @@ abstract class BaseQuestionnaireViewModel(
                     score = uiState.value.score!!,
                     resultMessage = context.getString(uiState.value.resultMessageResource!!),
                     selectedAnswers = selectedAnswers,
-                    fieldName = fieldName
+                    fieldName = fieldName,
+                    questionnaireName = questionnaireName
                 )
             }
         } else {

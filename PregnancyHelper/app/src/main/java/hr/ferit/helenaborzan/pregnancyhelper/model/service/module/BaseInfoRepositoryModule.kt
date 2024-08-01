@@ -9,6 +9,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.BaseInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
+import hr.ferit.helenaborzan.pregnancyhelper.repository.QuestionnaireRepository
 import javax.inject.Named
 
 @Module
@@ -19,17 +20,19 @@ object BaseInfoRepositoryModule {
     @Named("newborn")
     fun provideNewbornInfoRepository(
         accountService: AccountService,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        questionnaireRepository: QuestionnaireRepository
     ): BaseInfoRepository {
-        return NewbornInfoRepository(accountService, firestore)
+        return NewbornInfoRepository(accountService, firestore, questionnaireRepository)
     }
 
     @Provides
     @Named("pregnancy")
     fun providePregnancyInfoRepository(
         accountService: AccountService,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        questionnaireRepository: QuestionnaireRepository
     ): BaseInfoRepository {
-        return PregnancyInfoRepository(accountService, firestore)
+        return PregnancyInfoRepository(accountService, firestore, questionnaireRepository)
     }
 }

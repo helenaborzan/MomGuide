@@ -7,6 +7,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class QuestionnaireRepository @Inject constructor(
@@ -32,4 +33,26 @@ class QuestionnaireRepository @Inject constructor(
             }
         awaitClose()
     }
+
+    suspend fun incrementSelectedNumber(questionnaireName: String, questionId: String, answerText: String) {
+        val questionRef = firestore.collection(questionnaireName).document(questionId)
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(questionRef)
+            val question = snapshot.toObject(Question::class.java)
+
+            question?.let {
+                val updatedAnswers = it.answers.map { answer ->
+                    if (answer.text == answerText) {
+                        answer.copy(selectedNumber = answer.selectedNumber + 1)
+                    } else {
+                        answer
+                    }
+                }
+
+                transaction.update(questionRef, "answers", updatedAnswers)
+            }
+        }.await()
+    }
+
 }

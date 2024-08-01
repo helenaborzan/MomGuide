@@ -766,21 +766,24 @@ fun QuestionnaireSection(
         )
         QuestionnaireCard(
             titleId = R.string.depressionTitle,
-            navigate = { navController.navigate(Screen.DepressionQuestionnaireScreen.route) },
+            navigateToAnswering = { navController.navigate(Screen.DepressionQuestionnaireScreen.route) },
+            navigateToStatistics = { navController.navigate(Screen.DepressionQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightBlue,
             questionnaireResults = depressionResults
         )
         Spacer(modifier = Modifier.height(12.dp))
         QuestionnaireCard(
             titleId = R.string.anxietyTitle,
-            navigate = { navController.navigate(Screen.AnxietyQuestionnnaireScreen.route) },
+            navigateToAnswering = { navController.navigate(Screen.AnxietyQuestionnnaireScreen.route) },
+            navigateToStatistics = { navController.navigate(Screen.AnxietyQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightRed,
             questionnaireResults = anxietyResults
         )
         Spacer(modifier = Modifier.height(12.dp))
         QuestionnaireCard(
             titleId = R.string.stressTitle,
-            navigate = { navController.navigate(Screen.StressQuestionnaireScreen.route) },
+            navigateToAnswering = { navController.navigate(Screen.StressQuestionnaireScreen.route) },
+            navigateToStatistics = { navController.navigate(Screen.StressQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightYellow,
             questionnaireResults = stressResults
         )
@@ -793,7 +796,8 @@ fun QuestionnaireSection(
 @Composable
 fun QuestionnaireCard(
     @StringRes titleId: Int,
-    navigate : () -> Unit,
+    navigateToAnswering : () -> Unit,
+    navigateToStatistics : () -> Unit,
     backgroundColor: Color,
     questionnaireResults : List<QuestionnaireResult>
 ) {
@@ -817,7 +821,7 @@ fun QuestionnaireCard(
                 style = TextStyle(color = DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 12.dp)
             )
-            FillQuestionnaire(navigate = navigate)
+            FillQuestionnaire(navigate = navigateToAnswering)
         }
         Row (
             modifier = Modifier
@@ -868,7 +872,10 @@ fun QuestionnaireCard(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_bar_chart_24),
                     contentDescription = "See statistics",
-                    tint = DarkGray
+                    tint = DarkGray,
+                    modifier = Modifier.clickable {
+                        navigateToStatistics()
+                    }
                 )
             }
         }

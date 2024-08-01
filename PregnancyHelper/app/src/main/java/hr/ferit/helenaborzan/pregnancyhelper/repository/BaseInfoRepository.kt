@@ -12,16 +12,18 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QandA
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 abstract class BaseInfoRepository(
     protected val accountService: AccountService,
-    protected val firestore: FirebaseFirestore
+    protected val firestore: FirebaseFirestore,
+    private val questionnaireRepository: QuestionnaireRepository
 ) {
     protected abstract val collectionName: String
     protected val collection by lazy { firestore.collection(collectionName) }
 
-
+    abstract fun getUserInfo(): Flow<List<Any>>
     suspend fun ensureInfoDocument() {
         val userId = accountService.currentUserId
         val infoDocRef = collection.whereEqualTo("userId", userId).get().await()
@@ -34,7 +36,13 @@ abstract class BaseInfoRepository(
     protected abstract suspend fun createInfoDocument(userId: String)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun addQuestionnaireResults(score: Int, resultMessage: String, selectedAnswers: Map<String, Answer?>, fieldName : String) {
+    suspend fun addQuestionnaireResults(
+        score: Int,
+        resultMessage: String,
+        selectedAnswers: Map<String, Answer?>,
+        fieldName : String,
+        questionnaireName : String
+    ) {
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -55,6 +63,12 @@ abstract class BaseInfoRepository(
 
             val documentReference = collection.document(documentId)
             documentReference.update(fieldName, FieldValue.arrayUnion(newResult)).await()
+
+            selectedAnswers.forEach { (questionId, answer) ->
+                answer?.let {
+                    questionnaireRepository.incrementSelectedNumber(questionnaireName, questionId, it.text)
+                }
+            }
         }
     }
 }

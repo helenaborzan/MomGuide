@@ -32,6 +32,11 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQue
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.StressQuestionnaireViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.AnxietyStatisticsViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.DepressionStatisticsViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.EPDSStatisticsViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.QuestionnaireStatisticsScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.StressStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.recipe.RecipeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
@@ -102,6 +107,40 @@ fun NavigationController() {
                 navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
                 questionnaireName = "stressScale")
         }
+        composable(Screen.EPDSQuestionnaireStatisticsScreen.route){
+            val viewModel : EPDSStatisticsViewModel = hiltViewModel()
+            QuestionnaireStatisticsScreen(
+                navController = navController,
+                viewModel = viewModel,
+                questionnaireName = "postPartumDepressionScale"
+            )
+        }
+        composable(Screen.DepressionQuestionnaireStatisticsScreen.route){
+            val viewModel : DepressionStatisticsViewModel = hiltViewModel()
+            QuestionnaireStatisticsScreen(
+                navController = navController,
+                viewModel = viewModel,
+                questionnaireName = "depressionScale"
+            )
+        }
+        composable(Screen.AnxietyQuestionnaireStatisticsScreen.route){
+            val viewModel : AnxietyStatisticsViewModel = hiltViewModel()
+            QuestionnaireStatisticsScreen(
+                navController = navController,
+                viewModel = viewModel,
+                questionnaireName = "anxietyScale"
+            )
+        }
+        composable(Screen.StressQuestionnaireStatisticsScreen.route){
+            val viewModel : StressStatisticsViewModel = hiltViewModel()
+            QuestionnaireStatisticsScreen(
+                navController = navController,
+                viewModel = viewModel,
+                questionnaireName = "stressScale"
+            )
+        }
+
+
         composable(Screen.ContractionsTimerScreen.route){
             ContractionsTimerScreen(navController = navController)
         }
@@ -126,6 +165,7 @@ fun NavigationController() {
         composable(Screen.RecipeScreen.route){
             RecipeScreen(navController = navController)
         }
+
 
     }
 }

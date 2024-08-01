@@ -1,16 +1,12 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,14 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -48,7 +40,6 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Answer
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Question
-import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
@@ -88,10 +79,13 @@ fun QuestionnaireScreen(
                 )
             }
         }
-        SubmitQuestionnaireButton(viewModel = viewModel, modifier = Modifier
+        SubmitQuestionnaireButton(
+            viewModel = viewModel,
+            modifier = Modifier
             .fillMaxWidth()
             .weight(0.15f)
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 24.dp),
+            questionnaireName = questionnaireName
         )
     }
     LaunchedEffect(Unit) {
@@ -145,7 +139,10 @@ fun QandACard(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : BaseQuestionnaireViewModel) {
+fun SubmitQuestionnaireButton(
+    modifier: Modifier = Modifier,
+    viewModel : BaseQuestionnaireViewModel,
+    questionnaireName: String) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.End,
@@ -153,7 +150,7 @@ fun SubmitQuestionnaireButton(modifier: Modifier = Modifier, viewModel : BaseQue
     ){
         BasicButton(
             text = "Podnesi",
-            onClick = { viewModel.onSubmitQuestionnaire() },
+            onClick = { viewModel.onSubmitQuestionnaire(questionnaireName = questionnaireName) },
             borderColor = Pink,
             containerColor = Color.White,
             modifier = Modifier

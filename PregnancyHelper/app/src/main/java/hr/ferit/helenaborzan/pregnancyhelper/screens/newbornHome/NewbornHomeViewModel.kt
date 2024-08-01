@@ -101,7 +101,7 @@ class NewbornHomeViewModel @Inject constructor(
 
     fun getUsersNewbornInfo() {
         viewModelScope.launch {
-            newbornInfoRepository.getUsersNewbornInfo()
+            newbornInfoRepository.getUserInfo()
                 .catch { exception ->
                     Log.e("NewbornHomeViewModel", "Error fetching Newborn Info", exception)
                 }
