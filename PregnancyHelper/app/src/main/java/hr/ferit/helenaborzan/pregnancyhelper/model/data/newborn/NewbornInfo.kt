@@ -8,6 +8,8 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Questionna
 data class NewbornInfo(
     var id : String = "",
     val userId : String = "",
+    val name : String? = null,
+    val sex : String? = null,
     val breastfeedingInfo : MutableList<BreastfeedingInfo> = mutableListOf<BreastfeedingInfo>(),
     val bottleInfo : MutableList<BottleInfo> = mutableListOf<BottleInfo>(),
     val growthAndDevelopmentResults : MutableList<GrowthAndDevelopmentResult> = mutableListOf<GrowthAndDevelopmentResult>(),

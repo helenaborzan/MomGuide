@@ -25,6 +25,7 @@ sealed class Screen(val route : String){
     object DepressionQuestionnaireStatisticsScreen : Screen("DepressionQuestionnaireStatisticsScreen")
     object AnxietyQuestionnaireStatisticsScreen : Screen("AnxietyQuestionnaireStatisticsScreen")
     object StressQuestionnaireStatisticsScreen : Screen("StressQuestionnaireStatisticsScreen")
+    object NewbornNameQuestionScreen : Screen ("NewbornNameQuestionScreen")
 
 
 }

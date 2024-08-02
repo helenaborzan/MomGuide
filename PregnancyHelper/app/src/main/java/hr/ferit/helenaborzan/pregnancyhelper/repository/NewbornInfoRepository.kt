@@ -1,5 +1,8 @@
 package hr.ferit.helenaborzan.pregnancyhelper.repository
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
@@ -51,6 +54,8 @@ class NewbornInfoRepository @Inject constructor(
     override suspend fun createInfoDocument(userId: String) {
         val newbornInfoData = hashMapOf(
             "userId" to userId,
+            "name" to null,
+            "sex" to null,
             "breastfeedingInfo" to emptyList<BreastfeedingInfo>(),
             "bottleInfo" to emptyList<BottleInfo>(),
             "growthAndDevelopmentResults" to emptyList<GrowthAndDevelopmentResult>(),
@@ -141,6 +146,36 @@ class NewbornInfoRepository @Inject constructor(
             } else {
                 throw IndexOutOfBoundsException("Invalid index for growthAndDevelopmentResults")
             }
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun addBabyName(name: String) {
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+
+            val documentReference = collection.document(documentId)
+
+
+            documentReference.update("name", name).await()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun addBabySex(sex: String) {
+        val userId = accountService.currentUserId
+        val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents[0]
+            val documentId = document.id
+
+            val documentReference = collection.document(documentId)
+
+            documentReference.update("sex", sex).await()
         }
     }
 }

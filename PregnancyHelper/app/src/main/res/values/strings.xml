@@ -178,4 +178,8 @@
     <string name="noNutritionHistory">Još niste ništa unijeli danas.</string>
     <string name="kcal">kcal</string>
 
+    <string name="blankNameError">Morate unijeti ime.</string>
+    <string name="blankSexError">Morate odabrati spol.</string>
+    <string name="nameInputLabel">Unesite ime djeteta</string>
+
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -57,6 +59,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Questionna
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.AddFeeding
 import hr.ferit.helenaborzan.pregnancyhelper.screens.map.MapSection
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
@@ -95,7 +98,10 @@ fun NewbornHomeScreen(
             .background(color = DirtyWhite)
     ){ item {
         IconBar(viewModel = viewModel)
-        Recomendations()
+        BabyName(name = newbornInfo.map { it.name }.firstOrNull() ?: "",
+            sex = newbornInfo.map { it.sex }.firstOrNull() ?: "",
+            navController = navController
+        )
         BreastfeedingSection(
             navController = navController,
             uiState = uiState,
@@ -141,30 +147,6 @@ fun IconBar(viewModel: NewbornHomeViewModel) {
     }
 }
 
-@Composable
-fun Recomendations() {
-    Column (
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp)
-            .background(
-                color = LightestPink,
-                shape = RoundedCornerShape(8.dp)
-            )
-
-    ){
-        Text(
-            text = stringResource(id = R.string.recomendations),
-            style = TextStyle(color = DarkGray, fontSize = 16.sp, textDecoration = TextDecoration.Underline),
-            modifier = Modifier.padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 4.dp)
-        )
-        Text(
-            text = "Trenutno nema nikakvih preporuka.",
-            style = TextStyle(color = DarkGray, fontSize = 14.sp),
-            modifier = Modifier.padding(start = 24.dp, top = 4.dp, end = 24.dp, bottom = 24.dp)
-        )
-    }
-}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -209,7 +191,9 @@ fun BreastfeedingSection(
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -275,10 +259,11 @@ fun Breastfeeding(
                     color = Color.LightGray,
                     textDecoration = TextDecoration.Underline
                 ),
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
                     .clickable {
-                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
-                }
+                        navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                    }
             )
         }
     }
@@ -340,10 +325,11 @@ fun Bottle(
                     color = Color.LightGray,
                     textDecoration = TextDecoration.Underline
                 ),
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier
+                    .padding(12.dp)
                     .clickable {
-                    navController.navigate(Screen.BreastfeedingInfoScreen.route)
-                }
+                        navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                    }
             )
         }
     }
@@ -601,6 +587,37 @@ fun ResultDialog(uiState : NewbornHomeUiState, navController : NavController) {
                 }
             }
         )
+    }
+}
+
+@Composable
+fun BabyName(name : String, sex : String, navController: NavController) {
+    val color : Color = if (sex == "female") Pink else Blue
+
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Box(
+            modifier = Modifier
+                .size(300.dp)
+                .border(width = 1.dp, color = color, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = name,
+                style = TextStyle(
+                    color = color,
+                    fontSize = 60.sp,
+                    fontFamily = FontFamily.Cursive,
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.clickable{
+                    navController.navigate(Screen.NewbornNameQuestionScreen.route)
+                }
+            )
+        }
     }
 }
 

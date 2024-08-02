@@ -23,7 +23,7 @@ class PregnancyStartViewModel @Inject constructor(
 ) : ViewModel() {
 
     var uiState = mutableStateOf(PregnancyStartUiState())
-        protected set
+        private set
 
     fun onPregnancyStartDateChange(startDate : LocalDate){
         val seconds = startDate.atStartOfDay(ZoneOffset.UTC).toEpochSecond()

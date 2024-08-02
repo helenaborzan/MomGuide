@@ -47,6 +47,7 @@ fun ChooseCategoryScreen(
     viewModel: ChooseCategoryViewModel = hiltViewModel()
 ) {
     val pregnancyInfo by viewModel.pregnancyInfo.collectAsState(initial = emptyList())
+    val newbornInfo by viewModel.newbornInfo.collectAsState(initial = emptyList())
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +88,14 @@ fun ChooseCategoryScreen(
                 borderColor = DarkGray,
                 onClick = {
                     viewModel.onNewbornsCategoryClick()
-                    navController.navigate(Screen.NewbornHomeScreen.route)
+                    Log.d("ChooseCategoryScreen", "Newborn Info: $newbornInfo")
+                    if((newbornInfo.map { it.name }.firstOrNull() != null) &&
+                            (newbornInfo.map { it.sex }.firstOrNull() != null)){
+                        navController.navigate(Screen.NewbornHomeScreen.route)
+                    }
+                    else {
+                        navController.navigate(Screen.NewbornNameQuestionScreen.route)
+                    }
                 }
             )
         }
