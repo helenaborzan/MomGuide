@@ -130,19 +130,19 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
     }
 
     fun getLengthForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${percentileValue}% djece iste dobi je niže ili jednake visine kao i vaše dijete, dok je ${100 - percentileValue}% djece iste dobi višlje od vašeg djeteta."
+        return "${String.format("%.2f",percentileValue)}% djece iste dobi je niže ili jednake visine kao i vaše dijete, dok je ${String.format("%.2f",100 - percentileValue)}% djece iste dobi višlje od vašeg djeteta."
     }
 
     fun getWeightForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${percentileValue}% djece iste dobi ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${100 - percentileValue}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+        return "${String.format("%.2f",percentileValue)}% djece iste dobi ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
     }
 
     fun getWeightForLengthPercentileInterpretation(percentileValue: Double): String {
-        return "${percentileValue}% djece iste visine ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${100 - percentileValue}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+        return "${String.format("%.2f",percentileValue)}% djece iste visine ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
     }
 
     fun getHeadCircumFerenceForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${percentileValue}% djece iste dobi ima manji ili jednak opseg glave od Vašeg djeteta, dok ${100 - percentileValue}% djece iste dobi ima veći opseg glave od Vašeg djeteta."
+        return "${String.format("%.2f",percentileValue)}% djece iste dobi ima manji ili jednak opseg glave od Vašeg djeteta, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veći opseg glave od Vašeg djeteta."
     }
 
     fun getPercentileInterpretation(type: Int, percentileValue: Double): String {

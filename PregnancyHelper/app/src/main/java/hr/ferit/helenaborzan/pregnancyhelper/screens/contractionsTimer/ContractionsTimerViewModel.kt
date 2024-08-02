@@ -37,8 +37,6 @@ import javax.inject.Inject
 @RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
 class ContractionsTimerViewModel @Inject constructor(
-    private val app : Application,
-    private val notificationManager: NotificationManagerCompat,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 

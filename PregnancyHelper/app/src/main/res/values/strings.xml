@@ -89,6 +89,10 @@
     <string name="weightForLength">Težina za visinu</string>
     <string name="headCircumferenceForAge">Opseg glave za dob</string>
     <string name="notIntegerError">Unesite cjelobrojne vrijednosti</string>
+    <string name="height">Visina</string>
+    <string name="weight">Težina</string>
+    <string name="age">Dob</string>
+    <string name="headCircumference">Opseg glave</string>
 
     <string name="nutritionTitle">Prehrana</string>
     <string name="contractionsTimerTitle">Mjerač trudova</string>

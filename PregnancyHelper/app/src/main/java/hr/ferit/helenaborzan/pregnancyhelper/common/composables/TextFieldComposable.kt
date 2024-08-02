@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import hr.ferit.helenaborzan.pregnancyhelper.R
@@ -40,9 +39,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
-import io.data2viz.charts.core.Padding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,7 +165,7 @@ fun LabeledTextField(
     keyboardOptions: KeyboardOptions,
     fontSize : TextUnit = 16.sp,
     padding: PaddingValues = PaddingValues(16.dp),
-    modifier: Modifier =  Modifier
+    modifier: Modifier = Modifier
         .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(2.dp))
         .background(color = Color.White)
 ) {
@@ -181,25 +178,33 @@ fun LabeledTextField(
             style = TextStyle(color = DarkGray, fontSize = 16.sp)
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Row (modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically){
+        Row (verticalAlignment = Alignment.CenterVertically){
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(color = DarkGray, fontSize = fontSize),
                 keyboardOptions = keyboardOptions,
-                modifier = modifier.padding(horizontal = 8.dp)
-            ) {
-                it.invoke()
+                maxLines = 1,
+                modifier = modifier
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth(),
+
+                ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    it.invoke()
+                }
             }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = stringResource(id = unitId),
-                style = TextStyle(color = Color.Black, fontSize = 16.sp),
-                textAlign = TextAlign.Center
+                style = TextStyle(color = Color.Black, fontSize = 16.sp)
             )
         }
+        }
     }
-}
+
 

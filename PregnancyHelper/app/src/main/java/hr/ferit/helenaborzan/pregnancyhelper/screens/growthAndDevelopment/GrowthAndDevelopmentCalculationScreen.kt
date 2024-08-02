@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -36,6 +37,8 @@ import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -45,12 +48,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.AnswerRadioButton
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.LabeledTextField
+import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Green
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Red
 
 @Composable
 fun GrowthAndDevelopmentCalculationScreen(
@@ -59,7 +68,7 @@ fun GrowthAndDevelopmentCalculationScreen(
 ) {
     val uiState by viewModel.uiState
     val showResults by viewModel.showResults
-    Column (modifier = Modifier.background(color = DirtyWhite)) {
+    Column (modifier = Modifier.background(color = LightBlue)) {
         LazyColumn() {
             item {
                 GoBackIconBar(
@@ -70,6 +79,7 @@ fun GrowthAndDevelopmentCalculationScreen(
                     navController = navController
                 )
                 InputSection(uiState = uiState, viewModel = viewModel)
+                CalculateButton(viewModel = viewModel, uiState = uiState)
                 if(showResults){
                     PercentileResultSection(uiState = uiState)
                 }
@@ -89,7 +99,7 @@ fun InputSection(
             .fillMaxWidth()
             .padding(24.dp)
             .clip(RoundedCornerShape(8.dp))
-            .border(width = 1.dp, color = DarkGray)
+            .background(color = Color.White, shape = RoundedCornerShape(8.dp))
     ){
         RadioButtonInput(uiState = uiState)
         LabeledTextField(
@@ -100,7 +110,12 @@ fun InputSection(
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
-            )
+            ),
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .background(color = Color.White)
+                .width(200.dp)
+                .height(40.dp)
         )
         LabeledTextField(
             labelId = R.string.weightInputLabel,
@@ -110,7 +125,12 @@ fun InputSection(
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
-            )
+            ),
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .background(color = Color.White)
+                .width(200.dp)
+                .height(40.dp)
         )
         LabeledTextField(
             labelId = R.string.ageInputLabel,
@@ -120,7 +140,12 @@ fun InputSection(
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
-            )
+            ),
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .background(color = Color.White)
+                .width(200.dp)
+                .height(40.dp)
         )
         LabeledTextField(
             labelId = R.string.headCircumferenceLabel,
@@ -130,9 +155,13 @@ fun InputSection(
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
-            )
+            ),
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .background(color = Color.White)
+                .width(200.dp)
+                .height(40.dp)
         )
-        CalculationLabel(viewModel = viewModel, uiState = uiState)
     }
 }
 
@@ -212,9 +241,38 @@ fun CalculationLabel(viewModel: GrowthAndDevelopmentViewModel, uiState: GrowthAn
 }
 
 @Composable
+fun CalculateButton(viewModel: GrowthAndDevelopmentViewModel, uiState: GrowthAndDevelopmentCalculationUiState) {
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .padding(24.dp)
+        .clip(RoundedCornerShape(8.dp)),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically){
+        Button(
+            onClick = { if (uiState.errorMessageResource == null) viewModel.onCalculatePercentilesClick()  },
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+            modifier = Modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
+                .height(36.dp),
+            enabled = uiState.errorMessageResource == null,
+            shape = RoundedCornerShape(8.dp)
+
+        ) {
+            Text (
+                text = stringResource(id = R.string.calculateGrowthPercentiles),
+                style = TextStyle(color = DarkGray, fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
+            )
+        }
+    }
+}
+
+@Composable
 fun PercentileResultSection(uiState: GrowthAndDevelopmentCalculationUiState) {
     Column(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+        modifier = Modifier
+            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PercentileResult(
             percentileType = R.string.lengthForAgePercentile,
@@ -252,11 +310,12 @@ fun PercentileResult(
                 )
             )
             Text(
-                text = "$percentileValue",
+                text = "${String.format("%.2f", percentileValue)}",
                 style = TextStyle(
                     fontSize = 18.sp,
-                    color = if (viewModel.isPercentileInNormalLimits(percentileValue)) Color.Green
-                    else Color.Red
+                    color = if (viewModel.isPercentileInNormalLimits(percentileValue)) Green
+                    else Red,
+                    fontWeight = FontWeight.Bold
                 )
             )
         }

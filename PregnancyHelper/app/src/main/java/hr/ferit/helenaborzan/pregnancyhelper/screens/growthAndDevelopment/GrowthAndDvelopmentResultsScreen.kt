@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,6 +42,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
@@ -48,8 +52,10 @@ import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForAgeData
 import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForHeightData
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.GrowthAndDevelopmentButton
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
@@ -194,6 +200,7 @@ fun PercentilesResult(
                     .clickable { viewModel.onDeleteResultClick() }
             )
         }
+        GrowthInfo(growthAndDevelopmentInfo = growthAndDevelopmentResult.growthAndDevelopmentInfo)
         PercentileResultSection(growthAndDevelopmentPercentiles = growthAndDevelopmentResult.growthAndDevelopmentPercentiles)
         DeleteResultDialog(showDialog = viewModel.showDialog.value,
             onConfirm = {
@@ -204,6 +211,53 @@ fun PercentilesResult(
             },
             onDismiss = { viewModel.onDeleteResultDialogDismiss() }
         )
+    }
+}
+
+@Composable
+fun GrowthInfo(growthAndDevelopmentInfo: GrowthAndDevelopmentInfo) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 4.dp)
+            .background(color = LightBlue, shape = RoundedCornerShape(4.dp))
+            .height(70.dp)
+    ){
+        GrowthResult(labelId = R.string.height, value = growthAndDevelopmentInfo.length.toInt(), unitId = R.string.cmLabel, modifier = Modifier.weight(0.25f))
+        VerticalDivider(thickness = 1.dp, color = Color.LightGray)
+        GrowthResult(labelId = R.string.weight, value = growthAndDevelopmentInfo.weight.toInt(), unitId = R.string.kgLabel, modifier = Modifier.weight(0.25f))
+        VerticalDivider(thickness = 1.dp, color = Color.LightGray)
+        GrowthResult(labelId = R.string.age, value = growthAndDevelopmentInfo.age.toInt(), unitId = R.string.monthsLabel, modifier = Modifier.weight(0.25f))
+        VerticalDivider(thickness = 1.dp, color = Color.LightGray)
+        GrowthResult(labelId = R.string.headCircumference, value = growthAndDevelopmentInfo.headCircumference.toInt(), unitId = R.string.cmLabel, modifier = Modifier.weight(0.25f))
+    }
+}
+
+@Composable
+fun GrowthResult(
+    labelId : Int,
+    value : Int,
+    unitId : Int,
+    modifier: Modifier = Modifier
+){
+    Column (modifier = modifier.padding(4.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(text = stringResource(id = labelId))
+        Row (
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.Bottom
+        ){
+            Text(
+                text = "$value ",
+                style = TextStyle(color = Blue, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            )
+            Text(
+                text = stringResource(id = unitId),
+                style = TextStyle(color = Color.Black, fontSize = 14.sp)
+            )
+        }
     }
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @Composable
 fun GrowthPercentileChart(
@@ -27,7 +28,7 @@ fun GrowthPercentileChart(
     points: List<Point>,
     modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = modifier.background(color = LightestPink, shape = RoundedCornerShape(4.dp))) {
+    Canvas(modifier = modifier.background(color = Color.White, shape = RoundedCornerShape(4.dp))) {
         val canvasWidth = size.width
         val canvasHeight = size.height
         val padding = 60f
@@ -175,7 +176,7 @@ private fun DrawScope.drawIndividualDataPoint(
     val y = canvasHeight - padding - point.y * yScale
 
     drawCircle(
-        color = Color.Magenta,
+        color = Pink,
         radius = 5.dp.toPx(),
         center = Offset(x, y)
     )
