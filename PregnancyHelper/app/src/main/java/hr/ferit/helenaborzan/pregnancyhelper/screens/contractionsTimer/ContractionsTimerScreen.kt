@@ -1,6 +1,9 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -24,6 +27,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,8 +59,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ComponentActivity
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
@@ -68,6 +75,7 @@ fun ContractionsTimerScreen(
     navController: NavController,
     viewModel : ContractionsTimerViewModel = hiltViewModel()
 ){
+
     val uiState by viewModel.uiState.collectAsState()
     var shouldGoToTheHospital by remember { mutableStateOf(false) }
 
@@ -324,3 +332,5 @@ fun DontGoToHospital() {
         }
     }
 }
+
+

@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.google.firebase.Timestamp
 import hr.ferit.helenaborzan.pregnancyhelper.R
 
@@ -523,6 +524,7 @@ fun RecipeItem(
     modifier : Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val likeCount by viewModel.getLikeCount(recipe.url).collectAsState(initial = 0)
     Card(
         modifier = modifier
             .padding(4.dp)
@@ -543,27 +545,38 @@ fun RecipeItem(
                     style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold),
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .padding(end = 40.dp) // Dodajemo padding s desne strane
+                        .padding(end = 40.dp)
                         .fillMaxWidth()
                 )
-                IconButton(
-                    onClick = {
-                        Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
-                        viewModel.toggleFavorite(RecipeInfo(label = recipe.label, image = recipe.image, url = recipe.url))
-                    },
+                Row (
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(40.dp)
+                        .size(40.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (isFavourite) Color.Red else Color.Gray
-                    )
+                    Text(text = "${likeCount}", color = DarkGray)
+                    IconButton(
+                        onClick = {
+                            Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
+                            viewModel.toggleFavorite(
+                                RecipeInfo(
+                                    label = recipe.label,
+                                    image = recipe.image,
+                                    url = recipe.url
+                                )
+                            )
+                        },
+                    ) {
+                        Icon(
+                            imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (isFavourite) Color.Red else Color.Gray
+                        )
+                    }
                 }
             }
             Image(
-                painter = rememberAsyncImagePainter(recipe.image),
+                painter = rememberImagePainter(recipe.image),
                 contentDescription = null,
                 modifier = Modifier
                     .weight(1f)

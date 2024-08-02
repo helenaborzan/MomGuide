@@ -130,4 +130,23 @@ class RecipeRepository @Inject constructor(
             Log.e("ToggleFavorite", "Error toggling favorite for ${recipeInfo.label}", e)
         }
     }
+
+    fun getLikeCount(recipeUrl: String): Flow<Int> = callbackFlow {
+        val listenerRegistration = firestore.collection("likes")
+            .whereEqualTo("url", recipeUrl)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    close(e)
+                    return@addSnapshotListener
+                }
+
+                val likeCount = snapshot?.documents?.firstOrNull()?.let { doc ->
+                    (doc.get("users") as? List<*>)?.size ?: 0
+                } ?: 0
+
+                trySend(likeCount)
+            }
+
+        awaitClose { listenerRegistration.remove() }
+    }
 }

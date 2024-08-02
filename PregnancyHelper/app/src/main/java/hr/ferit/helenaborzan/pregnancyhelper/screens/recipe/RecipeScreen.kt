@@ -26,6 +26,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -69,10 +70,10 @@ fun RecipeScreen(
                 .padding(24.dp),
             navController = navController
         )
-        TextField(
+        OutlinedTextField(
             value = query,
             onValueChange = { query = it },
-            label = { Text("Enter ingredient") },
+            label = { Text("Search recipes") },
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
@@ -93,7 +94,8 @@ fun RecipeScreen(
 
         if (isLoading) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -123,6 +125,7 @@ fun RecipeItem(
     viewModel: RecipeViewModel
 ) {
     val context = LocalContext.current
+    val likeCount by viewModel.getLikeCount(recipe.url).collectAsState(initial = 0)
     Card(
         modifier = Modifier
             .padding(4.dp)
@@ -145,20 +148,31 @@ fun RecipeItem(
                         .padding(end = 40.dp)
                         .fillMaxWidth()
                 )
-                IconButton(
-                    onClick = {
-                        Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
-                        viewModel.toggleFavorite(RecipeInfo(label = recipe.label, image = recipe.image, url = recipe.url))
-                              },
+                Row (
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .size(40.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (isFavourite) Color.Red else Color.Gray
-                    )
+                    .align(Alignment.TopEnd)
+                    .size(40.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(text = "${likeCount}", color = DarkGray)
+                    IconButton(
+                        onClick = {
+                            Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
+                            viewModel.toggleFavorite(
+                                RecipeInfo(
+                                    label = recipe.label,
+                                    image = recipe.image,
+                                    url = recipe.url
+                                )
+                            )
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (isFavourite) Color.Red else Color.Gray
+                        )
+                    }
                 }
             }
             Image(

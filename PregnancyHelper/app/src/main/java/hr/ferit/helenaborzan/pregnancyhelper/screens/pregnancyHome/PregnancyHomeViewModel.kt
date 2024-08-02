@@ -19,6 +19,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.RecipeRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsUiState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -220,5 +221,9 @@ class PregnancyHomeViewModel @Inject constructor(
                 return true
         }
         return false
+    }
+
+    fun getLikeCount(recipeUrl: String): Flow<Int> {
+        return recipeRepository.getLikeCount(recipeUrl)
     }
 }

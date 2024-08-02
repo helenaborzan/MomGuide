@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.Recipe
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.RecipeRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,5 +60,9 @@ class RecipeViewModel @Inject constructor(
                 return true
         }
         return false
+    }
+
+    fun getLikeCount(recipeUrl: String): Flow<Int> {
+        return repository.getLikeCount(recipeUrl)
     }
 }

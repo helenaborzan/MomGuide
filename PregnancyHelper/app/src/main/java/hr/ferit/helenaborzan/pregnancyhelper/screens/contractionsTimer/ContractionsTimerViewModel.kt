@@ -1,12 +1,23 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ComponentActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertInstantToTemporal
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertTimestampToTemporal
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.contractions.ContractionsInfo
@@ -23,8 +34,13 @@ import java.time.Instant
 import javax.inject.Inject
 
 
+@RequiresApi(Build.VERSION_CODES.S)
 @HiltViewModel
-class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
+class ContractionsTimerViewModel @Inject constructor(
+    private val app : Application,
+    private val notificationManager: NotificationManagerCompat,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val _uiState = MutableStateFlow(ContractionsTimerUiState())
@@ -33,7 +49,6 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<ContractionsTimerUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun onContractionsButtonClick() {
         val currentTime = Instant.now()
@@ -151,8 +166,9 @@ class ContractionsTimerViewModel @Inject constructor() : ViewModel() {
             return false
         }
 
-        return (currentDuration.toMinutes() >= 60)
-                && (uiState.averageContractionDuration.seconds in 45..75)
-                && (uiState.averageContractionFrequency.toMinutes() in 4..6)
+        return (currentDuration.toMinutes() >= 1)
+                && (uiState.averageContractionDuration.seconds in 5..10)
+                && (uiState.averageContractionFrequency.toMinutes() in 10..15)
     }
+
 }
