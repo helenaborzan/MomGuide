@@ -126,7 +126,8 @@ class NewbornInfoRepository @Inject constructor(
         }
     }
 
-    suspend fun deletePercentileResult(growthAndDevelopmentResultIndex: Int) {
+    suspend fun deletePercentileResult(growthAndDevelopmentResultIndex: Int, growthAndDevelopmentResults: MutableList<GrowthAndDevelopmentResult>) {
+
         val userId = accountService.currentUserId
         val querySnapshot = collection.whereEqualTo("userId", userId).get().await()
 
@@ -134,19 +135,45 @@ class NewbornInfoRepository @Inject constructor(
             val document = querySnapshot.documents[0]
             val documentId = document.id
 
-            val currentResults =
-                document.get("growthAndDevelopmentResults") as? List<Map<String, Any>> ?: listOf()
+            if (growthAndDevelopmentResultIndex in growthAndDevelopmentResults.indices) {
+                // Remove the item from the local list
+                growthAndDevelopmentResults.removeAt(growthAndDevelopmentResultIndex)
 
-            if (growthAndDevelopmentResultIndex in currentResults.indices) {
-                val updatedResults = currentResults.toMutableList()
-                updatedResults.removeAt(growthAndDevelopmentResultIndex)
+                // Convert the local list to a list of maps for Firestore
+                val updatedResults = growthAndDevelopmentResults.map { result ->
+                    mapOf(
+                        "growthAndDevelopmentInfo" to result.growthAndDevelopmentInfo.toMap(),
+                        "growthAndDevelopmentPercentiles" to result.growthAndDevelopmentPercentiles.toMap()
+                    )
+                }
 
+                // Update Firestore with the modified list
                 val documentReference = collection.document(documentId)
                 documentReference.update("growthAndDevelopmentResults", updatedResults).await()
             } else {
                 throw IndexOutOfBoundsException("Invalid index for growthAndDevelopmentResults")
             }
         }
+    }
+    fun GrowthAndDevelopmentInfo.toMap(): Map<String, Any?> {
+        return mapOf(
+            "date" to date,
+            "sex" to sex,
+            "weight" to weight,
+            "length" to length,
+            "age" to age,
+            "headCircumference" to headCircumference
+        )
+    }
+
+    fun GrowthAndDevelopmentPercentiles.toMap(): Map<String, Any?> {
+        return mapOf(
+            "lengthForAgePercentile" to lengthForAgePercentile,
+            "weightForAgePercentile" to weightForAgePercentile,
+            "weightForLengthPercentile" to weightForLengthPercentile,
+            "headCircumferenceForAgePercentile" to headCircumferenceForAgePercentile
+            // Add other fields as necessary
+        )
     }
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun addBabyName(name: String) {

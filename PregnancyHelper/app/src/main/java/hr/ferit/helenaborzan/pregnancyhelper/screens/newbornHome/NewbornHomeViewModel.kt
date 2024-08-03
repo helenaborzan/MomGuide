@@ -41,7 +41,8 @@ class NewbornHomeViewModel @Inject constructor(
 
     var uiState = mutableStateOf(NewbornHomeUiState())
         private set
-
+    private val _indexToDelete = MutableStateFlow(-1)
+    val indexToDelete: StateFlow<Int> = _indexToDelete.asStateFlow()
     @RequiresApi(Build.VERSION_CODES.O)
     var breastfeedingInfoUiState = mutableStateOf(BreastfeedingInfoUiState())
         private set
@@ -132,16 +133,55 @@ class NewbornHomeViewModel @Inject constructor(
         uiState.value = uiState.value.copy(errorMessage = null)
     }
 
-    fun onDeleteResultClick(){
-        _showDialog.value = !_showDialog.value
+    fun onDeleteResultClick(index : Int){
+        _indexToDelete.value = index
+        _showDialog.value = true
     }
 
-    fun deletePercentileResult(
-        growthAndDevelopmentResultIndex: Int,
-        growthAndDevelopmentResults: List<GrowthAndDevelopmentResult>
-    ){
+    fun deletePercentileResult(growthAndDevelopmentResultIndex: Int) {
         viewModelScope.launch {
-            newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResultIndex)
+            Log.d("ViewModel", "Index before adjusting: $growthAndDevelopmentResultIndex")
+            val currentResults = newbornInfo.value.flatMap { it.growthAndDevelopmentResults }
+            val growthAndDevelopmentResultIndex = currentResults.size - growthAndDevelopmentResultIndex - 1
+            Log.d("ViewModel", "Current results size: ${currentResults.size}")
+            Log.d("ViewModel", "Attempting to delete result at index: $growthAndDevelopmentResultIndex")
+
+            // Log items and their indices
+            currentResults.forEachIndexed { index, result ->
+                Log.d("ViewModel", "Item at index $index: ${result.growthAndDevelopmentInfo.date}, " +
+                        "Weight: ${result.growthAndDevelopmentInfo.weight}, " +
+                        "Height: ${result.growthAndDevelopmentInfo.length}")
+            }
+
+            if (growthAndDevelopmentResultIndex in currentResults.indices) {
+                Log.d("ViewModel", "Index is within bounds. Proceeding with deletion.")
+                Log.d("ViewModel", "Item to be deleted: ${currentResults[growthAndDevelopmentResultIndex].growthAndDevelopmentInfo.date}, " +
+                        "Weight: ${currentResults[growthAndDevelopmentResultIndex].growthAndDevelopmentInfo.weight}, " +
+                        "Height: ${currentResults[growthAndDevelopmentResultIndex].growthAndDevelopmentInfo.length}")
+
+                try {
+                    newbornInfoRepository.deletePercentileResult(growthAndDevelopmentResultIndex, currentResults.toMutableList())
+                    Log.d("ViewModel", "Deletion in repository completed")
+
+                    getUsersNewbornInfo()
+                    Log.d("ViewModel", "Refreshed newborn info after deletion")
+
+                    // Log items after deletion
+                    val updatedResults = newbornInfo.value.flatMap { it.growthAndDevelopmentResults }
+                    Log.d("ViewModel", "Updated results size: ${updatedResults.size}")
+                    updatedResults.forEachIndexed { index, result ->
+                        Log.d("ViewModel", "Updated item at index $index: ${result.growthAndDevelopmentInfo.date}, " +
+                                "Weight: ${result.growthAndDevelopmentInfo.weight}, " +
+                                "Height: ${result.growthAndDevelopmentInfo.length}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("ViewModel", "Error during deletion: ${e.message}", e)
+                }
+            } else {
+                Log.w("ViewModel", "Index out of bounds. Cannot delete.")
+            }
+
+            Log.d("ViewModel", "Delete operation completed")
         }
     }
     fun onDeleteResultDialogDismiss(){

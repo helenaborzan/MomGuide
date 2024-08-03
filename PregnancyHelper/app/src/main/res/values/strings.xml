@@ -181,5 +181,6 @@
     <string name="blankNameError">Morate unijeti ime.</string>
     <string name="blankSexError">Morate odabrati spol.</string>
     <string name="nameInputLabel">Unesite ime djeteta</string>
+    <string name="invalidEmailError">Krivi email</string>
 
 </resources>

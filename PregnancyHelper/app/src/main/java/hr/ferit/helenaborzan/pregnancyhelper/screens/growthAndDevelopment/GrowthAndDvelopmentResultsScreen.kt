@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -114,12 +114,13 @@ fun GrowthAndDevelopmentResultsScreen(
                     .padding(24.dp)
             ) {
                 items(growthAndDevelopmentResults.withIndex().toList()) { (index, result) ->
+                    Log.d("LazyColumn", "Rendering item at index: $index")
                     PercentilesResult(
                         growthAndDevelopmentResult = result,
                         growthAndDevelopmentResultIndex = index,
                         viewModel = viewModel,
-                        growthAndDevelopmentResults = growthAndDevelopmentResults
                     )
+                    Log.d("PercentilesUI", "Index: ${index}, Height: ${result.growthAndDevelopmentInfo.length}")
                     Spacer(modifier = Modifier.height(24.dp))
                 }
             }
@@ -162,9 +163,10 @@ fun EmptyResults(navController: NavController, modifier : Modifier = Modifier) {
 @Composable
 fun PercentilesResult(
     growthAndDevelopmentResult: GrowthAndDevelopmentResult,
-    growthAndDevelopmentResultIndex : Int, viewModel: NewbornHomeViewModel,
-    growthAndDevelopmentResults : List<GrowthAndDevelopmentResult>
+    growthAndDevelopmentResultIndex : Int,
+    viewModel: NewbornHomeViewModel
     ) {
+    Log.d("PercentilesResult", "Composable called with index: $growthAndDevelopmentResultIndex")
     val date = growthAndDevelopmentResult.growthAndDevelopmentInfo.date
     Column(
         verticalArrangement = Arrangement.Center,
@@ -197,16 +199,19 @@ fun PercentilesResult(
                 tint = DarkGray,
                 modifier = Modifier
                     .padding(12.dp)
-                    .clickable { viewModel.onDeleteResultClick() }
+                    .clickable {
+                        Log.d("PercentilesResult", "Delete clicked for index: $growthAndDevelopmentResultIndex")
+                        viewModel.onDeleteResultClick(growthAndDevelopmentResultIndex) }
             )
         }
         GrowthInfo(growthAndDevelopmentInfo = growthAndDevelopmentResult.growthAndDevelopmentInfo)
         PercentileResultSection(growthAndDevelopmentPercentiles = growthAndDevelopmentResult.growthAndDevelopmentPercentiles)
+        val indexToDelete by viewModel.indexToDelete.collectAsState()
         DeleteResultDialog(showDialog = viewModel.showDialog.value,
             onConfirm = {
+                Log.e("result index UI", "$indexToDelete")
                 viewModel.deletePercentileResult(
-                    growthAndDevelopmentResultIndex,
-                    growthAndDevelopmentResults
+                    indexToDelete
                 )
             },
             onDismiss = { viewModel.onDeleteResultDialogDismiss() }

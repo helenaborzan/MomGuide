@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+
 
 class AccountServiceImpl @Inject constructor(
     private val auth: FirebaseAuth
@@ -56,26 +60,28 @@ class AccountServiceImpl @Inject constructor(
         }
 
     override suspend fun checkIfAccountExists(email: String): Boolean {
+        if (!isValidEmail(email)) {
+            Log.d("AccountService", "Invalid email format: $email")
+            throw IllegalArgumentException("Invalid email format")
+        }
+
         return try {
             auth.signInWithEmailAndPassword(email, "dummyPassword").await()
-            // Sign-in successful means account exists
-            auth.signOut()
-            Log.d("AccountService", "Account exists for email: $email")
             true
         } catch (e: FirebaseAuthInvalidUserException) {
-            // No such user exists
-            Log.d("AccountService", "No account exists for email: $email")
+            Log.d("AccountService", "Account does not exist for $email")
             false
         } catch (e: FirebaseAuthInvalidCredentialsException) {
-            // Invalid credentials means account exists but wrong password
-            auth.signOut()
-            Log.d("AccountService", "Account exists for email: $email but invalid credentials used")
+            Log.d("AccountService", "Account exists for $email")
             true
         } catch (e: Exception) {
-            // Catch any other exceptions and log them
-            Log.e("AccountService", "Error checking account existence for email: $email", e)
-            false
+            Log.e("AccountService", "Error checking if account exists", e)
+            throw e
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
 }
