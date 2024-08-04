@@ -1,7 +1,11 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.map
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.location.Geocoder
+import android.location.Location
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -14,6 +18,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Hospital
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,10 +27,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class MapViewModel @Inject constructor(private val placesClient: PlacesClient): ViewModel() {
+class MapViewModel @Inject constructor(
+    private val placesClient: PlacesClient
+): ViewModel() {
     private val _state = MutableStateFlow(MapState())
     val state: StateFlow<MapState> = _state.asStateFlow()
 
@@ -43,34 +51,45 @@ class MapViewModel @Inject constructor(private val placesClient: PlacesClient): 
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun fetchNearbyHospitals(currentLocation: LatLng) {
+    suspend fun fetchNearbyHospitals(context: Context,currentLocation: LatLng) {
         withContext(Dispatchers.IO) {
-            val request = FindAutocompletePredictionsRequest.builder()
-                .setLocationBias(RectangularBounds.newInstance(
-                    LatLng(currentLocation.latitude - 0.1, currentLocation.longitude - 0.1),
-                    LatLng(currentLocation.latitude + 0.1, currentLocation.longitude + 0.1)
-                ))
-                .setTypesFilter(listOf(PlaceTypes.HOSPITAL, PlaceTypes.HEALTH, PlaceTypes.DOCTOR))
-                .setQuery("psiholog")
-                .build()
-
+            val queries = listOf("psiholog", "psihijatar", "psychologist", "psychiatrist")
+            val results = mutableListOf<Hospital>()
+            val radius = 70000
+            val latLngBounds = RectangularBounds.newInstance(
+                LatLng(currentLocation.latitude - 0.1, currentLocation.longitude - 0.1),
+                LatLng(currentLocation.latitude + 0.1, currentLocation.longitude + 0.1)
+            )
             try {
-                Log.d("MapViewModel", "Fetching nearby hospitals for location: $currentLocation")
-                val response = placesClient.findAutocompletePredictions(request).await()
-                val hospitals = response.autocompletePredictions.map { prediction ->
-                    val placeResult = placesClient.fetchPlace(
-                        FetchPlaceRequest.newInstance(
-                            prediction.placeId,
-                            listOf(Place.Field.LAT_LNG, Place.Field.NAME)
-                        )
-                    ).await()
+                for (query in queries) {
+                    val request = FindAutocompletePredictionsRequest.builder()
+                        .setLocationBias(latLngBounds)
+                        .setTypesFilter(listOf(PlaceTypes.HOSPITAL, PlaceTypes.HEALTH, PlaceTypes.DOCTOR))
+                        .setQuery(query)
+                        .build()
 
-                    placeResult.place.latLng.let { latLng ->
-                        Hospital(placeResult.place.name ?: "", latLng)
+
+                    val response = placesClient.findAutocompletePredictions(request).await()
+                    val predictions = response.autocompletePredictions
+
+                    // Fetch detailed information for each prediction
+                    predictions.forEach { prediction ->
+                        val placeResult = placesClient.fetchPlace(
+                            FetchPlaceRequest.newInstance(
+                                prediction.placeId,
+                                listOf(Place.Field.LAT_LNG, Place.Field.NAME)
+                            )
+                        ).await()
+
+                        placeResult.place.latLng?.let { latLng ->
+                            if (isWithinRadius(currentLocation, latLng, radius)) {
+                                results.add(Hospital(placeResult.place.name ?: "Unknown", latLng))
+                            }
+                        }
                     }
                 }
-                Log.d("MapViewModel", "Fetched nearby hospitals: $hospitals")
-                updateHospitals(hospitals)
+                Log.d("MapViewModel", "Fetched nearby hospitals: $results")
+                updateHospitals(results)
             } catch (e: Exception) {
                 Log.e("MapViewModel", "Error fetching hospitals", e)
             }
@@ -92,5 +111,13 @@ class MapViewModel @Inject constructor(private val placesClient: PlacesClient): 
             )
         }
     }
-
+    private fun isWithinRadius(center: LatLng, point: LatLng, radius: Int): Boolean {
+        val results = FloatArray(1)
+        Location.distanceBetween(
+            center.latitude, center.longitude,
+            point.latitude, point.longitude,
+            results
+        )
+        return results[0] <= radius
+    }
 }

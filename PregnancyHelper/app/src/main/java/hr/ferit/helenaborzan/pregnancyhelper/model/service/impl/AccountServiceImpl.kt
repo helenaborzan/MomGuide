@@ -5,6 +5,7 @@ import com.google.android.gms.nearby.connection.AuthenticationException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.firestore.FirebaseFirestore
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.User
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import kotlinx.coroutines.channels.awaitClose
@@ -18,7 +19,8 @@ import kotlin.coroutines.suspendCoroutine
 
 
 class AccountServiceImpl @Inject constructor(
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AccountService {
     override val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
@@ -57,31 +59,8 @@ class AccountServiceImpl @Inject constructor(
 
     override suspend fun signIn(email: String, password: String){
         auth.createUserWithEmailAndPassword(email, password)
-        }
-
-    override suspend fun checkIfAccountExists(email: String): Boolean {
-        if (!isValidEmail(email)) {
-            Log.d("AccountService", "Invalid email format: $email")
-            throw IllegalArgumentException("Invalid email format")
-        }
-
-        return try {
-            auth.signInWithEmailAndPassword(email, "dummyPassword").await()
-            true
-        } catch (e: FirebaseAuthInvalidUserException) {
-            Log.d("AccountService", "Account does not exist for $email")
-            false
-        } catch (e: FirebaseAuthInvalidCredentialsException) {
-            Log.d("AccountService", "Account exists for $email")
-            true
-        } catch (e: Exception) {
-            Log.e("AccountService", "Error checking if account exists", e)
-            throw e
-        }
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
+
 
 }

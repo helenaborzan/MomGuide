@@ -11,10 +11,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.anyToLocalDate
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.Recipe
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.NutritionInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.pregnancy.PregnancyInfo
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.PregnancyInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.repository.RecipeRepository
@@ -38,7 +40,8 @@ import javax.inject.Inject
 class PregnancyHomeViewModel @Inject constructor(
     private val pregnancyInfoRepository: PregnancyInfoRepository,
     private val accountService: AccountService,
-    private val recipeRepository: RecipeRepository
+    private val recipeRepository: RecipeRepository,
+    private val resourceHelper: ResourceHelper
 ) : ViewModel(){
     private val _pregnancyInfo = MutableStateFlow<List<PregnancyInfo>>(emptyList())
     val pregnancyInfo: StateFlow<List<PregnancyInfo>> = _pregnancyInfo.asStateFlow()
@@ -225,5 +228,19 @@ class PregnancyHomeViewModel @Inject constructor(
 
     fun getLikeCount(recipeUrl: String): Flow<Int> {
         return recipeRepository.getLikeCount(recipeUrl)
+    }
+    fun doesUserHaveDepression(depressionResult: QuestionnaireResult) : Boolean{
+        Log.e("pregnancy", "${depressionResult.resultMessage}")
+        return depressionResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveDepressionTest)
+    }
+
+    fun doesUserHaveAnxiety(anxietyResult: QuestionnaireResult) : Boolean{
+        Log.e("pregnancy", "${anxietyResult.resultMessage}")
+        return anxietyResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveAnxietyTest)
+    }
+
+    fun doesUserHaveHighStress(stressResult: QuestionnaireResult) : Boolean{
+        Log.e("pregnancy", "${stressResult.resultMessage}")
+        return stressResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveStressTest)
     }
 }

@@ -11,11 +11,14 @@ import com.google.type.DateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
+import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getString
+import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BottleInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.breastfeeding.BreastfeedingInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.Point
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.model.service.AccountService
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoUiState
@@ -33,7 +36,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewbornHomeViewModel @Inject constructor(
     private val newbornInfoRepository: NewbornInfoRepository,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val resourceHelper: ResourceHelper
 ) : ViewModel(){
 
     private val _newbornInfo = MutableStateFlow<List<NewbornInfo>>(emptyList())
@@ -314,5 +318,9 @@ class NewbornHomeViewModel @Inject constructor(
             feedingDurations.add(row.getMinutesDifference() ?: 0)
         }
         return feedingDurations
+    }
+
+    fun doesUserNeedHelp(questionnaireResult : QuestionnaireResult) : Boolean{
+        return questionnaireResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveEPDStest)
     }
 }

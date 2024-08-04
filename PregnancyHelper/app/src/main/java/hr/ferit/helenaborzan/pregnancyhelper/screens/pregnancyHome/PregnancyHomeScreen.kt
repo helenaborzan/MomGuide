@@ -72,6 +72,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.GetHelp
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.QuestionnaireSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.ShowAllQuestionnaireResults
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.ShowQuestionnaireResult
@@ -145,7 +146,8 @@ fun PregnancyHomeScreen(
                 depressionResults = depressionQuestionnaireResults,
                 anxietyResults = anxietyQuestionnaireResults,
                 stressResults = stressQuestionnaireResults,
-                navController = navController
+                navController = navController,
+                viewModel = viewModel
             )
         }
     }
@@ -753,7 +755,8 @@ fun QuestionnaireSection(
     navController: NavController,
     depressionResults : List<QuestionnaireResult>,
     anxietyResults : List<QuestionnaireResult>,
-    stressResults : List<QuestionnaireResult>
+    stressResults : List<QuestionnaireResult>,
+    viewModel: PregnancyHomeViewModel
 ) {
     Column(
         modifier = Modifier
@@ -765,6 +768,34 @@ fun QuestionnaireSection(
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        if(depressionResults.isNotEmpty()){
+            if (viewModel.doesUserHaveDepression(depressionResults.last())){
+                GetHelp(
+                    navigate = { navController.navigate(Screen.GetHelpPregnancyScreen.route) },
+                    modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                )
+            }
+            else if(anxietyResults.isNotEmpty()){
+                if (viewModel.doesUserHaveAnxiety(anxietyResults.last())){
+                    GetHelp(
+                        navigate = { navController.navigate(Screen.GetHelpPregnancyScreen.route) },
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+                }
+                else if(stressResults.isNotEmpty()){
+                    if (viewModel.doesUserHaveHighStress(stressResults.last())){
+                        GetHelp(
+                            navigate = {navController.navigate(Screen.GetHelpPregnancyScreen.route)},
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
+        
         QuestionnaireCard(
             titleId = R.string.depressionTitle,
             navigateToAnswering = { navController.navigate(Screen.DepressionQuestionnaireScreen.route) },
@@ -846,9 +877,6 @@ fun QuestionnaireCard(
                         else
                             stringResource(id = R.string.emptyQuestionnaireResults)
                     )
-                    if (showAllResults){
-                        ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
-                    }
                 }
 
                 if (questionnaireResults.size > 1) {
@@ -859,7 +887,8 @@ fun QuestionnaireCard(
                             painterResource(id = R.drawable.baseline_expand_less_24),
                         contentDescription = stringResource(id = R.string.moreIconDescription),
                         tint = DarkGray,
-                        modifier = Modifier.weight(0.2f)
+                        modifier = Modifier
+                            .weight(0.2f)
                             .clickable {
                                 showAllResults = !showAllResults
                             }
@@ -880,13 +909,17 @@ fun QuestionnaireCard(
                 )
             }
         }
+        if (showAllResults){
+            ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
+        }
     }
 }
 
 @Composable
 fun FillQuestionnaire(navigate: () -> Unit) {
     Row (verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 4.dp)
+        modifier = Modifier
+            .padding(end = 4.dp)
             .clickable { navigate() }){
         Text(
             text = "Ispunite upitnik"

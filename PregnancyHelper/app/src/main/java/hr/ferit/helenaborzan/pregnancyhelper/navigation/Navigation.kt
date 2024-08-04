@@ -3,18 +3,17 @@ package hr.ferit.helenaborzan.pregnancyhelper.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInfoScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInputScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.chooseCategory.ChooseCategoryScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.dailyCalorieGoal.DailyCalorieGoalScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.getHelpPostpartum.GetHelpPostpartumScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.getHelpPregnancy.GetHelpPregnancyScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentCalculationScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment.GrowthAndDevelopmentResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationScreen
@@ -22,13 +21,10 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornNameQuestion.NewbornNameQuestionScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsScreen
-import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.ContractionsTimerSection
-import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.NutritionSection
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition.NutritionScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyStartQuestion.PregnancyStartQuestion
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.AnxietyQuestionnaireViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.BaseQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
@@ -40,11 +36,10 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.Que
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.StressStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.recipe.RecipeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.registration.RegistrationScreen
-import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 
 
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(34)
 @Composable
 fun NavigationController() {
     val navController = rememberNavController()
@@ -169,7 +164,12 @@ fun NavigationController() {
         composable(Screen.NewbornNameQuestionScreen.route){
             NewbornNameQuestionScreen(navController = navController)
         }
-
+        composable(Screen.GetHelpPostPartumScreen.route){
+            GetHelpPostpartumScreen(navController = navController)
+        }
+        composable(Screen.GetHelpPregnancyScreen.route){
+            GetHelpPregnancyScreen(navController = navController)
+        }
 
     }
 }

@@ -64,7 +64,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
-
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Red
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -72,6 +72,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 fun NewbornHomeScreen(
     navController: NavController,
     viewModel: NewbornHomeViewModel = hiltViewModel()) {
+
     val newbornInfo by viewModel.newbornInfo.collectAsState(initial = emptyList())
     val questionnaireResults = remember(newbornInfo) {
         newbornInfo.flatMap { it.questionnaireResults }
@@ -113,7 +114,9 @@ fun NewbornHomeScreen(
         QuestionnaireSection(
             navigate = {navController.navigate(Screen.EPDSQuestionnaireScreen.route)},
             questionnaireResults = questionnaireResults,
-            title = R.string.postPartumDepressionTitle
+            title = R.string.postPartumDepressionTitle,
+            viewModel = viewModel,
+            navController = navController
         )
     }
     }
@@ -452,7 +455,9 @@ fun GrowthAndDevelopmentButton(
 fun QuestionnaireSection(
     navigate : () -> Unit,
     questionnaireResults : List<QuestionnaireResult>,
-    @StringRes title : Int
+    @StringRes title : Int,
+    viewModel: NewbornHomeViewModel,
+    navController: NavController
 ){
     var showAllResults by remember {
         mutableStateOf(false)
@@ -472,6 +477,14 @@ fun QuestionnaireSection(
                 .fillMaxWidth()
                 .background(color = Color.White, shape = RoundedCornerShape(8.dp))
         ){
+            if (questionnaireResults.isNotEmpty()){
+                if (viewModel.doesUserNeedHelp(questionnaireResults.last())){
+                    GetHelp(
+                        navigate = {navController.navigate(Screen.GetHelpPostPartumScreen.route)},
+                        modifier = Modifier.fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 4.dp))
+                }
+            }
             Text(
                 text = stringResource(id = R.string.fillTheQuestionnaireLabel),
                 style = TextStyle(color = Pink, fontSize = 16.sp, textDecoration = TextDecoration.Underline),
@@ -479,37 +492,75 @@ fun QuestionnaireSection(
                     .padding(start = 4.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                     .clickable { navigate() }
             )
-           ShowQuestionnaireResult(
-               date = if (questionnaireResults.isNotEmpty())
-                   questionnaireResults[questionnaireResults.size-1].date
-               else
-                   null,
-               resultMessage = if (questionnaireResults.isNotEmpty())
-                   questionnaireResults[questionnaireResults.size-1].resultMessage
-               else
-                   stringResource(id = R.string.emptyQuestionnaireResults)
-           )
-            if (Build.VERSION.SDK_INT >= 34) {
-                MapSection()
-            }
-            if (questionnaireResults.size > 1) {
-                Icon(
-                    painter = if (!showAllResults)
-                        painterResource(id = R.drawable.baseline_more_horiz_24)
-                    else
-                        painterResource(id = R.drawable.baseline_expand_less_24),
-                    contentDescription = stringResource(id = R.string.moreIconDescription),
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .clickable {
-                            showAllResults = !showAllResults
+            Row() {
+                Row (modifier = Modifier.weight(0.7f),
+                    verticalAlignment = Alignment.Bottom){
+                    Column (modifier = Modifier.weight(0.7f)){
+                        ShowQuestionnaireResult(
+                            date = if (questionnaireResults.isNotEmpty())
+                                questionnaireResults[questionnaireResults.size - 1].date
+                            else
+                                null,
+                            resultMessage = if (questionnaireResults.isNotEmpty())
+                                questionnaireResults[questionnaireResults.size - 1].resultMessage
+                            else
+                                stringResource(id = R.string.emptyQuestionnaireResults)
+                        )
+                    }
+                        if (questionnaireResults.size > 1) {
+                            Icon(
+                                painter = if (!showAllResults)
+                                    painterResource(id = R.drawable.baseline_more_horiz_24)
+                                else
+                                    painterResource(id = R.drawable.baseline_expand_less_24),
+                                contentDescription = stringResource(id = R.string.moreIconDescription),
+                                modifier = Modifier.weight(0.3f)
+                                    .clickable {
+                                    showAllResults = !showAllResults
+                                }
+                            )
                         }
-                )
+                }
+                Row (
+                    modifier = Modifier.weight(0.3f),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ){
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bar_chart_24),
+                        contentDescription = "See statistics",
+                        tint = DarkGray,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable {
+                                navController.navigate(Screen.EPDSQuestionnaireStatisticsScreen.route)
+                            }
+                    )
+                }
             }
             if (showAllResults){
                 ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
             }
         }
+    }
+}
+
+@Composable
+fun GetHelp(navigate: () -> Unit, modifier: Modifier) {
+    Column (modifier = modifier){
+        Row (verticalAlignment = Alignment.CenterVertically){
+            Text(
+                text = stringResource(id = R.string.getHelp),
+                style = TextStyle(color = Red, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                contentDescription = "Get help",
+                modifier = Modifier.clickable {
+                    navigate()
+            })
+        }
+        Text(text = stringResource(id = R.string.getHelpDescription), fontSize = 16.sp)
     }
 }
 

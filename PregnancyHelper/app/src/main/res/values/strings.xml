@@ -47,6 +47,8 @@
     <string name="noGrowthAndDevelopmentResults">Još nema rezultata</string>
     <string name="noPreviousResults">Nema prijašnih rezultata</string>
     <string name="mentalHealthTitle">Psihičko zdravlje</string>
+    <string name="getHelp">Potražite pomoć</string>
+    <string name="getHelpDescription">Vaši rezultati pokazuju da trebate posjetiti liječnika.</string>
 
     <string name="positiveEPDStest">Vrlo je vjerojatno da patite od postporođajne depresije. Savjetujemo Vam da potražite <b>pomoć liječnika</b></string>
     <string name="negativeEPDStest">Čini se kao da ne bolujete od postporođajne depresije. Ispunite upitnik opet za dva tjedna.</string>
@@ -182,5 +184,8 @@
     <string name="blankSexError">Morate odabrati spol.</string>
     <string name="nameInputLabel">Unesite ime djeteta</string>
     <string name="invalidEmailError">Krivi email</string>
+
+    <string name="postPartumDepressionHelp">Otprilike 15% majki oboli od postporođajne depresije. Postporođajna depresija ima negativne učinke na Vas, a i na Vaše dijete zbog čega je važno potražiti stručnu pomoć.</string>
+    <string name="pregnancyHelp">Mentalno zdravlje ima veliku važnost u razdoblju trudnoće, kako za Vas, tako i za Vaše dijete. Stoga je bitno potražiti pomoć.</string>
 
 </resources>

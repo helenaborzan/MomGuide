@@ -31,7 +31,6 @@ import kotlinx.coroutines.tasks.await
 
 
 @RequiresApi(34)
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapSection(viewModel: MapViewModel = hiltViewModel()) {
     val context = LocalContext.current
@@ -50,13 +49,14 @@ fun MapSection(viewModel: MapViewModel = hiltViewModel()) {
         
 
     LaunchedEffect(hasLocationPermission) {
+
         if (hasLocationPermission) {
             try {
                 val location = fusedLocationClient.lastLocation.await()
                 location?.let {
                     val latLng = LatLng(it.latitude, it.longitude)
                     state.cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
-                    viewModel.fetchNearbyHospitals(latLng)
+                    viewModel.fetchNearbyHospitals(context,latLng)
                     Log.d("MapSection", "Fetching nearby hospitals: ${state.nearbyHospitals}")
                     viewModel.zoomToShowAllMarkers(state.nearbyHospitals)
                 }
