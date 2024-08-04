@@ -107,19 +107,26 @@ fun QandACard(
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AnswerRadioButton(
-                        isSelected = userAnswer?.text == answer.text,
-                        onCheckedChange = { /* Do nothing, as this is a statistics view */ }
-                    )
-                    Text(
-                        text = answer.text,
-                        style = TextStyle(color = Color.Black, fontSize = 14.sp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = String.format("%.1f%%", statistics[answer.text] ?: 0.0),
-                        style = TextStyle(color = Color.Gray, fontSize = 12.sp)
-                    )
+                    Row (modifier = Modifier.weight(0.7f),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        AnswerRadioButton(
+                            isSelected = userAnswer?.text == answer.text,
+                            onCheckedChange = { }
+                        )
+                        Text(
+                            text = answer.text,
+                            style = TextStyle(color = Color.Black, fontSize = 14.sp)
+                        )
+                    }
+                    Row (modifier = Modifier.weight(0.3f)){
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = String.format("%.1f%%", statistics[answer.text] ?: 0.0),
+                            style = TextStyle(color = Color.Gray, fontSize = 12.sp)
+                        )
+                    }
                 }
             }
         }

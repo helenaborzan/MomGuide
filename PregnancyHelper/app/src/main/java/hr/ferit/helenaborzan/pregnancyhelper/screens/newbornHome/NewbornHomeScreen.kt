@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BabyChangingStation
+import androidx.compose.material.icons.filled.PregnantWoman
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,11 +102,12 @@ fun NewbornHomeScreen(
             .fillMaxSize()
             .background(color = DirtyWhite)
     ){ item {
-        IconBar(viewModel = viewModel)
+        IconBar(viewModel = viewModel, navController = navController)
         BabyName(name = newbornInfo.map { it.name }.firstOrNull() ?: "",
             sex = newbornInfo.map { it.sex }.firstOrNull() ?: "",
             navController = navController
         )
+        Spacer(modifier = Modifier.height(40.dp))
         BreastfeedingSection(
             navController = navController,
             uiState = uiState,
@@ -129,7 +134,7 @@ fun NewbornHomeScreen(
 }
 
 @Composable
-fun IconBar(viewModel: NewbornHomeViewModel) {
+fun IconBar(viewModel: NewbornHomeViewModel, navController : NavController) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -137,16 +142,27 @@ fun IconBar(viewModel: NewbornHomeViewModel) {
             .fillMaxWidth()
             .padding(24.dp)
     ){
-        Icon(
-           painter = painterResource(R.drawable.baseline_notifications_24),
-            contentDescription = stringResource(id = R.string.notificationIconDescription),
-            tint = Color.DarkGray
-        )
-        Text(
-            text = stringResource(id = R.string.signOut),
-            style = TextStyle(fontSize = 14.sp, color = DarkGray),
-            modifier = Modifier.clickable { viewModel.onSignOutClick() }
-        )
+        Box(modifier = Modifier.border(width = 1.dp, color = DarkGray, shape = CircleShape)) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_baby_changing_station_24),
+                contentDescription = null,
+                tint = DarkGray,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_logout_24),
+                contentDescription = null,
+                tint = DarkGray,
+                modifier = Modifier.clickable { viewModel.onSignOutClick() }
+            )
+            Text(
+                text = stringResource(id = R.string.signOut),
+                style = TextStyle(fontSize = 14.sp, color = DarkGray),
+                modifier = Modifier.clickable { viewModel.onSignOutClick() }
+            )
+        }
     }
 }
 
@@ -163,12 +179,12 @@ fun BreastfeedingSection(
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = stringResource(id = R.string.breastfeedingAndFormulaTitle),
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 4.dp)
         )
         ChooseType(viewModel = viewModel, uiState = uiState)
         Column (
@@ -217,12 +233,12 @@ fun Breastfeeding(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = "${todaysBreastfeedingInfo.size} hranjenja",
+                text = "${todaysBreastfeedingInfo.size} feedings",
                 style = TextStyle(color = Pink)
             )
             Text(
@@ -243,7 +259,7 @@ fun Breastfeeding(
             yValues = viewModel.getFeedingDuration(todaysBreastfeedingInfo),
             xlabel = stringResource(id = R.string.time),
             ylabel = stringResource(id = R.string.feedingDuration),
-            modifier = Modifier.height(360.dp)
+            modifier = Modifier.height(200.dp)
         )
     }
     else{
@@ -254,20 +270,25 @@ fun Breastfeeding(
         ) {
             Text(
                 text = stringResource(id = R.string.noFeedingHistoryToday),
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(8.dp)
+                    .weight(0.7f)
             )
-            Text(
-                text = stringResource(id = R.string.seeAll),
-                style = TextStyle(
-                    color = Color.LightGray,
-                    textDecoration = TextDecoration.Underline
-                ),
-                modifier = Modifier
-                    .padding(12.dp)
-                    .clickable {
-                        navController.navigate(Screen.BreastfeedingInfoScreen.route)
-                    }
-            )
+            Spacer(modifier = Modifier.weight(0.1f))
+            Row (modifier = Modifier.weight(0.2f),
+                horizontalArrangement = Arrangement.End){
+                Text(
+                    text = stringResource(id = R.string.seeAll),
+                    style = TextStyle(
+                        color = Color.LightGray,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                        }
+                )
+            }
         }
     }
 }
@@ -283,12 +304,12 @@ fun Bottle(
         Row (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = "${todaysBottleInfo.size} hranjenja",
+                text = "${todaysBottleInfo.size} feedings",
                 style = TextStyle(color = Pink)
             )
             Text(
@@ -320,20 +341,25 @@ fun Bottle(
         ) {
             Text(
                 text = stringResource(id = R.string.noFeedingHistoryToday),
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(8.dp)
+                    .weight(0.7f)
             )
-            Text(
-                text = stringResource(id = R.string.seeAll),
-                style = TextStyle(
-                    color = Color.LightGray,
-                    textDecoration = TextDecoration.Underline
-                ),
-                modifier = Modifier
-                    .padding(12.dp)
-                    .clickable {
-                        navController.navigate(Screen.BreastfeedingInfoScreen.route)
-                    }
-            )
+            Spacer(modifier = Modifier.weight(0.1f))
+            Row (modifier = Modifier.weight(0.2f),
+                horizontalArrangement = Arrangement.End){
+                Text(
+                    text = stringResource(id = R.string.seeAll),
+                    style = TextStyle(
+                        color = Color.LightGray,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            navController.navigate(Screen.BreastfeedingInfoScreen.route)
+                        }
+                )
+            }
         }
     }
 }
@@ -347,10 +373,10 @@ fun ChooseType(viewModel: NewbornHomeViewModel, uiState: NewbornHomeUiState) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp)
+            .padding(vertical = 12.dp)
     ){
         BasicButton(
-            text = stringResource(id = R.string.breastfeedingTitle),
+            text = stringResource(id = R.string.breastfeedingType),
             onClick = { viewModel.onFeedingTypeChangeHome("Dojenje") },
             containerColor = if (uiState.feedingType == "Dojenje") LightestPink else Color.White,
             modifier = Modifier
@@ -376,7 +402,7 @@ fun GrowthAndDevelopmentSection(
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ){
         Text(
             text = stringResource(id = R.string.growthAndDevelopmentTitle),
@@ -391,14 +417,16 @@ fun GrowthAndDevelopmentSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             GrowthAndDevelopmentResult(
-                modifier = Modifier.weight(2f),
+                modifier = Modifier.weight(0.6f),
                 growthAndDevelopmentResults = growthAndDevelopmentResults,
                 navController = navController
             )
-            GrowthAndDevelopmentButton(
-                text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
-                onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) }
-            )
+            Row(modifier = Modifier.weight(0.4f)){
+                GrowthAndDevelopmentButton(
+                    text = stringResource(id = R.string.growthAndDevelopmentButtonLabel),
+                    onClick = { navController.navigate(Screen.GrowthAndDevelopmentCalculationScreen.route) }
+                )
+        }
         }
     }
 }
@@ -443,7 +471,8 @@ fun GrowthAndDevelopmentButton(
     ) {
         Text (
             text = text,
-            style = TextStyle(color = DarkGray, fontSize = 12.sp, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(color = DarkGray, fontSize = 12.sp, fontFamily = FontFamily.SansSerif),
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -465,26 +494,27 @@ fun QuestionnaireSection(
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = stringResource(id = title),
             style = TextStyle(color = Color.Black, fontSize = 20.sp),
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        if (questionnaireResults.isNotEmpty()){
+            if (viewModel.doesUserNeedHelp(questionnaireResults.last())){
+                GetHelp(
+                    navigate = {navController.navigate(Screen.GetHelpPostPartumScreen.route)},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp))
+            }
+        }
         Column (
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color.White, shape = RoundedCornerShape(8.dp))
         ){
-            if (questionnaireResults.isNotEmpty()){
-                if (viewModel.doesUserNeedHelp(questionnaireResults.last())){
-                    GetHelp(
-                        navigate = {navController.navigate(Screen.GetHelpPostPartumScreen.route)},
-                        modifier = Modifier.fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 4.dp))
-                }
-            }
             Text(
                 text = stringResource(id = R.string.fillTheQuestionnaireLabel),
                 style = TextStyle(color = Pink, fontSize = 16.sp, textDecoration = TextDecoration.Underline),
@@ -493,9 +523,9 @@ fun QuestionnaireSection(
                     .clickable { navigate() }
             )
             Row() {
-                Row (modifier = Modifier.weight(0.7f),
+                Row (modifier = Modifier.weight(0.85f),
                     verticalAlignment = Alignment.Bottom){
-                    Column (modifier = Modifier.weight(0.7f)){
+                    Column (modifier = Modifier.weight(0.9f)){
                         ShowQuestionnaireResult(
                             date = if (questionnaireResults.isNotEmpty())
                                 questionnaireResults[questionnaireResults.size - 1].date
@@ -514,28 +544,31 @@ fun QuestionnaireSection(
                                 else
                                     painterResource(id = R.drawable.baseline_expand_less_24),
                                 contentDescription = stringResource(id = R.string.moreIconDescription),
-                                modifier = Modifier.weight(0.3f)
+                                modifier = Modifier
+                                    .weight(0.1f)
                                     .clickable {
-                                    showAllResults = !showAllResults
-                                }
+                                        showAllResults = !showAllResults
+                                    }
                             )
                         }
                 }
-                Row (
-                    modifier = Modifier.weight(0.3f),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Bottom
-                ){
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_bar_chart_24),
-                        contentDescription = "See statistics",
-                        tint = DarkGray,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
-                                navController.navigate(Screen.EPDSQuestionnaireStatisticsScreen.route)
-                            }
-                    )
+                if(questionnaireResults.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.weight(0.15f),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_bar_chart_24),
+                            contentDescription = "See statistics",
+                            tint = DarkGray,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    navController.navigate(Screen.EPDSQuestionnaireStatisticsScreen.route)
+                                }
+                        )
+                    }
                 }
             }
             if (showAllResults){
@@ -650,17 +683,27 @@ fun BabyName(name : String, sex : String, navController: NavController) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Box(
+        Column(
             modifier = Modifier
-                .size(300.dp)
+                .size(150.dp)
                 .border(width = 1.dp, color = color, shape = CircleShape),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Baby",
+                style = TextStyle(
+                    color = color,
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily.Cursive,
+                    fontWeight = FontWeight.Bold
+                )
+            )
             Text(
                 text = name,
                 style = TextStyle(
                     color = color,
-                    fontSize = 60.sp,
+                    fontSize = 30.sp,
                     fontFamily = FontFamily.Cursive,
                     fontWeight = FontWeight.Bold
                 ),

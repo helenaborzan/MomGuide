@@ -25,7 +25,7 @@ class PercentileCalculator @Inject constructor(
     fun <T>calculatePercentile(type : String, sex : String, searchCriteria : T, value : Int) : Double{
         val z_value = calculateZvalue(type = type, sex = sex, searchCriteria = searchCriteria, value = value)
         val normalDistribution = NormalDistribution()
-        return String.format("%.3f", normalDistribution.cumulativeProbability(z_value) * 100).toDouble()
+        return (normalDistribution.cumulativeProbability(z_value) * 100).toDouble()
     }
 
     fun isPercentileInNormalLimits(percentileValue : Double) : Boolean{

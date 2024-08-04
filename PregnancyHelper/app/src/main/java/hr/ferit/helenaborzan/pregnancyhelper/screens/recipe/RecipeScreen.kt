@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.navArgument
@@ -86,7 +88,7 @@ fun RecipeScreen(
             Button(
                 onClick = { viewModel.fetchRecipes(query) },
                 enabled = query.isNotBlank() && !isLoading,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 Text("Search")
             }
@@ -103,7 +105,7 @@ fun RecipeScreen(
             }
         } else {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(4),
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 content = {
                     items(recipes.size) { index ->
@@ -142,7 +144,7 @@ fun RecipeItem(
             ) {
                 Text(
                     text = recipe.label,
-                    style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold),
+                    style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold, fontSize = 10.sp),
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(end = 40.dp)
@@ -193,7 +195,7 @@ fun RecipeItem(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                Text("View Recipe")
+                Text("View")
             }
         }
     }

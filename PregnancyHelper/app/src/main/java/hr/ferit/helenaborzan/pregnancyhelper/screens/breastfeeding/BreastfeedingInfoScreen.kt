@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -63,6 +65,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -116,23 +119,27 @@ fun BreastfeedingInfoScreen(
             uiState = uiState,
             availableDates = if(uiState.feedingType == "Dojenje") availableBreastfeedingDates
             else availableBottleDates)
-        DatePickerDialog(
-            showDialog = showDatePicker,
-            onDismiss = { showDatePicker = false },
-            onDateSelected = { date ->
-                viewModel.updateSelectedDate(date)
-                showDatePicker = false
-            },
-            availableDates = if (uiState.feedingType == "Dojenje") availableBreastfeedingDates
-            else availableBottleDates
-        )
+        LocaleWrapper(locale = Locale.ENGLISH) {
+            DatePickerDialog(
+                showDialog = showDatePicker,
+                onDismiss = { showDatePicker = false },
+                onDateSelected = { date ->
+                    viewModel.updateSelectedDate(date)
+                    showDatePicker = false
+                },
+                availableDates = if (uiState.feedingType == "Dojenje") availableBreastfeedingDates
+                else availableBottleDates
+            )
+        }
         Spacer(modifier = Modifier.weight(0.05f))
         ChooseFeedingType(viewModel = viewModel, uiState = uiState)
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.height(40.dp))
         if(uiState.feedingType == "Dojenje") {
             if(breastfeedingInfoByDate.size > 0) {
-                Column (modifier = Modifier.weight(0.4f).fillMaxWidth()) {
+                Column (modifier = Modifier
+                    .weight(0.4f)
+                    .fillMaxWidth()) {
                     ScatterPlot(
                         times = timesToTimePoints(breastfeedingInfoByDate.map { it.startTime }),
                         yValues = viewModel.getFeedingDuration(breastfeedingInfoByDate),
@@ -154,7 +161,9 @@ fun BreastfeedingInfoScreen(
         }
         else{
             if(bottleInfoByDate.size > 0) {
-                Column (modifier = Modifier.weight(0.4f).fillMaxWidth()) {
+                Column (modifier = Modifier
+                    .weight(0.4f)
+                    .fillMaxWidth()) {
                     ScatterPlot(
                         times = timesToTimePoints(bottleInfoByDate.map { it.time }),
                         yValues = bottleInfoByDate.map { it.quantity },
@@ -265,7 +274,7 @@ fun ChooseDate(
             )
         }
         Text(
-            text = if (viewModel.isSelectedDayToday(uiState.selectedDate)) "Danas" else getString(uiState.selectedDate),
+            text = if (viewModel.isSelectedDayToday(uiState.selectedDate)) "Today" else getString(uiState.selectedDate),
             style = TextStyle(textDecoration = TextDecoration.Underline),
             modifier = Modifier.clickable { onClick() }
         )
@@ -378,11 +387,30 @@ fun DatePickerDialog(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                title = { Text(text = "Choose date", modifier = Modifier.padding(12.dp))},
+                headline = { Text(text = "Selected date", modifier = Modifier.padding(12.dp))},
+                showModeToggle = false
+            )
         }
     }
 }
+@Composable
+fun LocaleWrapper(
+    locale: Locale = Locale.ENGLISH, // Default to English
+    content: @Composable () -> Unit
+) {
+    val context = LocalContext.current
+    val config = context.resources.configuration.apply {
+        setLocale(locale)
+    }
+    val newContext = context.createConfigurationContext(config)
 
+    CompositionLocalProvider(LocalContext provides newContext) {
+        content()
+    }
+}
 
 @Composable
 fun AddFeeding(

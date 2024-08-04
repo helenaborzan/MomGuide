@@ -144,19 +144,19 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
     }
 
     fun getLengthForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${String.format("%.2f",percentileValue)}% djece iste dobi je niže ili jednake visine kao i vaše dijete, dok je ${String.format("%.2f",100 - percentileValue)}% djece iste dobi višlje od vašeg djeteta."
+        return "${String.format("%.2f", percentileValue)}% of children of the same age are shorter or of the same height as your child, while ${String.format("%.2f", 100 - percentileValue)}% of children of the same age are taller than your child."
     }
 
     fun getWeightForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${String.format("%.2f",percentileValue)}% djece iste dobi ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+        return "${String.format("%.2f", percentileValue)}% of children of the same age have a smaller or equal body weight as your child, while ${String.format("%.2f", 100 - percentileValue)}% of children of the same age have a greater body weight than your child."
     }
 
     fun getWeightForLengthPercentileInterpretation(percentileValue: Double): String {
-        return "${String.format("%.2f",percentileValue)}% djece iste visine ima manju ili jednaku tjelesnu težinu kao i Vaše dijete, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veću tjelesnu težinu od Vašeg djeteta."
+        return "${String.format("%.2f", percentileValue)}% of children of the same height have a smaller or equal body weight as your child, while ${String.format("%.2f", 100 - percentileValue)}% of children of the same height have a greater body weight than your child."
     }
 
-    fun getHeadCircumFerenceForAgePercentileInterpretation(percentileValue: Double): String {
-        return "${String.format("%.2f",percentileValue)}% djece iste dobi ima manji ili jednak opseg glave od Vašeg djeteta, dok ${String.format("%.2f",100 - percentileValue)}% djece iste dobi ima veći opseg glave od Vašeg djeteta."
+    fun getHeadCircumferenceForAgePercentileInterpretation(percentileValue: Double): String {
+        return "${String.format("%.2f", percentileValue)}% of children of the same age have a smaller or equal head circumference as your child, while ${String.format("%.2f", 100 - percentileValue)}% of children of the same age have a greater head circumference than your child."
     }
 
     fun getPercentileInterpretation(type: Int, percentileValue: Double): String {
@@ -174,7 +174,7 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
                 percentileValue
             )
 
-            resourceHelper.getStringFromResource(id = R.string.headCircumferenceForAgePercentile) -> return getHeadCircumFerenceForAgePercentileInterpretation(
+            resourceHelper.getStringFromResource(id = R.string.headCircumferenceForAgePercentile) -> return getHeadCircumferenceForAgePercentileInterpretation(
                 percentileValue
             )
 

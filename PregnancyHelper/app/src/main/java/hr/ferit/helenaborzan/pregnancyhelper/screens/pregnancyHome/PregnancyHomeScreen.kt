@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,11 +26,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PregnantWoman
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -58,12 +61,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.google.firebase.Timestamp
@@ -170,18 +175,29 @@ fun IconBar(viewModel: PregnancyHomeViewModel) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ){
-        Icon(
-            painter = painterResource(R.drawable.baseline_notifications_24),
-            contentDescription = stringResource(id = R.string.notificationIconDescription),
-            tint = Color.DarkGray
-        )
-        Text(
-            text = stringResource(id = R.string.signOut),
-            style = TextStyle(fontSize = 14.sp, color = DarkGray),
-            modifier = Modifier.clickable { viewModel.onSignOutClick() }
-        )
+        Box(modifier = Modifier.border(width = 1.dp, color = DarkGray, shape = CircleShape)) {
+            Icon(
+                imageVector = Icons.Filled.PregnantWoman,
+                contentDescription = null,
+                tint = DarkGray,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_logout_24),
+                contentDescription = null,
+                tint = DarkGray,
+                modifier = Modifier.clickable { viewModel.onSignOutClick() }
+            )
+            Text(
+                text = stringResource(id = R.string.signOut),
+                style = TextStyle(fontSize = 14.sp, color = DarkGray),
+                modifier = Modifier.clickable { viewModel.onSignOutClick() }
+            )
+        }
     }
 }
 
@@ -196,7 +212,7 @@ fun NutritionSection(
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = stringResource(id = R.string.nutritionTitle),
@@ -210,7 +226,8 @@ fun NutritionSection(
         ){
             Row (modifier = Modifier
                 .padding(24.dp)
-                .height(184.dp)
+                .height(140.dp),
+                verticalAlignment = Alignment.CenterVertically
             ){
                 AddFoodButton(modifier = Modifier.weight(0.3f), navController = navController)
                 Spacer(modifier = Modifier.weight(0.2f))
@@ -312,7 +329,8 @@ fun CaloriesWithLabel(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = stringResource(id = labelId)
+            text = stringResource(id = labelId),
+            fontSize = 12.sp
         )
         if (value!=null) {
             Text(
@@ -321,7 +339,7 @@ fun CaloriesWithLabel(
                     else "${String.format("%.1f", value+450)}",
                     style = TextStyle(
                         color = valueColor,
-                        fontSize = 40.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier.clickable {
@@ -334,9 +352,10 @@ fun CaloriesWithLabel(
                 text = stringResource(id = R.string.calculateDailyCalorieGoal),
                 style = TextStyle(
                     color = Color.LightGray,
-                    fontSize = 20.sp,
+                    fontSize = 12.sp,
                     textDecoration = TextDecoration.Underline
                 ),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .clickable {
@@ -359,14 +378,16 @@ fun CaloriesWithLabel(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
-            text = stringResource(id = labelId)
+            text = stringResource(id = labelId),
+            textAlign = TextAlign.Center,
+            fontSize = 12.sp
         )
         if (value!=null) {
             Text(
                 text = "${String.format("%.1f", value)}",
                 style = TextStyle(
                     color = valueColor,
-                    fontSize = 40.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -386,7 +407,7 @@ fun CaloriesRecomendation(
     ){
 
         Text(
-            text = "$trimester. tromjesečje",
+            text = "${trimester}. trimester",
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -401,7 +422,7 @@ fun ContractionsTimerSection(navController: NavController) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = stringResource(id = R.string.contractionsTimerTitle),
@@ -421,7 +442,7 @@ fun RecipeSection(
 ) {
     Column (modifier = Modifier
         .fillMaxWidth()
-        .padding(24.dp)){
+        .padding(12.dp)){
 
         Text(
             text = stringResource(id = R.string.recipes),
@@ -453,12 +474,13 @@ fun NoFavoriteRecipes(navController: NavController) {
     ){
         Text(
             text = stringResource(id = R.string.noFavoriteRecipes),
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.weight(0.7f).padding(horizontal = 8.dp)
             )
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(12.dp)
+                .weight(0.3f)
+                .padding(8.dp)
                 .clickable { navController.navigate(Screen.RecipeScreen.route) }
         ){
             Icon(
@@ -490,7 +512,7 @@ fun FavoriteRecipes(
                         recipe = favoriteRecipes[it], favoriteRecipes = favoriteRecipes
                     ),
                     viewModel = viewModel,
-                    modifier = Modifier.width(200.dp)
+                    modifier = Modifier.width(140.dp)
                 )
             }
 
@@ -501,7 +523,7 @@ fun FavoriteRecipes(
             .padding(bottom = 12.dp, end = 12.dp)
             .clickable { navController.navigate(Screen.RecipeScreen.route) },
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ){
             Icon(
                 imageVector = Icons.Filled.Explore,
@@ -544,7 +566,7 @@ fun RecipeItem(
             ) {
                 Text(
                     text = recipe.label,
-                    style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold),
+                    style = TextStyle(color = DarkGray, fontWeight = FontWeight.Bold, fontSize = 10.sp),
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(end = 40.dp)
@@ -559,7 +581,6 @@ fun RecipeItem(
                     Text(text = "${likeCount}", color = DarkGray)
                     IconButton(
                         onClick = {
-                            Log.d("RecipeItem", "Clicked favorite for ${recipe.label}")
                             viewModel.toggleFavorite(
                                 RecipeInfo(
                                     label = recipe.label,
@@ -578,7 +599,7 @@ fun RecipeItem(
                 }
             }
             Image(
-                painter = rememberImagePainter(recipe.image),
+                painter = rememberAsyncImagePainter(recipe.image),
                 contentDescription = null,
                 modifier = Modifier
                     .weight(1f)
@@ -595,7 +616,7 @@ fun RecipeItem(
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                Text("View Recipe")
+                Text("View")
             }
         }
     }
@@ -698,12 +719,12 @@ fun PregnancyProgressCircle(
     modifier: Modifier = Modifier,
     backgroundColor: Color = LightestPink,
     progressColor: Color = Pink,
-    strokeWidth: Dp = 24.dp
+    strokeWidth: Dp = 12.dp
 ) {
     val progress = weeksPregnant / 40f * 360
 
     Box(
-        modifier = modifier.size(300.dp),
+        modifier = modifier.size(200.dp),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -734,15 +755,15 @@ fun PregnancyProgressCircle(
         }
         Column ( horizontalAlignment = Alignment.CenterHorizontally){
             Text(
-                text = "$weeksPregnant.",
+                text = "$weeksPregnant",
                 color = DarkGray,
-                fontSize = 36.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "tjedan trudnoće",
+                text = "weeks pregnant",
                 color = DarkGray,
-                fontSize = 24.sp
+                fontSize = 16.sp
             )
         }
     }
@@ -761,7 +782,7 @@ fun QuestionnaireSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = stringResource(id = title),
@@ -772,15 +793,17 @@ fun QuestionnaireSection(
             if (viewModel.doesUserHaveDepression(depressionResults.last())){
                 GetHelp(
                     navigate = { navController.navigate(Screen.GetHelpPregnancyScreen.route) },
-                    modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                 )
             }
             else if(anxietyResults.isNotEmpty()){
                 if (viewModel.doesUserHaveAnxiety(anxietyResults.last())){
                     GetHelp(
                         navigate = { navController.navigate(Screen.GetHelpPregnancyScreen.route) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(vertical = 8.dp)
                     )
                 }
@@ -788,7 +811,8 @@ fun QuestionnaireSection(
                     if (viewModel.doesUserHaveHighStress(stressResults.last())){
                         GetHelp(
                             navigate = {navController.navigate(Screen.GetHelpPregnancyScreen.route)},
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(vertical = 8.dp)
                         )
                     }
@@ -851,7 +875,7 @@ fun QuestionnaireCard(
             Text(
                 text = stringResource(id = titleId),
                 style = TextStyle(color = DarkGray, fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             FillQuestionnaire(navigate = navigateToAnswering)
         }
@@ -895,18 +919,21 @@ fun QuestionnaireCard(
                     )
                 }
             }
-            Row (modifier = Modifier.weight(0.3f),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.Bottom
-            ){
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_bar_chart_24),
-                    contentDescription = "See statistics",
-                    tint = DarkGray,
-                    modifier = Modifier.clickable {
-                        navigateToStatistics()
-                    }
-                )
+            if(questionnaireResults.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.weight(0.3f),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bar_chart_24),
+                        contentDescription = "See statistics",
+                        tint = DarkGray,
+                        modifier = Modifier.clickable {
+                            navigateToStatistics()
+                        }
+                    )
+                }
             }
         }
         if (showAllResults){
@@ -922,7 +949,7 @@ fun FillQuestionnaire(navigate: () -> Unit) {
             .padding(end = 4.dp)
             .clickable { navigate() }){
         Text(
-            text = "Ispunite upitnik"
+            text = stringResource(id = R.string.fillTheQuestionnaireLabel)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Icon(

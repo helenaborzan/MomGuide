@@ -3,6 +3,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,8 +38,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -48,6 +51,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.nutritionix.Food
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @Composable
 fun NutritionScreen(
@@ -69,8 +73,8 @@ fun NutritionScreen(
         var query by remember { mutableStateOf("") }
         GoBackIconBar(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+                .padding(vertical = 12.dp)
+                .fillMaxWidth(),
             navController = navController
         )
         OutlinedTextField(
@@ -150,12 +154,13 @@ fun FoodItem(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FoodImage(item = item)
-                Spacer(modifier = Modifier.width(16.dp))
-                FoodNutrientsValues(item = item, showMore = showMore)
+                FoodImage(item = item, modifier = Modifier.weight(0.15f))
+                FoodNutrientsValues(item = item, showMore = showMore, modifier = Modifier.weight(0.6f))
                 AddFoodAndMore(
+                    modifier = Modifier.weight(0.25f),
                     onButtonClick = {
                         viewModel.addUsersFoodIntake(food = item)
                                     navController.navigate(Screen.PregnancyHomeScreen.route)},
@@ -163,56 +168,56 @@ fun FoodItem(
                     showMore = showMore
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
 
 @Composable
 fun FoodNutrientsValues(
+    modifier : Modifier = Modifier,
     item : Food,
     showMore: Boolean
 ) {
-    Column {
+    Column (modifier = modifier){
         Text(
             text = item.food_name ?: "",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold
         )
         item.brand_name?.let { brand ->
             Text(
                 text = "Brand: $brand",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodySmall
             )
         }
         item.nf_calories?.let { calories ->
-            Text("Calories: $calories", style = MaterialTheme.typography.bodyMedium)
+            Text("Calories: $calories", style = MaterialTheme.typography.bodySmall)
         }
         if (showMore) {
             item.nf_total_fat?.let { fat ->
-                Text("Total Fat: ${fat}g", style = MaterialTheme.typography.bodyMedium)
+                Text("Total Fat: ${fat}g", style = MaterialTheme.typography.bodySmall)
             }
             item.nf_total_carbohydrate?.let { carbs ->
-                Text("Total Carbohydrates: ${carbs}g", style = MaterialTheme.typography.bodyMedium)
+                Text("Total Carbohydrates: ${carbs}g", style = MaterialTheme.typography.bodySmall)
             }
             item.nf_protein?.let { protein ->
-                Text("Protein: ${protein}g", style = MaterialTheme.typography.bodyMedium)
+                Text("Protein: ${protein}g", style = MaterialTheme.typography.bodySmall)
             }
             item.nf_dietary_fiber?.let { fiber ->
-                Text("Dietary Fiber: ${fiber}g", style = MaterialTheme.typography.bodyMedium)
+                Text("Dietary Fiber: ${fiber}g", style = MaterialTheme.typography.bodySmall)
             }
             item.nf_sugars?.let { sugars ->
-                Text("Sugars: ${sugars}g", style = MaterialTheme.typography.bodyMedium)
+                Text("Sugars: ${sugars}g", style = MaterialTheme.typography.bodySmall)
             }
             item.nf_sodium?.let { sodium ->
-                Text("Sodium: ${sodium}mg", style = MaterialTheme.typography.bodyMedium)
+                Text("Sodium: ${sodium}mg", style = MaterialTheme.typography.bodySmall)
             }
         }
         item.serving_qty?.let { qty ->
             item.serving_unit?.let { unit ->
                 Text(
                     text = "Serving: $qty $unit",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
@@ -220,40 +225,37 @@ fun FoodNutrientsValues(
 }
 
 @Composable
-fun FoodImage(item : Food) {
-    AsyncImage(
-        model = item.photo?.thumb,
-        contentDescription = "Food thumbnail",
-        modifier = Modifier
-            .size(80.dp)
-            .clip(RoundedCornerShape(8.dp))
-    )
+fun FoodImage(item : Food, modifier: Modifier = Modifier) {
+
+    Box(modifier = modifier.padding(4.dp)) {
+        AsyncImage(
+            model = item.photo?.thumb,
+            contentDescription = "Food thumbnail",
+            modifier = modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+    }
 }
 
 @Composable
 fun AddFoodAndMore(
+    modifier: Modifier = Modifier,
     onButtonClick : () -> Unit,
     onMoreIconClick : () -> Unit,
     showMore : Boolean
 ) {
 
-    Row (modifier = Modifier.fillMaxWidth(),
+    Row (modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically){
-        Button(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(24.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonColors(
-                containerColor = LightPink,
-                contentColor = DarkGray,
-                disabledContainerColor = LightPink,
-                disabledContentColor = DarkGray),
-            onClick = { onButtonClick() }
-        ) {
-            Text(text = stringResource(id = R.string.add))
-        }
+
+        Text(
+            text = "+",
+            style = TextStyle(color = Pink,fontWeight = FontWeight.Bold, fontSize = 24.sp),
+            modifier = Modifier.padding(4.dp)
+                .clickable { onButtonClick() }
+        )
         Icon(
             painter = if (showMore) painterResource(id = R.drawable.baseline_expand_less_24)
                     else painterResource(id = R.drawable.baseline_more_horiz_24),

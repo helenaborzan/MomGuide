@@ -273,18 +273,20 @@ fun PercentileResult(
             Text(
                 text = "${stringResource(id = percentileType)}:  ",
                 style = TextStyle(
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     color = Color.Black
-                )
+                ),
+                modifier = Modifier.weight(0.75f)
             )
             Text(
                 text = "${String.format("%.2f", percentileValue)}",
                 style = TextStyle(
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     color = if (viewModel.isPercentileInNormalLimits(percentileValue)) Green
                     else Red,
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                modifier = Modifier.weight(0.25f)
             )
         }
         Spacer(modifier = Modifier.height(4.dp))

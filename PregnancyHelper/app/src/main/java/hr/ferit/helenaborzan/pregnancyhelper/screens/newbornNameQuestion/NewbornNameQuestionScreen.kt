@@ -65,15 +65,18 @@ fun NewbornNameQuestionScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column (modifier = Modifier.weight(0.5f),
-            verticalArrangement = Arrangement.Bottom){
-            NameInput(uiState = uiState, viewModel = viewModel)
+            Column (modifier = Modifier.weight(0.5f),
+                verticalArrangement = Arrangement.Bottom){
+                NameInput(uiState = uiState, viewModel = viewModel)
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             Spacer(modifier = Modifier.height(24.dp))
-            SexInput(viewModel = viewModel)
-        }
+            Column (modifier = Modifier.weight(0.25f),
+                verticalArrangement = Arrangement.Top) {
+                SexInput(viewModel = viewModel)
+            }
 
-
-        Column(modifier = Modifier.weight(0.5f),
+        Column(modifier = Modifier.weight(0.25f),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

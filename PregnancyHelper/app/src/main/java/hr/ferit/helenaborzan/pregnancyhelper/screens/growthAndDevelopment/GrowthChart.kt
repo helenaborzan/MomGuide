@@ -38,13 +38,10 @@ fun GrowthPercentileChart(
     Canvas(modifier = modifier.background(color = Color.White, shape = RoundedCornerShape(4.dp))) {
         val canvasWidth = size.width
         val canvasHeight = size.height
-        val padding = 100f
-        val innerPadding = 50f
-
-        val leftPadding = 150f  // Increased left padding
+        val leftPadding = 150f
         val rightPadding = 100f
         val topPadding = 100f
-        val bottomPadding = 100f
+        val bottomPadding = 150f // Increased bottom padding
 
         val horizontalLines = 4
         val verticalLines = 12
@@ -52,8 +49,8 @@ fun GrowthPercentileChart(
         val verticalStep = (canvasWidth - leftPadding - rightPadding) / verticalLines
 
         // Define chart area
-        val chartWidth = canvasWidth - innerPadding - leftPadding - rightPadding
-        val chartHeight = canvasHeight - innerPadding - topPadding - bottomPadding
+        val chartWidth = canvasWidth - leftPadding - rightPadding
+        val chartHeight = canvasHeight - topPadding - bottomPadding
 
         // Calculate scales
         val minXValue = data.minOf { it.value }
@@ -64,29 +61,28 @@ fun GrowthPercentileChart(
 
         // Draw grid lines
         for (i in 0..horizontalLines) {
-            val y = padding + i * horizontalStep
-            drawLine(Color.LightGray, Offset(padding, y), Offset(canvasWidth - padding, y))
+            val y = topPadding + i * horizontalStep
+            drawLine(Color.LightGray, Offset(leftPadding, y), Offset(canvasWidth - rightPadding, y))
         }
 
         for (i in 0..verticalLines) {
-            val x = padding + i * verticalStep
-            drawLine(Color.LightGray, Offset(x, padding), Offset(x, canvasHeight - padding))
+            val x = leftPadding + i * verticalStep
+            drawLine(Color.LightGray, Offset(x, topPadding), Offset(x, canvasHeight - bottomPadding))
         }
 
         // Draw axes
-        drawLine(Color.Black, Offset(padding, canvasHeight - padding), Offset(canvasWidth - padding, canvasHeight - padding))
-        drawLine(Color.Black, Offset(padding, canvasHeight - padding), Offset(padding, padding))
+        drawLine(Color.Black, Offset(leftPadding, canvasHeight - bottomPadding), Offset(canvasWidth - rightPadding, canvasHeight - bottomPadding))
+        drawLine(Color.Black, Offset(leftPadding, canvasHeight - bottomPadding), Offset(leftPadding, topPadding))
 
         // Draw percentile lines
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p3 }, "3", minXValue)
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p50 }, "50", minXValue)
-        drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p97 }, "97", minXValue)
+        drawPercentileLine(data, xScale, yScale, leftPadding, topPadding, canvasHeight, bottomPadding, Color.Gray, { it.p3 }, "3", minXValue, maxXValue)
+        drawPercentileLine(data, xScale, yScale, leftPadding, topPadding, canvasHeight, bottomPadding, Color.Gray, { it.p50 }, "50", minXValue, maxXValue)
+        drawPercentileLine(data, xScale, yScale, leftPadding, topPadding, canvasHeight, bottomPadding, Color.Gray, { it.p97 }, "97", minXValue, maxXValue)
 
+        drawLabels(minXValue.toInt(), maxXValue.toInt(), maxYValue, leftPadding, topPadding, bottomPadding, rightPadding, canvasWidth, canvasHeight, xlabel, ylabel)
 
-        drawLabels(minXValue.toInt(), maxXValue.toInt(), maxYValue, padding, canvasWidth, canvasHeight, xlabel, ylabel)
-
-        for(point in points){
-            drawIndividualDataPoint(point, xScale, yScale, padding, canvasHeight, minXValue)
+        for (point in points) {
+            drawIndividualDataPoint(point, xScale, yScale, leftPadding, topPadding, canvasHeight, bottomPadding, minXValue)
         }
     }
 }
@@ -95,19 +91,22 @@ private fun DrawScope.drawPercentileLine(
     data: List<Percentile>,
     xScale: Float,
     yScale: Float,
-    padding: Float,
+    leftPadding: Float,
+    topPadding: Float,
     canvasHeight: Float,
+    bottomPadding: Float,
     color: Color,
     heightSelector: (Percentile) -> Float,
     label: String,
-    minXValue: Int
+    minXValue: Int,
+    maxXValue: Int
 ) {
     val path = Path()
     var lastPoint: Offset? = null
 
     data.forEachIndexed { index, point ->
-        val x = padding + (point.value - minXValue) * xScale
-        val y = canvasHeight - padding - heightSelector(point) * yScale
+        val x = leftPadding + (point.value - minXValue) * xScale
+        val y = canvasHeight - bottomPadding - heightSelector(point) * yScale
         if (index == 0) {
             path.moveTo(x, y)
         } else {
@@ -115,13 +114,18 @@ private fun DrawScope.drawPercentileLine(
         }
         lastPoint = Offset(x, y)
     }
+
+    val rightEdgeX = leftPadding + (maxXValue - minXValue) * xScale
+    lastPoint?.let {
+        path.lineTo(rightEdgeX, it.y)
+    }
     drawPath(path, color, style = Stroke(width = 2.dp.toPx()))
 
     // Draw label at the end of the line
     lastPoint?.let {
         drawContext.canvas.nativeCanvas.drawText(
             label,
-            it.x + 10f,
+            rightEdgeX + 10f,
             it.y,
             android.graphics.Paint().apply {
                 textSize = 15f
@@ -131,17 +135,18 @@ private fun DrawScope.drawPercentileLine(
     }
 }
 
-
-
 private fun DrawScope.drawLabels(
     minXValue: Int,
     maxXValue: Int,
     maxYValue: Float,
-    padding: Float,
+    leftPadding: Float,
+    topPadding: Float,
+    bottomPadding: Float,
+    rightPadding : Float,
     canvasWidth: Float,
     canvasHeight: Float,
-    xlabel : String,
-    ylabel : String
+    xlabel: String,
+    ylabel: String
 ) {
     val paint = Paint().asFrameworkPaint().apply {
         color = android.graphics.Color.BLACK
@@ -151,11 +156,11 @@ private fun DrawScope.drawLabels(
     // X-axis labels
     val xStep = (maxXValue - minXValue) / 5
     for (x in minXValue..maxXValue step xStep) {
-        val xPos = padding + (x - minXValue) * (canvasWidth - 2 * padding) / (maxXValue - minXValue)
+        val xPos = leftPadding + (x - minXValue) * (canvasWidth - leftPadding - rightPadding) / (maxXValue - minXValue)
         drawContext.canvas.nativeCanvas.drawText(
             x.toString(),
             xPos,
-            canvasHeight - padding + 40f,
+            canvasHeight - bottomPadding + 40f,
             paint
         )
     }
@@ -163,10 +168,10 @@ private fun DrawScope.drawLabels(
     // Y-axis labels
     val yStep = maxYValue / 5
     for (y in 0..maxYValue.toInt() step yStep.toInt()) {
-        val yPos = canvasHeight - padding - y * (canvasHeight - 2 * padding) / maxYValue
+        val yPos = canvasHeight - bottomPadding - y * (canvasHeight - topPadding - bottomPadding) / maxYValue
         drawContext.canvas.nativeCanvas.drawText(
             y.toString(),
-            padding - 50f,
+            leftPadding - 50f,
             yPos,
             paint
         )
@@ -176,7 +181,7 @@ private fun DrawScope.drawLabels(
     drawContext.canvas.nativeCanvas.drawText(
         xlabel,
         canvasWidth / 2,
-        canvasHeight - padding + 80f,
+        canvasHeight - bottomPadding + 80f,
         android.graphics.Paint().apply {
             this.color = DarkGray.toArgb()
             textSize = 12.sp.toPx()
@@ -187,10 +192,10 @@ private fun DrawScope.drawLabels(
     // Add y-axis label
     drawContext.canvas.nativeCanvas.apply {
         save()
-        rotate(-90f, padding - 70f, canvasHeight / 2)
+        rotate(-90f, leftPadding - 70f, canvasHeight / 2)
         drawText(
             ylabel,
-            padding - 90f,
+            leftPadding - 90f,
             canvasHeight / 2,
             android.graphics.Paint().apply {
                 this.color = DarkGray.toArgb()
@@ -202,17 +207,18 @@ private fun DrawScope.drawLabels(
     }
 }
 
-
 private fun DrawScope.drawIndividualDataPoint(
     point: Point,
     xScale: Float,
     yScale: Float,
-    padding: Float,
+    leftPadding: Float,
+    topPadding: Float,
     canvasHeight: Float,
+    bottomPadding: Float,
     minXValue: Int
 ) {
-    val x = padding + (point.x - minXValue) * xScale
-    val y = canvasHeight - padding - point.y * yScale
+    val x = leftPadding + (point.x - minXValue) * xScale
+    val y = canvasHeight - bottomPadding - point.y * yScale
 
     drawCircle(
         color = Pink,

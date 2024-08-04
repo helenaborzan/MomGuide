@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.common.TimePoint
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
+
 @Composable
 fun ScatterPlot(
     times: List<TimePoint>,
@@ -27,15 +28,16 @@ fun ScatterPlot(
     modifier: Modifier = Modifier,
     pointColor: Color = Pink,
     axisColor: Color = Color.Black,
-    xlabel : String,
-    ylabel : String
+    xlabel: String,
+    ylabel: String
 ) {
     require(times.size == yValues.size) { "Liste times i yValues moraju biti iste veličine" }
 
-    Canvas(modifier = modifier
-        .fillMaxWidth()
-        .height(400.dp)
-        .background(Color.White)
+    Canvas(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .background(Color.White)
     ) {
         val yMin = yValues.minOrNull() ?: 0
         val yMax = yValues.maxOrNull() ?: 1
@@ -53,7 +55,10 @@ fun ScatterPlot(
             height = size.height - yPadding - innerPadding * 2
         )
 
-        drawAxis(times, adjustedYMin.toFloat(), adjustedYMax.toFloat(), axisColor, plotArea, xPadding, yPadding, innerPadding, xlabel, ylabel)
+        drawAxis(
+            times, adjustedYMin.toFloat(), adjustedYMax.toFloat(),
+            axisColor, plotArea, xPadding, yPadding, innerPadding, xlabel, ylabel
+        )
 
         times.zip(yValues).forEach { (time, value) ->
             val xPos = xPadding + innerPadding + (time.toFloat() / 24f * plotArea.width)
@@ -94,13 +99,13 @@ private fun DrawScope.drawAxis(
     )
 
     // X-axis labels (every third hour)
-    for (hour in 0..24 step 3) {
+    for (hour in 0..24 step 4) {
         val x = xPadding + innerPadding + (plotArea.width * hour / 24f)
         drawLine(color, Offset(x, innerPadding + plotArea.height), Offset(x, innerPadding + plotArea.height + 5))
         drawContext.canvas.nativeCanvas.drawText(
             "${hour}:00",
             x,
-            size.height - yPadding / 2,
+            innerPadding + plotArea.height + 40f,  // Adjust this value to change the padding
             android.graphics.Paint().apply {
                 this.color = color.toArgb()
                 textSize = 12.sp.toPx()
@@ -130,11 +135,11 @@ private fun DrawScope.drawAxis(
     // X-axis label
     drawContext.canvas.nativeCanvas.drawText(
         xlabel,
-        size.width / 2,
-        size.height - 15,
+        xPadding + plotArea.width / 2,
+        size.height - 50,
         android.graphics.Paint().apply {
             this.color = color.toArgb()
-            textSize = 14.sp.toPx()
+            textSize = 12.sp.toPx()
             textAlign = android.graphics.Paint.Align.CENTER
         }
     )
@@ -149,7 +154,7 @@ private fun DrawScope.drawAxis(
             size.height / 2,
             android.graphics.Paint().apply {
                 this.color = color.toArgb()
-                textSize = 14.sp.toPx()
+                textSize = 12.sp.toPx()
                 textAlign = android.graphics.Paint.Align.CENTER
             }
         )

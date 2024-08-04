@@ -86,55 +86,67 @@ fun BreastfeedingInputScreen(
                 .weight(0.1f),
             navController = navController
         )
-        Spacer(modifier = Modifier.weight(0.2f))
         Column (
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
-                .weight(0.7f)
+                .weight(0.8f)
                 .background(color = Color.White)
                 .padding(24.dp)
         ){
             ChooseFeedingType(viewModel = viewModel, uiState = uiState)
+            Spacer(modifier = Modifier.height(12.dp))
             if (uiState.feedingType == "Dojenje") {
-                BreastfeedingSpecific(viewModel = viewModel)
+                BreastfeedingSpecific(viewModel = viewModel,
+                    modifier = Modifier.weight(0.8f))
             } else {
                 BottleSpecific(
                     viewModel = viewModel,
                     uiState = uiState,
-                    modifier = Modifier.weight(0.8f))
+                    modifier = Modifier.weight(0.8f)
+                )
             }
+        }
+        Row (modifier = Modifier.weight(0.1f),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.Bottom
+        ){
             AddButton(uiState = uiState, viewModel = viewModel, navController = navController)
         }
-        Spacer(modifier = Modifier.weight(0.2f))
     }
     ErrorDialog(uiState = uiState, viewModel = viewModel)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BreastfeedingSpecific(viewModel: BreastfeedingViewModel) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        TimePicker(
-            labelId = R.string.startTime,
-            modifier = Modifier.weight(0.7f),
-            onTimeSelected = { newTime ->
-                viewModel.onStartTimeChange(newTime)
-            },
-            viewModel = viewModel
-        )
+fun BreastfeedingSpecific(viewModel: BreastfeedingViewModel, modifier: Modifier = Modifier) {
+    Column (
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ){
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TimePicker(
+                labelId = R.string.startTime,
+                modifier = Modifier.weight(0.7f),
+                onTimeSelected = { newTime ->
+                    viewModel.onStartTimeChange(newTime)
+                },
+                viewModel = viewModel
+            )
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TimePicker(
+                labelId = R.string.endTime,
+                modifier = Modifier.weight(0.7f),
+                onTimeSelected = { newTime ->
+                    viewModel.onEndTimeChange(newTime)
+                },
+                viewModel = viewModel
+            )
+        }
+        ChooseBreast(viewModel = viewModel)
     }
-    Row(modifier = Modifier.fillMaxWidth()) {
-        TimePicker(
-            labelId = R.string.endTime,
-            modifier = Modifier.weight(0.7f),
-            onTimeSelected = { newTime ->
-                viewModel.onEndTimeChange(newTime)
-            },
-            viewModel = viewModel
-        )
-    }
-    ChooseBreast(viewModel = viewModel)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -143,30 +155,37 @@ fun BottleSpecific(
     viewModel: BreastfeedingViewModel,
     uiState: BreastfeedingInputUiState,
     modifier: Modifier = Modifier) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        TimePicker(
-            labelId = R.string.time,
-            modifier = Modifier.weight(0.7f),
-            onTimeSelected = { newTime ->
-                viewModel.onTimeChange(newTime)
-            },
-            viewModel = viewModel
+    Column (
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
+    ){
+        Row(modifier = Modifier.fillMaxWidth()) {
+            TimePicker(
+                labelId = R.string.time,
+                modifier = Modifier.weight(0.7f),
+                onTimeSelected = { newTime ->
+                    viewModel.onTimeChange(newTime)
+                },
+                viewModel = viewModel
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        LabeledTextField(
+            labelId = R.string.milkQuantity,
+            unitId = R.string.mlLabel,
+            value = uiState.quantity,
+            onValueChange = viewModel::onQuantityChange,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = modifier
+                .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(16.dp))
+                .background(color = Color.White)
+                .height(54.dp)
+                .padding(vertical = 8.dp),
+            fontSize = 24.sp,
+            padding = PaddingValues(0.dp)
         )
     }
-    LabeledTextField(
-        labelId = R.string.milkQuantity,
-        unitId = R.string.mlLabel,
-        value = uiState.quantity,
-        onValueChange = viewModel::onQuantityChange,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        modifier = modifier
-            .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(16.dp))
-            .background(color = Color.White)
-            .height(54.dp)
-            .padding(vertical = 8.dp),
-        fontSize = 24.sp,
-        padding = PaddingValues(0.dp)
-    )
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -324,23 +343,23 @@ fun ChooseBreast(viewModel: BreastfeedingViewModel) {
         ) {
             RadioButtonSection(
                 textId = R.string.left,
-                isSelected = selectedBreast == "lijeva dojka",
+                isSelected = selectedBreast == "left breast",
                 onCheckedChange = {
-                    selectedBreast = "lijeva dojka"
+                    selectedBreast = "left breast"
                     viewModel.onBreastChange(selectedBreast)
                 })
             RadioButtonSection(
                 textId = R.string.right,
-                isSelected = selectedBreast == "desna dojka",
+                isSelected = selectedBreast == "right breast",
                 onCheckedChange = {
-                    selectedBreast = "desna dojka"
+                    selectedBreast = "right breast"
                     viewModel.onBreastChange(selectedBreast)
                 })
             RadioButtonSection(
                 textId = R.string.both,
-                isSelected = selectedBreast == "obje dojke",
+                isSelected = selectedBreast == "both",
                 onCheckedChange = {
-                    selectedBreast = "obje dojke"
+                    selectedBreast = "both"
                     viewModel.onBreastChange(selectedBreast)
                 })
         }

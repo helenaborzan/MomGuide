@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -89,46 +90,47 @@ fun GrowthAndDevelopmentResultsScreen(
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(horizontal = 24.dp)
                 .weight(0.1f),
             navController = navController
         )
-        ChoosePercentile(viewModel = viewModel)
-        GrowthPercentileChart(
-            data = chartData,
-            points = points,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.5f)
-                .align(Alignment.CenterHorizontally)
-                .padding(24.dp),
-            xlabel = xlabel,
-            ylabel = ylabel
-            )
-        if(growthAndDevelopmentResults.size > 0) {
-            LazyColumn(
+        ChoosePercentile(modifier = Modifier.weight(0.1f),viewModel = viewModel)
+        LazyColumn(modifier = Modifier.weight(0.8f)) { item {
+            GrowthPercentileChart(
+                data = chartData,
+                points = points,
                 modifier = Modifier
-                    .weight(0.9f)
                     .fillMaxWidth()
-                    .padding(24.dp)
-            ) {
-                items(growthAndDevelopmentResults.withIndex().toList()) { (index, result) ->
-                    Log.d("LazyColumn", "Rendering item at index: $index")
-                    PercentilesResult(
-                        growthAndDevelopmentResult = result,
-                        growthAndDevelopmentResultIndex = index,
-                        viewModel = viewModel,
-                    )
-                    Log.d("PercentilesUI", "Index: ${index}, Height: ${result.growthAndDevelopmentInfo.length}")
-                    Spacer(modifier = Modifier.height(24.dp))
+                    .height(300.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(8.dp),
+                xlabel = xlabel,
+                ylabel = ylabel
+            )
+            if (growthAndDevelopmentResults.size > 0) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                ) {
+                    growthAndDevelopmentResults.forEachIndexed { index, result ->
+
+                        PercentilesResult(
+                            growthAndDevelopmentResult = result,
+                            growthAndDevelopmentResultIndex = index,
+                            viewModel = viewModel,
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                 }
             }
+            else{
+                EmptyResults(
+                    navController = navController
+                )
+            }
         }
-        else{
-            EmptyResults(
-                navController = navController,
-                modifier = Modifier.weight(0.9f)
-            )
         }
     }
 
@@ -179,7 +181,7 @@ fun PercentilesResult(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 12.dp, top = 12.dp, bottom = 0.dp, end = 12.dp)
+                .padding(start = 8.dp, top = 8.dp, bottom = 0.dp, end = 8.dp)
         ) {
             if (date != null) {
                 val dateYMD = getDate(date)
@@ -199,8 +201,12 @@ fun PercentilesResult(
                 modifier = Modifier
                     .padding(12.dp)
                     .clickable {
-                        Log.d("PercentilesResult", "Delete clicked for index: $growthAndDevelopmentResultIndex")
-                        viewModel.onDeleteResultClick(growthAndDevelopmentResultIndex) }
+                        Log.d(
+                            "PercentilesResult",
+                            "Delete clicked for index: $growthAndDevelopmentResultIndex"
+                        )
+                        viewModel.onDeleteResultClick(growthAndDevelopmentResultIndex)
+                    }
             )
         }
         GrowthInfo(growthAndDevelopmentInfo = growthAndDevelopmentResult.growthAndDevelopmentInfo)
@@ -223,7 +229,7 @@ fun GrowthInfo(growthAndDevelopmentInfo: GrowthAndDevelopmentInfo) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 4.dp)
+            .padding(horizontal = 4.dp, vertical = 4.dp)
             .background(color = LightBlue, shape = RoundedCornerShape(4.dp))
             .height(70.dp)
     ){
@@ -248,10 +254,10 @@ fun GrowthResult(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Text(text = stringResource(id = labelId))
+        Text(text = stringResource(id = labelId), fontSize = 6.sp, maxLines = 1)
         Row (
             modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ){
             Text(
                 text = "$value ",
@@ -259,7 +265,7 @@ fun GrowthResult(
             )
             Text(
                 text = stringResource(id = unitId),
-                style = TextStyle(color = Color.Black, fontSize = 14.sp)
+                style = TextStyle(color = Color.Black, fontSize = 10.sp)
             )
         }
     }
@@ -268,7 +274,7 @@ fun GrowthResult(
 @Composable
 fun PercentileResultSection(growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles) {
     Column(
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
         PercentileResult(
             percentileType = R.string.lengthForAgePercentile,
@@ -323,13 +329,13 @@ fun DeleteResultDialog(
 }
 
 @Composable
-fun ChoosePercentile(viewModel : NewbornHomeViewModel) {
+fun ChoosePercentile(viewModel : NewbornHomeViewModel, modifier: Modifier = Modifier) {
     val selectedChartType by viewModel.selectedChartType.collectAsState()
     LazyRow (horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(24.dp)) {
+            .padding(horizontal = 12.dp)) {
         item {
             BasicButton(
                 text = stringResource(id = R.string.lengthForAge),

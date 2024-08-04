@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -55,33 +56,32 @@ fun DailyCalorieGoalScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = LightestPink)
-            .padding(24.dp),
+            .padding(12.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
-                .weight(0.1f),
+                .weight(0.1f)
+                .padding(12.dp),
             navController = navController
         )
         InputSection(
             viewModel = viewModel,
             uiState = uiState,
-            modifier = Modifier.weight(0.7f))
-        Spacer(modifier = Modifier.weight(0.15f))
+            modifier = Modifier.weight(0.9f))
         BasicButton(
             modifier = Modifier
-                .weight(0.05f)
+                .weight(0.075f)
                 .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(36.dp))
-                .height(36.dp),
+                .height(28.dp),
             text = stringResource(id = R.string.calculateDailyCalorieGoal),
             onClick = {
                 viewModel.onCalculateCalorieGoalClick()
             navController.navigate(Screen.PregnancyHomeScreen.route)}
         )
-        Spacer(modifier = Modifier.weight(0.1f))
+        Spacer(modifier = Modifier.weight(0.025f))
     }
     ErrorDialog(uiState = uiState, viewModel = viewModel)
 }
@@ -91,13 +91,13 @@ fun InputSection(
     viewModel: DailyCalorieGoalViewModel,
     uiState: DailyCalorieGoalUiState,
     modifier: Modifier = Modifier) {
-    Column (modifier = modifier
+    LazyColumn (modifier = modifier
         .fillMaxWidth()
-        .padding(24.dp)
+        .padding(12.dp)
         .background(color = Color.White, shape = RoundedCornerShape(8.dp)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
-    ){
+    ){item {
         LabeledTextField(
             labelId = R.string.heightLabel,
             unitId = R.string.cmLabel,
@@ -107,8 +107,8 @@ fun InputSection(
             modifier = Modifier
                 .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
                 .background(color = Color.White)
-                .width(200.dp)
-                .height(40.dp)
+                .width(180.dp)
+                .height(32.dp)
         )
         LabeledTextField(
             labelId = R.string.weightLabel,
@@ -119,8 +119,8 @@ fun InputSection(
             modifier = Modifier
                 .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
                 .background(color = Color.White)
-                .width(200.dp)
-                .height(40.dp)
+                .width(180.dp)
+                .height(32.dp)
         )
         LabeledTextField(
             labelId = R.string.ageLabel,
@@ -131,10 +131,11 @@ fun InputSection(
             modifier = Modifier
                 .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
                 .background(color = Color.White)
-                .width(200.dp)
-                .height(40.dp)
+                .width(180.dp)
+                .height(32.dp)
         )
         ActivityInput(viewModel = viewModel)
+    }
     }
 }
 

@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -63,10 +65,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ComponentActivity
+import dagger.hilt.android.qualifiers.ApplicationContext
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Green
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Red
 
 
 @RequiresApi(Build.VERSION_CODES.S)
@@ -79,6 +83,15 @@ fun ContractionsTimerScreen(
     val uiState by viewModel.uiState.collectAsState()
     var shouldGoToTheHospital by remember { mutableStateOf(false) }
 
+    LaunchedEffect(uiState){
+        shouldGoToTheHospital = viewModel.shouldGoToTheHospital(uiState)
+    }
+    LaunchedEffect(uiState) {
+        // Check notifications status and prompt user if necessary
+        if (viewModel.shouldPromptForNotifications(uiState)) {
+            viewModel.promptUserToEnableNotifications()
+        }
+    }
 
     Column (
         verticalArrangement = Arrangement.Top,
@@ -87,21 +100,17 @@ fun ContractionsTimerScreen(
             .fillMaxSize()
             .background(color = DirtyWhite)
     ){
-        LaunchedEffect(uiState){
-            shouldGoToTheHospital = viewModel.shouldGoToTheHospital(uiState)
-        }
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
-                .weight(0.1f),
+                .padding(24.dp),
             navController = navController
         )
-        ContractionButton(modifier = Modifier.weight(0.4f, fill = false), uiState = uiState, viewModel = viewModel)
-        Spacer(modifier = Modifier.height(40.dp))
-        AverageResults(modifier = Modifier.weight(0.1f), uiState = uiState)
+        ContractionButton(uiState = uiState, viewModel = viewModel)
+        Spacer(modifier = Modifier.height(20.dp))
+        AverageResults( uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-        TimedContractions(modifier = Modifier.weight(0.4f), uiState = uiState)
+        TimedContractions(uiState = uiState)
         HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
         Column (
             verticalArrangement = Arrangement.Center,
@@ -144,9 +153,9 @@ fun ContractionButton(
     Box(
         contentAlignment = Alignment.Center,
         modifier = animatedModifier
-            .size(300.dp)
+            .size(150.dp)
             .border(
-                width = 10.dp,
+                width = 6.dp,
                 brush = if (uiState.isTimerRunning)
                     Brush.linearGradient(0.2f to LilaPink, 1.0f to Purple)
                 else
@@ -160,7 +169,8 @@ fun ContractionButton(
         Text(
             text = if (uiState.isTimerRunning) stringResource(id = R.string.contractionEnded)
             else stringResource(id = R.string.contractionStarted),
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -192,7 +202,7 @@ fun <T>AverageResult(label : String, value : T, modifier : Modifier = Modifier) 
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .height(60.dp)
+            .height(90.dp)
             .padding(bottom = 0.dp, start = 4.dp, top = 4.dp, end = 4.dp)
     ){
         Text(
@@ -211,9 +221,18 @@ fun <T>AverageResult(label : String, value : T, modifier : Modifier = Modifier) 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimedContractions(modifier: Modifier = Modifier, uiState: ContractionsTimerUiState) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(uiState.contractions) {
+        if (uiState.contractions.isNotEmpty()) {
+            listState.animateScrollToItem(uiState.contractions.size - 1)
+        }
+    }
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .height(200.dp)) {
         TimedContractionsLabels()
-        LazyColumn() {
+        LazyColumn(state = listState) {
             items(uiState.contractions.size) { index ->
                 ContractionInfo(
                     contractionsInfo = uiState.contractions[index],
@@ -287,7 +306,7 @@ fun GoToHospital() {
     Row (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(40.dp),
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 12.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -295,17 +314,20 @@ fun GoToHospital() {
             text = "🚑",
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Red,
-            modifier = Modifier.weight(0.3f)
+            color = Color.Red
         )
-        Column (modifier = Modifier.weight(0.7f)){
+        Spacer(modifier = Modifier.width(32.dp))
+        Column (
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
             Text(
                 text = stringResource(id = R.string.hospitalRecomendation),
-                style = TextStyle(color = Blue, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                style = TextStyle(color = Red, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             )
             Text(
                 text = stringResource(id = R.string.hospitalRecomendationExplanation),
-                style = TextStyle(color = DarkGray, fontSize = 16.sp)
+                style = TextStyle(color = DarkGray, fontSize = 12.sp)
             )
         }
     }
@@ -320,14 +342,19 @@ fun DontGoToHospital() {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
-        Column (){
+        Column (modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
             Text(
                 text = stringResource(id = R.string.dontGoToHospital),
-                style = TextStyle(color = Green, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                style = TextStyle(color = Green, fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
             )
             Text(
                 text = stringResource(id = R.string.dontGoToHospitalExplanation),
-                style = TextStyle(color = DarkGray, fontSize = 16.sp)
+                style = TextStyle(color = DarkGray, fontSize = 12.sp),
+                textAlign = TextAlign.Center
             )
         }
     }

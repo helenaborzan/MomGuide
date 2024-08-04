@@ -232,11 +232,13 @@ class PregnancyHomeViewModel @Inject constructor(
     fun doesUserHaveDepression(depressionResult: QuestionnaireResult) : Boolean{
         Log.e("pregnancy", "${depressionResult.resultMessage}")
         return depressionResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveDepressionTest)
+                || depressionResult.resultMessage == resourceHelper.getStringFromResource(R.string.borderlineDepressionTest)
     }
 
     fun doesUserHaveAnxiety(anxietyResult: QuestionnaireResult) : Boolean{
         Log.e("pregnancy", "${anxietyResult.resultMessage}")
         return anxietyResult.resultMessage == resourceHelper.getStringFromResource(R.string.positiveAnxietyTest)
+                || anxietyResult.resultMessage == resourceHelper.getStringFromResource(R.string.borderlineAnxietyTest)
     }
 
     fun doesUserHaveHighStress(stressResult: QuestionnaireResult) : Boolean{

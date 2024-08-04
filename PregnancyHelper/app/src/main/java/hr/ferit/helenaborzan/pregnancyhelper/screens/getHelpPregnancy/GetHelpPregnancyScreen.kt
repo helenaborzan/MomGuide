@@ -27,12 +27,11 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 fun GetHelpPregnancyScreen(navController: NavController) {
     Column (modifier = Modifier
         .fillMaxSize()
-        .padding(24.dp)
+        .padding(12.dp)
     ){
         GoBackIconBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
                 .weight(0.1f),
             navController = navController
         )

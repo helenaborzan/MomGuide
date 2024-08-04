@@ -46,6 +46,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingInputUiState
 import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.BreastfeedingViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.breastfeeding.LocaleWrapper
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 import java.time.Instant
@@ -53,6 +54,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -69,14 +71,16 @@ fun PregnancyStartQuestion(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PregnancyStartDatePicker(
-            modifier = Modifier.weight(0.5f),
-            labelId = R.string.pregnancyStartQuestion,
-            onDateSelected = { newDate ->
-                viewModel.onPregnancyStartDateChange(newDate)
-            },
-            viewModel = viewModel
-        )
+        LocaleWrapper(locale = Locale.ENGLISH) {
+            PregnancyStartDatePicker(
+                modifier = Modifier.weight(0.5f),
+                labelId = R.string.pregnancyStartQuestion,
+                onDateSelected = { newDate ->
+                    viewModel.onPregnancyStartDateChange(newDate)
+                },
+                viewModel = viewModel
+            )
+        }
         Column(modifier = Modifier.weight(0.4f),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -174,7 +178,12 @@ fun PregnancyStartDatePicker(
                 }
             }
         ) {
-            DatePicker(state = datePickerState)
+            DatePicker(
+                state = datePickerState,
+                title = { Text(text = "Choose date", modifier = Modifier.padding(12.dp))},
+                headline = { Text(text = "Selected date", modifier = Modifier.padding(12.dp))},
+                showModeToggle = false
+            )
         }
     }
 }

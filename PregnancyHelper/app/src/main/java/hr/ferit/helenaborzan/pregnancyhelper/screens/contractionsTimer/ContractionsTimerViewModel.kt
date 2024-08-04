@@ -1,17 +1,22 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
+import android.app.AlertDialog
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ComponentActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -21,6 +26,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertInstantToTemporal
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.convertTimestampToTemporal
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.contractions.ContractionsInfo
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Red
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +53,7 @@ class ContractionsTimerViewModel @Inject constructor(
     val uiState: StateFlow<ContractionsTimerUiState> = _uiState.asStateFlow()
 
     private var timerJob: Job? = null
+    private var notificationJob: Job? = null
     @RequiresApi(Build.VERSION_CODES.O)
     fun onContractionsButtonClick() {
         val currentTime = Instant.now()
@@ -54,6 +61,33 @@ class ContractionsTimerViewModel @Inject constructor(
             endContraction(currentTime)
         } else {
             startNewContraction(currentTime)
+        }
+    }
+    init{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel()
+        }
+    }
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "contractions_channel_id"
+            val channelName = "Contractions Notifications"
+            val channelDescription = "Notifications for contractions monitoring"
+
+            // Create the NotificationChannel with the specified channelId
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+                description = channelDescription
+                enableLights(true)
+                enableVibration(true)
+                lightColor = Red.toArgb()
+                vibrationPattern = longArrayOf(1000, 500, 1000)
+            }
+
+            // Get the NotificationManager
+            val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
+
+            // Create the notification channel
+            notificationManager?.createNotificationChannel(channel)
         }
     }
 
@@ -73,11 +107,13 @@ class ContractionsTimerViewModel @Inject constructor(
         }
 
         startTimer()
+        startNotificationCheck()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun endContraction(endTime: Instant) {
         stopTimer()
+        notificationJob?.cancel()
 
         val updatedContractions = _uiState.value.contractions.toMutableList()
         if (updatedContractions.isNotEmpty()) {
@@ -110,7 +146,10 @@ class ContractionsTimerViewModel @Inject constructor(
         timerJob?.cancel()
         timerJob = null
     }
-
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun shouldPromptForNotifications(uiState: ContractionsTimerUiState): Boolean {
+        return !areNotificationsEnabled()
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateCurrentContractionDuration() {
         val currentTime = Instant.now()
@@ -166,7 +205,63 @@ class ContractionsTimerViewModel @Inject constructor(
 
         return (currentDuration.toMinutes() >= 1)
                 && (uiState.averageContractionDuration.seconds in 5..10)
-                && (uiState.averageContractionFrequency.toMinutes() in 10..15)
+                && (uiState.averageContractionFrequency.seconds in 10..15)
+    }
+
+    private fun showNotification() {
+        val notificationId = 1
+        val channelId = "contractions_channel_id"
+
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.baseline_local_hospital_24) // Use your app's icon
+            .setContentTitle("Contractions Alert")
+            .setContentText("You may need to go to the hospital.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
+        notificationManager?.notify(notificationId, notificationBuilder.build())
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun startNotificationCheck() {
+        notificationJob = viewModelScope.launch {
+            while (isActive) {
+                if (areNotificationsEnabled()) {
+                    checkAndNotify()
+                } else {
+                    promptUserToEnableNotifications()
+                }
+                delay(60000) // Check every minute
+            }
+        }
+    }
+    private suspend fun checkAndNotify() {
+        if (shouldGoToTheHospital(uiState.value)) {
+            showNotification()
+        }
+    }
+
+    fun promptUserToEnableNotifications() {
+        AlertDialog.Builder(context)
+            .setTitle("Enable Notifications")
+            .setMessage("To receive important alerts about your contractions, please enable notifications for this app.")
+            .setPositiveButton("Go to Settings") { _, _ ->
+                openNotificationSettings()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun openNotificationSettings() {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
+        context.startActivity(intent)
+    }
+    private fun areNotificationsEnabled(): Boolean {
+        val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
+        return notificationManager?.areNotificationsEnabled() ?: false
     }
 
 }

@@ -73,8 +73,8 @@ fun RegistrationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            UserInfoInput(modifier = Modifier.weight(2f), viewModel = viewModel, uiState = uiState, navController = navController)
-            Column (modifier = Modifier.weight(1f),
+            UserInfoInput(modifier = Modifier.weight(0.8f), viewModel = viewModel, uiState = uiState, navController = navController)
+            Column (modifier = Modifier.weight(0.2f),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally){
                 ButtonWithGradient(text = stringResource(id = R.string.register), onClick = {

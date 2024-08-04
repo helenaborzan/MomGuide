@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +36,7 @@ import androidx.navigation.NavController
 import com.google.android.gms.common.util.DeviceProperties.isTablet
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButton
+import hr.ferit.helenaborzan.pregnancyhelper.common.composables.BasicButtonLargerFont
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.ButtonWithGradient
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
@@ -59,7 +62,7 @@ fun LoginAndRegistrationScreen (
         Column (modifier = Modifier.weight(0.2f)){
             TitleBar()
             Spacer(modifier = Modifier.height(32.dp))
-            Description()
+          //  Description()
         }
         Column (
             modifier = Modifier.weight(0.4f)
@@ -80,7 +83,7 @@ fun LoginAndRegistrationScreen (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            BasicButton(text = stringResource(id = R.string.loginButtonText), onClick = {
+            BasicButtonLargerFont(text = stringResource(id = R.string.loginButtonText), onClick = {
                 navController.navigate(Screen.LoginScreen.route)
             })
             Spacer(modifier = Modifier.height(16.dp))
@@ -94,13 +97,16 @@ fun LoginAndRegistrationScreen (
 
 @Composable
 fun TitleBar() {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            text = stringResource(id = R.string.loginAndRegistrationTitle),
-            style = TextStyle(color = DarkGray, fontSize = 36.sp, fontFamily = FontFamily.SansSerif)
+            text =  "MomGuide",
+            style = TextStyle(color = Pink, fontSize = 40.sp, fontFamily = FontFamily.SansSerif)
         )
     }
 }
@@ -108,10 +114,18 @@ fun TitleBar() {
 
 @Composable
 fun Description(){
-    Text(
-        text = stringResource(id = R.string.loginAndRegistrationDescription),
-        style = TextStyle(color = Pink, fontSize=20.sp, fontFamily = FontFamily.SansSerif)
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(id = R.string.loginAndRegistrationDescription),
+            style = TextStyle(color = DarkGray, fontSize = 20.sp, fontFamily = FontFamily.SansSerif)
+        )
+    }
 }
 
 
