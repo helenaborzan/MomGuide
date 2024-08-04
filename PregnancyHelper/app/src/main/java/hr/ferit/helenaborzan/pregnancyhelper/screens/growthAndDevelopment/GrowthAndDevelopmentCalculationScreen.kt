@@ -101,7 +101,6 @@ fun InputSection(
             .clip(RoundedCornerShape(8.dp))
             .background(color = Color.White, shape = RoundedCornerShape(8.dp))
     ){
-        RadioButtonInput(uiState = uiState)
         LabeledTextField(
             labelId = R.string.heightInputLabel,
             unitId = R.string.cmLabel,
@@ -162,37 +161,6 @@ fun InputSection(
                 .width(200.dp)
                 .height(40.dp)
         )
-    }
-}
-
-@Composable
-fun RadioButtonInput(
-    uiState : GrowthAndDevelopmentCalculationUiState,
-    viewModel: GrowthAndDevelopmentViewModel = hiltViewModel()
-){
-        var selectedSex by remember { mutableStateOf("") }
-        Column (modifier = Modifier.padding(16.dp)){
-        Text(
-            text = stringResource(id = R.string.chooseSexLabel),
-            style = TextStyle(color = DarkGray, fontSize = 16.sp)
-        )
-        Row (){
-            RadioButtonWithLabel(
-                labelId = R.string.maleLabel,
-                isSelected = selectedSex == "male",
-                onCheckedChange = {
-                    selectedSex = "male"
-                    viewModel.onSexChange(selectedSex)
-                }
-            )
-            RadioButtonWithLabel(labelId = R.string.femaleLabel,
-                isSelected = selectedSex == "female",
-                onCheckedChange = {
-                    selectedSex = "female"
-                    viewModel.onSexChange(selectedSex)
-                }
-            )
-        }
     }
 }
 

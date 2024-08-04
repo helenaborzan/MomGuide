@@ -1,5 +1,6 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,15 @@ import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.PercentileCalculator
 import hr.ferit.helenaborzan.pregnancyhelper.common.utils.ResourceHelper
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
+import hr.ferit.helenaborzan.pregnancyhelper.model.data.newborn.NewbornInfo
 import hr.ferit.helenaborzan.pregnancyhelper.repository.NewbornInfoRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,19 +34,24 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
         private set
     private val _showResults = mutableStateOf(false)
     val showResults: State<Boolean> = _showResults
-    val bottomHeightLimit = 45
-    val upperHeightLimit = 110
-    val bottomAgeLimit = 0
-    val upperAgeLimit = 24
-    val weightLimit = 0
-    val headCircumferenceLimit = 0
-    fun onSexChange(newValue: String) {
-        uiState.value = uiState.value.copy(
-            growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(sex = newValue),
-            isRadioButtonChecked = true
-        )
-    }
 
+    private val _newbornInfo = MutableStateFlow<List<NewbornInfo>>(emptyList())
+    val newbornInfo: StateFlow<List<NewbornInfo>> get() = _newbornInfo
+
+    init {
+        getUsersNewbornInfo()
+    }
+    fun getUsersNewbornInfo() {
+        viewModelScope.launch {
+            newbornInfoRepository.getUserInfo()
+                .catch { exception ->
+                    Log.e("NewbornHomeViewModel", "Error fetching Newborn Info", exception)
+                }
+                .collect { newbornInfo ->
+                    _newbornInfo.value = newbornInfo
+                }
+        }
+    }
     fun onHeightChange(newValue: String) {
         uiState.value = uiState.value.copy(
             growthAndDevelopmentInfo = uiState.value.growthAndDevelopmentInfo.copy(length = newValue)
@@ -92,25 +106,25 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
             growthAndDevelopmentPercentiles = GrowthAndDevelopmentPercentiles(
                 lengthForAgePercentile = percentileCalculator.calculatePercentile(
                     type = "length_age",
-                    sex = uiState.value.growthAndDevelopmentInfo.sex,
+                    sex =  newbornInfo.value.firstOrNull()?.sex ?: "male",
                     searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(),
                     value = uiState.value.growthAndDevelopmentInfo.length.toInt()
                 ),
                 weightForAgePercentile = percentileCalculator.calculatePercentile(
                     type = "weight_age",
-                    sex = uiState.value.growthAndDevelopmentInfo.sex,
+                    sex = newbornInfo.value.firstOrNull()?.sex ?: "male",
                     searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(),
                     value = uiState.value.growthAndDevelopmentInfo.weight.toInt()
                 ),
                 weightForLengthPercentile = percentileCalculator.calculatePercentile(
                     type = "weight_length",
-                    sex = uiState.value.growthAndDevelopmentInfo.sex,
+                    sex = newbornInfo.value.firstOrNull()?.sex ?: "male",
                     searchCriteria = uiState.value.growthAndDevelopmentInfo.length.toInt(),
                     value = uiState.value.growthAndDevelopmentInfo.weight.toInt()
                 ),
                 headCircumferenceForAgePercentile = percentileCalculator.calculatePercentile(
                     type = "head_circumference_for_age",
-                    sex = uiState.value.growthAndDevelopmentInfo.sex,
+                    sex = newbornInfo.value.firstOrNull()?.sex ?: "male",
                     searchCriteria = uiState.value.growthAndDevelopmentInfo.age.toInt(),
                     value = uiState.value.growthAndDevelopmentInfo.headCircumference.toInt()
                 )
@@ -173,15 +187,9 @@ class GrowthAndDevelopmentViewModel @Inject constructor(
                 && isWeightInLimits(uiState.value.growthAndDevelopmentInfo.weight)
                 && isAgeInLimits(uiState.value.growthAndDevelopmentInfo.age)
                 && isHeadCircumferenceInLimits(uiState.value.growthAndDevelopmentInfo.headCircumference)
-                && isSexChecked(uiState.value.isRadioButtonChecked)
+
     }
 
-    fun isSexChecked(isChecked: Boolean): Boolean {
-        if (!isChecked) {
-            uiState.value = uiState.value.copy(errorMessageResource = R.string.sexNotChecked)
-        }
-        return isChecked
-    }
 
     fun isHeightInLimits(height: String): Boolean {
         val bottomLimit = 45

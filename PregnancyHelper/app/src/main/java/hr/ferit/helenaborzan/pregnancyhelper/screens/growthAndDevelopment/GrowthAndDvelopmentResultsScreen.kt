@@ -46,10 +46,6 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.Gro
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentPercentiles
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.GrowthAndDevelopmentResult
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
-import hr.ferit.helenaborzan.pregnancyhelper.repository.headCircumferenceForAgeData
-import hr.ferit.helenaborzan.pregnancyhelper.repository.heightForAgeData
-import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForAgeData
-import hr.ferit.helenaborzan.pregnancyhelper.repository.weightForHeightData
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.GrowthAndDevelopmentButton
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
@@ -72,13 +68,14 @@ fun GrowthAndDevelopmentResultsScreen(
     val showDialog = viewModel.showDialog.value
     val selectedChartType by viewModel.selectedChartType.collectAsState()
 
-    val chartData =  when (selectedChartType) {
-        "lengthForAge" -> heightForAgeData
-        "weightForAge" -> weightForAgeData
-        "weightForLength" -> weightForHeightData
-        "headCircumferenceForAge" -> headCircumferenceForAgeData
-        else -> emptyList()
-    }
+   val chartData = viewModel.getChartData(
+       sex = newbornInfo.map{ it.sex}.firstOrNull() ?: "male",
+       selectedChartType = selectedChartType
+   )
+
+    val xlabel = viewModel.getGrowthChartXlabel(selectedChartType)
+
+    val ylabel = viewModel.getGrowthChartYLabel(selectedChartType)
 
     LaunchedEffect(growthAndDevelopmentResults, selectedChartType) {
         viewModel.updatePoints(growthAndDevelopmentResults, selectedChartType)
@@ -105,6 +102,8 @@ fun GrowthAndDevelopmentResultsScreen(
                 .weight(0.5f)
                 .align(Alignment.CenterHorizontally)
                 .padding(24.dp),
+            xlabel = xlabel,
+            ylabel = ylabel
             )
         if(growthAndDevelopmentResults.size > 0) {
             LazyColumn(

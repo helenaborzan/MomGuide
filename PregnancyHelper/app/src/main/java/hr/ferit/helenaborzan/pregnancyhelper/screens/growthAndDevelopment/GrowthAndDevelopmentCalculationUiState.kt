@@ -8,5 +8,4 @@ data class GrowthAndDevelopmentCalculationUiState(
     val growthAndDevelopmentInfo: GrowthAndDevelopmentInfo = GrowthAndDevelopmentInfo(),
     val growthAndDevelopmentPercentiles: GrowthAndDevelopmentPercentiles = GrowthAndDevelopmentPercentiles(),
     @StringRes val errorMessageResource : Int? = null,
-    val isRadioButtonChecked : Boolean = false
 )

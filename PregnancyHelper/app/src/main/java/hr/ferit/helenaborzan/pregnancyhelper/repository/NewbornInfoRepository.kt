@@ -158,7 +158,6 @@ class NewbornInfoRepository @Inject constructor(
     fun GrowthAndDevelopmentInfo.toMap(): Map<String, Any?> {
         return mapOf(
             "date" to date,
-            "sex" to sex,
             "weight" to weight,
             "length" to length,
             "age" to age,

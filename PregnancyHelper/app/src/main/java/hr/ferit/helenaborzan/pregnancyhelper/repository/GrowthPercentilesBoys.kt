@@ -3,7 +3,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.repository
 
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.growthAndDevelopment.Percentile
 
-val heightForAgeData = listOf(
+val heightForAgeDataBoys = listOf(
     Percentile(0, 46.1f, 49.9f, 53.7f),   // Pri rođenju
     Percentile(2, 54.4f, 58.4f, 62.4f),   // 2 mjeseca
     Percentile(4, 60.0f, 64.0f, 68.0f),   // 4 mjeseca
@@ -17,7 +17,7 @@ val heightForAgeData = listOf(
     Percentile(24, 81.2f, 86.4f, 91.6f)   // 24 mjeseca
 )
 
-val weightForAgeData = listOf(
+val weightForAgeDataBoys = listOf(
     Percentile(0, 2.5f, 3.3f, 4.3f),    // Pri rođenju
     Percentile(2, 4.3f, 5.6f, 7.1f),    // 2 mjeseca
     Percentile(4, 5.6f, 7.0f, 8.6f),    // 4 mjeseca
@@ -31,7 +31,7 @@ val weightForAgeData = listOf(
     Percentile(24, 9.7f, 12.0f, 14.8f)  // 24 mjeseca
 )
 
-val weightForHeightData = listOf(
+val weightForHeightDataBoys = listOf(
     Percentile(45, 2.2f, 2.5f, 2.9f),
     Percentile(50, 2.9f, 3.4f, 4.0f),
     Percentile(55, 3.8f, 4.4f, 5.2f),
@@ -49,7 +49,7 @@ val weightForHeightData = listOf(
 )
 
 
-val headCircumferenceForAgeData = listOf(
+val headCircumferenceForAgeDataBoys = listOf(
     Percentile(0, 32.1f, 34.5f, 36.9f),   // Pri rođenju
     Percentile(2, 36.0f, 38.3f, 40.6f),   // 2 mjeseca
     Percentile(4, 38.5f, 40.8f, 43.1f),   // 4 mjeseca

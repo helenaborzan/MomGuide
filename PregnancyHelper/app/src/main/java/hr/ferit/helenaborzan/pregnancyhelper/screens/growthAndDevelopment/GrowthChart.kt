@@ -4,6 +4,7 @@ package hr.ferit.helenaborzan.pregnancyhelper.screens.growthAndDevelopment
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text2.input.TextFieldState.Saver.restore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -20,29 +21,39 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.sp
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @Composable
 fun GrowthPercentileChart(
     data: List<Percentile>,
     points: List<Point>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    xlabel: String,
+    ylabel: String
 ) {
     Canvas(modifier = modifier.background(color = Color.White, shape = RoundedCornerShape(4.dp))) {
         val canvasWidth = size.width
         val canvasHeight = size.height
-        val padding = 60f
-        val axisPadding = 20f
-        val labelPadding = 40f
+        val padding = 100f
+        val innerPadding = 50f
+
+        val leftPadding = 150f  // Increased left padding
+        val rightPadding = 100f
+        val topPadding = 100f
+        val bottomPadding = 100f
 
         val horizontalLines = 4
         val verticalLines = 12
-        val horizontalStep = (canvasHeight - 2 * padding) / horizontalLines
-        val verticalStep = (canvasWidth - 2 * padding) / verticalLines
+        val horizontalStep = (canvasHeight - topPadding - bottomPadding) / horizontalLines
+        val verticalStep = (canvasWidth - leftPadding - rightPadding) / verticalLines
 
         // Define chart area
-        val chartWidth = canvasWidth - 2 * padding
-        val chartHeight = canvasHeight - 2 * padding
+        val chartWidth = canvasWidth - innerPadding - leftPadding - rightPadding
+        val chartHeight = canvasHeight - innerPadding - topPadding - bottomPadding
 
         // Calculate scales
         val minXValue = data.minOf { it.value }
@@ -71,8 +82,8 @@ fun GrowthPercentileChart(
         drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p50 }, "50", minXValue)
         drawPercentileLine(data, xScale, yScale, padding, canvasHeight, Color.Gray, { it.p97 }, "97", minXValue)
 
-        // Draw labels
-        drawLabels(minXValue.toInt(), maxXValue.toInt(), maxYValue, padding, canvasWidth, canvasHeight)
+
+        drawLabels(minXValue.toInt(), maxXValue.toInt(), maxYValue, padding, canvasWidth, canvasHeight, xlabel, ylabel)
 
         for(point in points){
             drawIndividualDataPoint(point, xScale, yScale, padding, canvasHeight, minXValue)
@@ -110,7 +121,7 @@ private fun DrawScope.drawPercentileLine(
     lastPoint?.let {
         drawContext.canvas.nativeCanvas.drawText(
             label,
-            it.x + 10f,  // Adjusted to place the label slightly to the right of the point
+            it.x + 10f,
             it.y,
             android.graphics.Paint().apply {
                 textSize = 15f
@@ -128,7 +139,9 @@ private fun DrawScope.drawLabels(
     maxYValue: Float,
     padding: Float,
     canvasWidth: Float,
-    canvasHeight: Float
+    canvasHeight: Float,
+    xlabel : String,
+    ylabel : String
 ) {
     val paint = Paint().asFrameworkPaint().apply {
         color = android.graphics.Color.BLACK
@@ -159,8 +172,34 @@ private fun DrawScope.drawLabels(
         )
     }
 
-    // X-axis label
+    // Add x-axis label
+    drawContext.canvas.nativeCanvas.drawText(
+        xlabel,
+        canvasWidth / 2,
+        canvasHeight - padding + 80f,
+        android.graphics.Paint().apply {
+            this.color = DarkGray.toArgb()
+            textSize = 12.sp.toPx()
+            textAlign = android.graphics.Paint.Align.CENTER
+        }
+    )
 
+    // Add y-axis label
+    drawContext.canvas.nativeCanvas.apply {
+        save()
+        rotate(-90f, padding - 70f, canvasHeight / 2)
+        drawText(
+            ylabel,
+            padding - 90f,
+            canvasHeight / 2,
+            android.graphics.Paint().apply {
+                this.color = DarkGray.toArgb()
+                textSize = 12.sp.toPx()
+                textAlign = android.graphics.Paint.Align.CENTER
+            }
+        )
+        restore()
+    }
 }
 
 
