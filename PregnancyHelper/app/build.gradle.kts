@@ -118,6 +118,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.0")
 }
 
 

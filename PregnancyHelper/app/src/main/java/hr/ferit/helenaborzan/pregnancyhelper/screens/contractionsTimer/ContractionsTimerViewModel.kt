@@ -203,9 +203,9 @@ class ContractionsTimerViewModel @Inject constructor(
             return false
         }
 
-        return (currentDuration.toMinutes() >= 1)
-                && (uiState.averageContractionDuration.seconds in 5..10)
-                && (uiState.averageContractionFrequency.seconds in 10..15)
+        return (currentDuration.toMinutes() >= 60)
+                && (uiState.averageContractionDuration.seconds in 45..75)
+                && (uiState.averageContractionFrequency.toMinutes() in 4..6)
     }
 
     private fun showNotification() {
@@ -213,7 +213,7 @@ class ContractionsTimerViewModel @Inject constructor(
         val channelId = "contractions_channel_id"
 
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.baseline_local_hospital_24) // Use your app's icon
+            .setSmallIcon(R.drawable.baseline_local_hospital_24)
             .setContentTitle("Contractions Alert")
             .setContentText("You may need to go to the hospital.")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
