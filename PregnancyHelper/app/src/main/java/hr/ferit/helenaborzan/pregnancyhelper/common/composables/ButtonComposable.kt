@@ -37,7 +37,7 @@ fun BasicButton(
     ) {
         Text (
             text = text,
-            style = TextStyle(color = DarkGray, fontSize = 12.sp, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(color = DarkGray, fontSize = 10.sp, fontFamily = FontFamily.SansSerif)
         )
     }
 }
@@ -49,7 +49,7 @@ fun BasicButtonLargerFont(
     containerColor : Color = Color.White,
     onClick : () -> Unit,
     modifier : Modifier = Modifier.border(width = 1.dp, color = Pink, shape = RoundedCornerShape(36.dp))
-        .size(width = 200.dp, height = 36.dp)
+        .size(width = 200.dp, height = 40.dp)
 ) {
     Button(
         onClick = onClick,
@@ -59,7 +59,7 @@ fun BasicButtonLargerFont(
     ) {
         Text (
             text = text,
-            style = TextStyle(color = DarkGray, fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(color = DarkGray, fontSize = 12.sp, fontFamily = FontFamily.SansSerif)
         )
     }
 }
@@ -88,7 +88,7 @@ fun ButtonWithGradient(
     ) {
         Text (
             text = text,
-            style = TextStyle(color = DarkGray, fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
+            style = TextStyle(color = DarkGray, fontSize = 12.sp, fontFamily = FontFamily.SansSerif)
         )
     }
 }

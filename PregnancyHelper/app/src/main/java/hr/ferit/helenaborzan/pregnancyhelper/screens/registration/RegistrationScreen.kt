@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -161,7 +162,11 @@ fun UserInfoInput(
 @Composable
 fun UserAlreadyHasAccount(navController : NavController) {
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = stringResource(id = R.string.goToLogin),
             style = TextStyle(
@@ -171,7 +176,6 @@ fun UserAlreadyHasAccount(navController : NavController) {
             ),
             modifier = Modifier
                 .padding(24.dp)
-                .align(Alignment.Center)
                 .clickable { navController.navigate(Screen.LoginScreen.route) }
         )
     }

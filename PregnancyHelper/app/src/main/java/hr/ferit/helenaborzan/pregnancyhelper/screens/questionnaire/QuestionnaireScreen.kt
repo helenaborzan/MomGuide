@@ -82,9 +82,9 @@ fun QuestionnaireScreen(
         SubmitQuestionnaireButton(
             viewModel = viewModel,
             modifier = Modifier
-            .fillMaxWidth()
-            .weight(0.15f)
-            .padding(horizontal = 24.dp),
+                .fillMaxWidth()
+                .weight(0.15f)
+                .padding(horizontal = 24.dp),
             questionnaireName = questionnaireName
         )
     }
@@ -149,7 +149,7 @@ fun SubmitQuestionnaireButton(
         verticalAlignment = Alignment.CenterVertically
     ){
         BasicButton(
-            text = "Podnesi",
+            text = stringResource(id = R.string.submit),
             onClick = { viewModel.onSubmitQuestionnaire(questionnaireName = questionnaireName) },
             borderColor = Pink,
             containerColor = Color.White,

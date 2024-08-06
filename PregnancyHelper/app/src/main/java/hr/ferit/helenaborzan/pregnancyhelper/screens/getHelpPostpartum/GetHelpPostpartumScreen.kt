@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import hr.ferit.helenaborzan.pregnancyhelper.R
 import hr.ferit.helenaborzan.pregnancyhelper.common.composables.GoBackIconBar
@@ -52,7 +53,7 @@ fun HelpDescription(modifier: Modifier = Modifier) {
     ){
         Text(
             text = stringResource(id = R.string.postPartumDepressionHelp),
-            style = TextStyle(color = DarkGray),
+            style = TextStyle(color = DarkGray, fontSize = 10.sp),
             textAlign = TextAlign.Center
         )
     }

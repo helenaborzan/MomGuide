@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -130,7 +131,7 @@ fun UserInfoInput(
 ) {
     val focusRequester = remember { FocusRequester() }
     Column (
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ){
         EmailTextField(
@@ -163,7 +164,11 @@ fun UserInfoInput(
 
 @Composable
 fun UserHasNoAccount(navController: NavController) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = stringResource(id = R.string.goToRegistration),
             style = TextStyle(
@@ -173,8 +178,8 @@ fun UserHasNoAccount(navController: NavController) {
             ),
             modifier = Modifier
                 .padding(24.dp)
-                .align(Alignment.Center)
-                .clickable { navController.navigate(Screen.RegistrationScreen.route) }
+                .clickable { navController.navigate(Screen.RegistrationScreen.route) },
+            textAlign = TextAlign.Center
         )
     }
 }

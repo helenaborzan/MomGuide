@@ -1,9 +1,8 @@
 package hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer
 
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -29,8 +28,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,8 +61,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ComponentActivity
-import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatDuration
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.formatStartTime
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
@@ -73,6 +72,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Green
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Red
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ContractionsTimerScreen(
@@ -82,14 +82,35 @@ fun ContractionsTimerScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     var shouldGoToTheHospital by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(permission = android.Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+    var hasNotificationPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true
+            }
+        )
+    }
+
 
     LaunchedEffect(uiState){
         shouldGoToTheHospital = viewModel.shouldGoToTheHospital(uiState)
     }
     LaunchedEffect(uiState) {
-        // Check notifications status and prompt user if necessary
-        if (viewModel.shouldPromptForNotifications(uiState)) {
-            viewModel.promptUserToEnableNotifications()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && viewModel.shouldPromptForNotifications(uiState)) {
+            if (!hasNotificationPermission) {
+                notificationPermissionState?.launchPermissionRequest()
+            }
         }
     }
 
@@ -207,12 +228,14 @@ fun <T>AverageResult(label : String, value : T, modifier : Modifier = Modifier) 
     ){
         Text(
             text = label,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp
         )
         Text(
             text = "$value",
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
+            fontSize = 10.sp
         )
     }
 

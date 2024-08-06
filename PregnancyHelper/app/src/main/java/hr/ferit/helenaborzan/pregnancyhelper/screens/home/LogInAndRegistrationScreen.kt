@@ -62,7 +62,6 @@ fun LoginAndRegistrationScreen (
         Column (modifier = Modifier.weight(0.2f)){
             TitleBar()
             Spacer(modifier = Modifier.height(32.dp))
-          //  Description()
         }
         Column (
             modifier = Modifier.weight(0.4f)

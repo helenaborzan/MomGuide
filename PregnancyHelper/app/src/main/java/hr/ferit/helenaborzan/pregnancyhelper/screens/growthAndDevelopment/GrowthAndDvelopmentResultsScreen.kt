@@ -231,7 +231,7 @@ fun GrowthInfo(growthAndDevelopmentInfo: GrowthAndDevelopmentInfo) {
             .fillMaxWidth()
             .padding(horizontal = 4.dp, vertical = 4.dp)
             .background(color = LightBlue, shape = RoundedCornerShape(4.dp))
-            .height(70.dp)
+            .height(100.dp)
     ){
         GrowthResult(labelId = R.string.height, value = growthAndDevelopmentInfo.length.toInt(), unitId = R.string.cmLabel, modifier = Modifier.weight(0.25f))
         VerticalDivider(thickness = 1.dp, color = Color.LightGray)
@@ -261,11 +261,11 @@ fun GrowthResult(
         ){
             Text(
                 text = "$value ",
-                style = TextStyle(color = Blue, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                style = TextStyle(color = Blue, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             )
             Text(
                 text = stringResource(id = unitId),
-                style = TextStyle(color = Color.Black, fontSize = 10.sp)
+                style = TextStyle(color = Color.Black, fontSize = 8.sp)
             )
         }
     }

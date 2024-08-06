@@ -221,7 +221,7 @@ fun CalculateButton(viewModel: GrowthAndDevelopmentViewModel, uiState: GrowthAnd
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             modifier = Modifier
                 .border(width = 1.dp, color = Pink, shape = RoundedCornerShape(8.dp))
-                .height(36.dp),
+                .height(40.dp),
             enabled = uiState.errorMessageResource == null,
             shape = RoundedCornerShape(8.dp)
 

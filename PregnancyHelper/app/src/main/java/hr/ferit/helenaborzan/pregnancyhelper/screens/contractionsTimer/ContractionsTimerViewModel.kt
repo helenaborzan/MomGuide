@@ -229,10 +229,8 @@ class ContractionsTimerViewModel @Inject constructor(
             while (isActive) {
                 if (areNotificationsEnabled()) {
                     checkAndNotify()
-                } else {
-                    promptUserToEnableNotifications()
                 }
-                delay(60000) // Check every minute
+                delay(60000)
             }
         }
     }
@@ -242,26 +240,12 @@ class ContractionsTimerViewModel @Inject constructor(
         }
     }
 
-    fun promptUserToEnableNotifications() {
-        AlertDialog.Builder(context)
-            .setTitle("Enable Notifications")
-            .setMessage("To receive important alerts about your contractions, please enable notifications for this app.")
-            .setPositiveButton("Go to Settings") { _, _ ->
-                openNotificationSettings()
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
 
-    private fun openNotificationSettings() {
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        }
-        context.startActivity(intent)
-    }
+
     private fun areNotificationsEnabled(): Boolean {
         val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
         return notificationManager?.areNotificationsEnabled() ?: false
     }
+
 
 }

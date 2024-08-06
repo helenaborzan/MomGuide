@@ -22,10 +22,12 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,6 +55,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NutritionScreen(
     viewModel: NutritionViewModel = hiltViewModel(),
@@ -81,7 +84,8 @@ fun NutritionScreen(
             value = query,
             onValueChange = { query = it },
             label = { Text("Search Food") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = LightPink)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -90,7 +94,8 @@ fun NutritionScreen(
             onClick = {
                 viewModel.searchFood(query)
             },
-            enabled = query.isNotBlank()
+            enabled = query.isNotBlank(),
+            colors = ButtonColors(containerColor = LightPink, contentColor = Color.White, disabledContainerColor = LightPink, disabledContentColor = Color.White)
         ) {
             Text("Search")
         }
@@ -253,7 +258,8 @@ fun AddFoodAndMore(
         Text(
             text = "+",
             style = TextStyle(color = Pink,fontWeight = FontWeight.Bold, fontSize = 24.sp),
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier
+                .padding(4.dp)
                 .clickable { onButtonClick() }
         )
         Icon(

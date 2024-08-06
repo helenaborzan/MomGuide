@@ -22,14 +22,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,7 +59,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.Recipe
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.edamam.RecipeInfo
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeScreen(
     viewModel: RecipeViewModel = hiltViewModel(),
@@ -78,7 +85,12 @@ fun RecipeScreen(
             label = { Text("Search recipes") },
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = LightPink,
+                unfocusedBorderColor = DarkGray
+            )
+
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -88,7 +100,9 @@ fun RecipeScreen(
             Button(
                 onClick = { viewModel.fetchRecipes(query) },
                 enabled = query.isNotBlank() && !isLoading,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                colors = ButtonColors(containerColor = LightPink, contentColor = Color.White,
+                    disabledContainerColor = DarkGray, disabledContentColor = Color.White)
             ) {
                 Text("Search")
             }
@@ -152,8 +166,8 @@ fun RecipeItem(
                 )
                 Row (
                     modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(40.dp),
+                        .align(Alignment.TopEnd)
+                        .size(40.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(text = "${likeCount}", color = DarkGray)
@@ -193,7 +207,8 @@ fun RecipeItem(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(8.dp),
+                colors = ButtonColors(containerColor = LightPink, contentColor = Color.White, disabledContainerColor = LightPink, disabledContentColor = Color.White)
             ) {
                 Text("View")
             }

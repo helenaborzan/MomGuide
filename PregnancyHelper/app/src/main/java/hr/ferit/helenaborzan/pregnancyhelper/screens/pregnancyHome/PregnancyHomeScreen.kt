@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PregnantWoman
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -85,6 +86,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Blue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightRed
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightYellow
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightestPink
@@ -330,7 +332,7 @@ fun CaloriesWithLabel(
     ){
         Text(
             text = stringResource(id = labelId),
-            fontSize = 12.sp
+            fontSize = 10.sp
         )
         if (value!=null) {
             Text(
@@ -339,7 +341,7 @@ fun CaloriesWithLabel(
                     else "${String.format("%.1f", value+450)}",
                     style = TextStyle(
                         color = valueColor,
-                        fontSize = 24.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier.clickable {
@@ -352,7 +354,7 @@ fun CaloriesWithLabel(
                 text = stringResource(id = R.string.calculateDailyCalorieGoal),
                 style = TextStyle(
                     color = Color.LightGray,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     textDecoration = TextDecoration.Underline
                 ),
                 textAlign = TextAlign.Center,
@@ -380,14 +382,14 @@ fun CaloriesWithLabel(
         Text(
             text = stringResource(id = labelId),
             textAlign = TextAlign.Center,
-            fontSize = 12.sp
+            fontSize = 10.sp
         )
         if (value!=null) {
             Text(
                 text = "${String.format("%.1f", value)}",
                 style = TextStyle(
                     color = valueColor,
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -612,6 +614,7 @@ fun RecipeItem(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(recipe.url))
                     context.startActivity(intent)
                 },
+                colors = ButtonColors(containerColor = LightPink, contentColor = Color.White, disabledContainerColor = LightPink, disabledContentColor = Color.White),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
