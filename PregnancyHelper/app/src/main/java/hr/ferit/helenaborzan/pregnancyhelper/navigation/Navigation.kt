@@ -29,6 +29,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQue
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.StressQuestionnaireViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireResults.QuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.AnxietyStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.DepressionStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.EPDSStatisticsViewModel
@@ -169,6 +170,9 @@ fun NavigationController() {
         }
         composable(Screen.GetHelpPregnancyScreen.route){
             GetHelpPregnancyScreen(navController = navController)
+        }
+        composable(Screen.PregnancyQuestionnaireResultsScreen.route){
+            QuestionnaireResultsScreen(navController = navController)
         }
 
     }

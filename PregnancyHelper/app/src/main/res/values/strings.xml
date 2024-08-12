@@ -184,5 +184,7 @@
 
     <string name="postPartumDepressionHelp">Approximately 15% of mothers experience postpartum depression. Postpartum depression has negative effects on both you and your child, so it is important to seek professional help.</string>
     <string name="pregnancyHelp">Mental health is crucial during pregnancy, both for you and your baby. Therefore, it is important to seek professional help.</string>
+    <string name="seeAllResults">See all results</string>
+    <string name="noQuestionnaireResults">You have not completed this questionnaire yet, please complete it.</string>
 
 </resources>

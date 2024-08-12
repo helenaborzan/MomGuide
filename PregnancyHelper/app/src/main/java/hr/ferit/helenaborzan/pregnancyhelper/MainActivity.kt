@@ -15,6 +15,7 @@ import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.NavigationController
 import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerViewModel
+import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireResults.QuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 
 @AndroidEntryPoint
