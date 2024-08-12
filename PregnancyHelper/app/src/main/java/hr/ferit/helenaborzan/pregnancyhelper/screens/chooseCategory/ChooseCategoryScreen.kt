@@ -91,10 +91,16 @@ fun ChooseCategoryScreen(
                     Log.d("ChooseCategoryScreen", "Newborn Info: $newbornInfo")
                     if((newbornInfo.map { it.name }.firstOrNull() != null) &&
                             (newbornInfo.map { it.sex }.firstOrNull() != null)){
-                        navController.navigate(Screen.NewbornHomeScreen.route)
+                        navController.navigate(Screen.NewbornHomeScreen.route){
+                            popUpTo(Screen.ChooseCategoryScreen.route) {inclusive = false}
+                            launchSingleTop = true
+                        }
                     }
                     else {
-                        navController.navigate(Screen.NewbornNameQuestionScreen.route)
+                        navController.navigate(Screen.NewbornNameQuestionScreen.route){
+                            popUpTo(Screen.ChooseCategoryScreen.route) {inclusive = false}
+                            launchSingleTop = true
+                        }
                     }
                 }
             )

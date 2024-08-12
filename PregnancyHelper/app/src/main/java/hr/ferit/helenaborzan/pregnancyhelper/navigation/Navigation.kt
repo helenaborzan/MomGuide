@@ -68,7 +68,12 @@ fun NavigationController() {
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                navigate = { navController.navigate(Screen.NewbornHomeScreen.route)},
+                navigate = {
+                    navController.navigate(Screen.NewbornHomeScreen.route){
+                        popUpTo(Screen.ChooseCategoryScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                           },
                 questionnaireName = "postPartumDepressionScale")
         }
         composable(Screen.GrowthAndDevelopmentCalculationScreen.route){
@@ -85,7 +90,12 @@ fun NavigationController() {
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                navigate = {
+                    navController.navigate(Screen.PregnancyHomeScreen.route){
+                        popUpTo(Screen.ChooseCategoryScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                           },
                 questionnaireName = "depressionScale")
         }
         composable(Screen.AnxietyQuestionnnaireScreen.route){
@@ -93,7 +103,12 @@ fun NavigationController() {
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                navigate = {
+                    navController.navigate(Screen.PregnancyHomeScreen.route){
+                        popUpTo(Screen.ChooseCategoryScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                           },
                 questionnaireName = "anxietyScale")
         }
         composable(Screen.StressQuestionnaireScreen.route){
@@ -101,7 +116,12 @@ fun NavigationController() {
             QuestionnaireScreen(
                 navController = navController,
                 viewModel = viewModel,
-                navigate = { navController.navigate(Screen.PregnancyHomeScreen.route)},
+                navigate = {
+                    navController.navigate(Screen.PregnancyHomeScreen.route){
+                        popUpTo(Screen.ChooseCategoryScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                           },
                 questionnaireName = "stressScale")
         }
         composable(Screen.EPDSQuestionnaireStatisticsScreen.route){
