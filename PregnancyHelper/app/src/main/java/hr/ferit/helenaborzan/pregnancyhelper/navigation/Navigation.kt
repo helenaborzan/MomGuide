@@ -1,6 +1,5 @@
 package hr.ferit.helenaborzan.pregnancyhelper.navigation
 
-import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,16 +19,17 @@ import hr.ferit.helenaborzan.pregnancyhelper.screens.home.LoginAndRegistrationSc
 import hr.ferit.helenaborzan.pregnancyhelper.screens.login.LoginScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornHome.NewbornHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornNameQuestion.NewbornNameQuestionScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.newbornQuestionnaireResults.NewbornQuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.nutritionDetails.NutritionDetailsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyHome.PregnancyHomeScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyNutrition.NutritionScreen
+import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyQuestionnaireResults.PregnancyQuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyStartQuestion.PregnancyStartQuestion
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.AnxietyQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.DepressionQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.EPDSQuestionnaireViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.QuestionnaireScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaire.StressQuestionnaireViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireResults.QuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.AnxietyStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.DepressionStatisticsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireStatistics.EPDSStatisticsViewModel
@@ -192,7 +192,10 @@ fun NavigationController() {
             GetHelpPregnancyScreen(navController = navController)
         }
         composable(Screen.PregnancyQuestionnaireResultsScreen.route){
-            QuestionnaireResultsScreen(navController = navController)
+            PregnancyQuestionnaireResultsScreen(navController = navController)
+        }
+        composable(Screen.NewbornQuestionnaireResultsScreen.route){
+            NewbornQuestionnaireResultsScreen(navController = navController)
         }
 
     }

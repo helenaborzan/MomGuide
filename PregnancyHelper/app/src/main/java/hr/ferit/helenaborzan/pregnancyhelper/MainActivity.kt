@@ -1,9 +1,7 @@
 package hr.ferit.helenaborzan.pregnancyhelper
 
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -14,8 +12,6 @@ import androidx.compose.ui.Modifier
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
 import hr.ferit.helenaborzan.pregnancyhelper.navigation.NavigationController
-import hr.ferit.helenaborzan.pregnancyhelper.screens.contractionsTimer.ContractionsTimerViewModel
-import hr.ferit.helenaborzan.pregnancyhelper.screens.questionnaireResults.QuestionnaireResultsScreen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.PregnancyHelperTheme
 
 @AndroidEntryPoint

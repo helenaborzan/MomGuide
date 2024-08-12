@@ -29,6 +29,7 @@ sealed class Screen(val route : String){
     object GetHelpPostPartumScreen : Screen ("GetHelpPostPartumScreen")
     object GetHelpPregnancyScreen : Screen ("GetHelpPregnancyScreen")
     object PregnancyQuestionnaireResultsScreen : Screen ("PregnancyQuestionnaireResultsScreen")
+    object NewbornQuestionnaireResultsScreen : Screen("NewbornQuestionnaireResultsScreen")
 
 
 }

@@ -270,7 +270,8 @@ fun Breastfeeding(
         ) {
             Text(
                 text = stringResource(id = R.string.noFeedingHistoryToday),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(8.dp)
                     .weight(0.7f)
             )
             Spacer(modifier = Modifier.weight(0.1f))
@@ -341,7 +342,8 @@ fun Bottle(
         ) {
             Text(
                 text = stringResource(id = R.string.noFeedingHistoryToday),
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .padding(8.dp)
                     .weight(0.7f)
             )
             Spacer(modifier = Modifier.weight(0.1f))
@@ -574,6 +576,23 @@ fun QuestionnaireSection(
             if (showAllResults){
                 ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
             }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Row (modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Text(
+                text = stringResource(id = R.string.seeAllResults),
+                style = TextStyle(color = DarkGray, fontSize = 14.sp),
+                modifier = Modifier.clickable { navController.navigate(Screen.NewbornQuestionnaireResultsScreen.route) }
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
+                contentDescription = null,
+                tint = DarkGray,
+                modifier = Modifier.clickable { navController.navigate(Screen.NewbornQuestionnaireResultsScreen.route) }
+            )
         }
     }
 }
