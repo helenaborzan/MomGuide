@@ -61,6 +61,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.navigation.Screen
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -126,24 +127,28 @@ fun BreastfeedingSpecific(viewModel: BreastfeedingViewModel, modifier: Modifier 
         horizontalAlignment = Alignment.Start
     ){
         Row(modifier = Modifier.fillMaxWidth()) {
-            TimePicker(
-                labelId = R.string.startTime,
-                modifier = Modifier.weight(0.7f),
-                onTimeSelected = { newTime ->
-                    viewModel.onStartTimeChange(newTime)
-                },
-                viewModel = viewModel
-            )
+            LocaleWrapper(locale = Locale.ENGLISH) {
+                TimePicker(
+                    labelId = R.string.startTime,
+                    modifier = Modifier.weight(0.7f),
+                    onTimeSelected = { newTime ->
+                        viewModel.onStartTimeChange(newTime)
+                    },
+                    viewModel = viewModel
+                )
+            }
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            TimePicker(
-                labelId = R.string.endTime,
-                modifier = Modifier.weight(0.7f),
-                onTimeSelected = { newTime ->
-                    viewModel.onEndTimeChange(newTime)
-                },
-                viewModel = viewModel
-            )
+            LocaleWrapper(locale = Locale.ENGLISH) {
+                TimePicker(
+                    labelId = R.string.endTime,
+                    modifier = Modifier.weight(0.7f),
+                    onTimeSelected = { newTime ->
+                        viewModel.onEndTimeChange(newTime)
+                    },
+                    viewModel = viewModel
+                )
+            }
         }
         ChooseBreast(viewModel = viewModel)
     }

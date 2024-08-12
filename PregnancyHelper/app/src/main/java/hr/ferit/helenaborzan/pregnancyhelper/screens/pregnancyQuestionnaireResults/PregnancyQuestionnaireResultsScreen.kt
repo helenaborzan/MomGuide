@@ -44,7 +44,10 @@ import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
 import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.QuestionnaireResult
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightBlue
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightRed
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightYellow
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 
@@ -154,7 +157,7 @@ fun DepressionResults(depressionResults : List<QuestionnaireResult>, viewModel: 
         val dates = depressionResults.mapNotNull { it.date }
         val results = viewModel.getDepressionResultsLabels(depressionResults)
         val categories = listOf<String>("Negative", "Borderline", "Positive")
-        BarChart(dates = dates, results = results, categories = categories)
+        BarChart(dates = dates, results = results, categories = categories, barColor = LightBlue)
         Spacer(modifier = Modifier.height(24.dp))
         for (result in depressionResults) {
             ResultCard(result = result)
@@ -179,7 +182,7 @@ fun AnxietyResults(anxietyResults : List<QuestionnaireResult>, viewModel: Pregna
         val dates = anxietyResults.mapNotNull { it.date }
         val results = viewModel.getAnxietyResultsLabels(anxietyResults)
         val categories = listOf<String>("Negative", "Borderline", "Positive")
-        BarChart(dates = dates, results = results, categories = categories)
+        BarChart(dates = dates, results = results, categories = categories, barColor = LightRed)
         Spacer(modifier = Modifier.height(24.dp))
         for (result in anxietyResults) {
             ResultCard(result = result)
@@ -203,7 +206,7 @@ fun StressResults(stressResults : List<QuestionnaireResult>, viewModel: Pregnanc
         val dates = stressResults.mapNotNull { it.date }
         val results = viewModel.getStressResultsLabels(stressResults)
         val categories = listOf<String>("Low", "Moderate", "High")
-        BarChart(dates = dates, results = results, categories = categories)
+        BarChart(dates = dates, results = results, categories = categories, barColor = LightYellow)
         Spacer(modifier = Modifier.height(24.dp))
         for (result in stressResults) {
             ResultCard(result = result)

@@ -17,8 +17,9 @@ import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 
 
 @Composable
-fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<String>) {
+fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<String>, barColor: Color) {
     val chartHeight = 160f
+    val maxBarWidth = 60f
 
     Box(
         modifier = Modifier
@@ -40,7 +41,16 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
             val barCount = dates.size
             val totalPaddingWidth = chartWidth * 0.2f
             val paddingBetweenBars = totalPaddingWidth / (barCount + 1)
-            val barWidth = (chartWidth - totalPaddingWidth) / barCount
+
+            // Calculate bar width with a maximum limit
+            val calculatedBarWidth = (chartWidth - totalPaddingWidth) / barCount
+            val barWidth = minOf(calculatedBarWidth, maxBarWidth)
+
+            // Recalculate total width of all bars
+            val totalBarWidth = barWidth * barCount
+
+            // Calculate the starting X position to center the bars
+            val startX = yAxisX + (chartWidth - totalBarWidth - (barCount - 1) * paddingBetweenBars) / 2
 
             // Draw x-axis
             drawLine(
@@ -62,6 +72,7 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
             val yAxisLabelPositions = List(categories.size) { index ->
                 xAxisY - (index + 1).toFloat() / (categories.size + 1) * (xAxisY - yAxisTop)
             }
+            val xAxisCenter = yAxisX + chartWidth / 2
 
             // Draw bars
             results.forEachIndexed { index, result ->
@@ -71,17 +82,30 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
                     categories[2] -> yAxisLabelPositions[2] - xAxisY
                     else -> 0f
                 }
-                val barX = yAxisX + paddingBetweenBars + index * (barWidth + paddingBetweenBars)
+                val barX = if (results.size == 1) {
+                    // If there's only one bar, center it on the x-axis
+                    xAxisCenter - barWidth / 2
+                } else {
+                    // Otherwise, use the adjusted calculation from before
+                    startX + (index + 0.5f) * (barWidth + paddingBetweenBars) - barWidth / 2
+                }
                 drawRect(
-                    LightPink,
+                    barColor,
                     topLeft = Offset(barX, xAxisY),
                     size = Size(barWidth, barHeight),
                 )
             }
 
-            // Draw x-axis labels (dates)
+// Draw x-axis labels (dates)
             dates.forEachIndexed { index, date ->
-                val labelX = yAxisX + paddingBetweenBars + (index + 0.5f) * (barWidth + paddingBetweenBars)
+                val labelX = if (dates.size == 1) {
+                    // If there's only one date, center it on the x-axis
+                    xAxisCenter
+                } else {
+                    // Otherwise, use the original calculation
+                    startX + (index + 0.5f) * (barWidth + paddingBetweenBars)
+                }
+
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
                         "${getDate(timestamp = date).get("day")}.${getDate(timestamp = date).get("month")}.",
@@ -101,12 +125,12 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
                         category,
-                        yAxisX - 10f,  // Move labels 10 pixels to the left of the y-axis
+                        yAxisX - 10f,
                         yAxisLabelPositions[index],
                         android.graphics.Paint().apply {
                             color = android.graphics.Color.BLACK
                             textSize = 24f
-                            textAlign = android.graphics.Paint.Align.RIGHT  // Align text to the right
+                            textAlign = android.graphics.Paint.Align.RIGHT
                         }
                     )
                 }
@@ -116,8 +140,9 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
 }
 
 @Composable
-fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<String>) {
+fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<String>, barColor: Color) {
     val chartHeight = 160f
+    val maxBarWidth = 60f
 
     Box(
         modifier = Modifier
@@ -139,7 +164,16 @@ fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<
             val barCount = dates.size
             val totalPaddingWidth = chartWidth * 0.2f
             val paddingBetweenBars = totalPaddingWidth / (barCount + 1)
-            val barWidth = (chartWidth - totalPaddingWidth) / barCount
+
+            // Calculate bar width with a maximum limit
+            val calculatedBarWidth = (chartWidth - totalPaddingWidth) / barCount
+            val barWidth = minOf(calculatedBarWidth, maxBarWidth)
+
+            // Recalculate total width of all bars
+            val totalBarWidth = barWidth * barCount
+
+            // Calculate the starting X position to center the bars
+            val startX = yAxisX + (chartWidth - totalBarWidth - (barCount - 1) * paddingBetweenBars) / 2
 
             // Draw x-axis
             drawLine(
@@ -161,25 +195,40 @@ fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<
             val yAxisLabelPositions = List(categories.size) { index ->
                 xAxisY - (index + 1).toFloat() / (categories.size + 1) * (xAxisY - yAxisTop)
             }
+            val xAxisCenter = yAxisX + chartWidth / 2
 
             // Draw bars
             results.forEachIndexed { index, result ->
                 val barHeight = when (result) {
                     categories[0] -> yAxisLabelPositions[0] - xAxisY
                     categories[1] -> yAxisLabelPositions[1] - xAxisY
+                    categories[2] -> yAxisLabelPositions[2] - xAxisY
                     else -> 0f
                 }
-                val barX = yAxisX + paddingBetweenBars + index * (barWidth + paddingBetweenBars)
+                val barX = if (results.size == 1) {
+                    // If there's only one bar, center it on the x-axis
+                    xAxisCenter - barWidth / 2
+                } else {
+                    // Otherwise, use the adjusted calculation from before
+                    startX + (index + 0.5f) * (barWidth + paddingBetweenBars) - barWidth / 2
+                }
                 drawRect(
-                    LightPink,
+                    barColor,
                     topLeft = Offset(barX, xAxisY),
                     size = Size(barWidth, barHeight),
                 )
             }
 
-            // Draw x-axis labels (dates)
+// Draw x-axis labels (dates)
             dates.forEachIndexed { index, date ->
-                val labelX = yAxisX + paddingBetweenBars + (index + 0.5f) * (barWidth + paddingBetweenBars)
+                val labelX = if (dates.size == 1) {
+                    // If there's only one date, center it on the x-axis
+                    xAxisCenter
+                } else {
+                    // Otherwise, use the original calculation
+                    startX + (index + 0.5f) * (barWidth + paddingBetweenBars)
+                }
+
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
                         "${getDate(timestamp = date).get("day")}.${getDate(timestamp = date).get("month")}.",
@@ -199,12 +248,12 @@ fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
                         category,
-                        yAxisX - 10f,  // Move labels 10 pixels to the left of the y-axis
+                        yAxisX - 10f,
                         yAxisLabelPositions[index],
                         android.graphics.Paint().apply {
                             color = android.graphics.Color.BLACK
                             textSize = 24f
-                            textAlign = android.graphics.Paint.Align.RIGHT  // Align text to the right
+                            textAlign = android.graphics.Paint.Align.RIGHT
                         }
                     )
                 }
@@ -212,3 +261,4 @@ fun PPDBarChart(dates: List<Timestamp>, results: List<String>, categories: List<
         }
     }
 }
+

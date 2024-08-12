@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import hr.ferit.helenaborzan.pregnancyhelper.model.data.questionnaire.Questionna
 import hr.ferit.helenaborzan.pregnancyhelper.screens.pregnancyQuestionnaireResults.PregnancyQuestionnaireResultsViewModel
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DarkGray
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.DirtyWhite
+import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.Pink
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -95,7 +97,7 @@ fun QuestionnaireResults(questionnaireResults : List<QuestionnaireResult>, viewM
         val dates = questionnaireResults.mapNotNull { it.date }
         val results = viewModel.getPPDResultsLabels(questionnaireResults)
         val categories = listOf<String>("Negative", "Positive")
-        PPDBarChart(dates = dates, results = results, categories = categories)
+        PPDBarChart(dates = dates, results = results, categories = categories, barColor = LightPink)
         Spacer(modifier = Modifier.height(24.dp))
         for (result in questionnaireResults) {
             ResultCard(result = result)
