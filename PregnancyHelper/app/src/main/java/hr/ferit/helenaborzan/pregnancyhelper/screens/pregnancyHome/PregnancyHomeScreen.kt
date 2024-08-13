@@ -830,7 +830,8 @@ fun QuestionnaireSection(
             navigateToAnswering = { navController.navigate(Screen.DepressionQuestionnaireScreen.route) },
             navigateToStatistics = { navController.navigate(Screen.DepressionQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightBlue,
-            questionnaireResults = depressionResults
+            questionnaireResults = depressionResults,
+            navController = navController
         )
         Spacer(modifier = Modifier.height(12.dp))
         QuestionnaireCard(
@@ -838,7 +839,8 @@ fun QuestionnaireSection(
             navigateToAnswering = { navController.navigate(Screen.AnxietyQuestionnnaireScreen.route) },
             navigateToStatistics = { navController.navigate(Screen.AnxietyQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightRed,
-            questionnaireResults = anxietyResults
+            questionnaireResults = anxietyResults,
+            navController = navController
         )
         Spacer(modifier = Modifier.height(12.dp))
         QuestionnaireCard(
@@ -846,26 +848,10 @@ fun QuestionnaireSection(
             navigateToAnswering = { navController.navigate(Screen.StressQuestionnaireScreen.route) },
             navigateToStatistics = { navController.navigate(Screen.StressQuestionnaireStatisticsScreen.route) },
             backgroundColor = LightYellow,
-            questionnaireResults = stressResults
+            questionnaireResults = stressResults,
+            navController = navController
         )
         Spacer(modifier = Modifier.height(12.dp))
-        Row (modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = stringResource(id = R.string.seeAllResults),
-                style = TextStyle(color = DarkGray, fontSize = 14.sp),
-                modifier = Modifier.clickable { navController.navigate(Screen.PregnancyQuestionnaireResultsScreen.route) }
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                contentDescription = null,
-                tint = DarkGray,
-                modifier = Modifier.clickable { navController.navigate(Screen.PregnancyQuestionnaireResultsScreen.route) }
-                )
-        }
-
     }
 }
 
@@ -876,7 +862,8 @@ fun QuestionnaireCard(
     navigateToAnswering : () -> Unit,
     navigateToStatistics : () -> Unit,
     backgroundColor: Color,
-    questionnaireResults : List<QuestionnaireResult>
+    questionnaireResults : List<QuestionnaireResult>,
+    navController: NavController
 ) {
     var showAllResults by remember {
         mutableStateOf(false)
@@ -923,26 +910,18 @@ fun QuestionnaireCard(
                             stringResource(id = R.string.emptyQuestionnaireResults)
                     )
                 }
-
-                if (questionnaireResults.size > 1) {
-                    Icon(
-                        painter = if (!showAllResults)
-                            painterResource(id = R.drawable.baseline_more_horiz_24)
-                        else
-                            painterResource(id = R.drawable.baseline_expand_less_24),
-                        contentDescription = stringResource(id = R.string.moreIconDescription),
-                        tint = DarkGray,
-                        modifier = Modifier
-                            .weight(0.2f)
-                            .clickable {
-                                showAllResults = !showAllResults
-                            }
+                if (questionnaireResults.isNotEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.seeAll),
+                        style = TextStyle(color = DarkGray, textDecoration = TextDecoration.Underline, fontSize = 14.sp),
+                        modifier = Modifier.weight(0.3f)
+                            .clickable { navController.navigate(Screen.PregnancyQuestionnaireResultsScreen.route) }
                     )
                 }
             }
             if(questionnaireResults.isNotEmpty()) {
                 Row(
-                    modifier = Modifier.weight(0.3f),
+                    modifier = Modifier.weight(0.2f),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.Bottom
                 ) {
@@ -956,9 +935,6 @@ fun QuestionnaireCard(
                     )
                 }
             }
-        }
-        if (showAllResults){
-            ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
         }
     }
 }

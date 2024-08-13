@@ -13,7 +13,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import hr.ferit.helenaborzan.pregnancyhelper.common.ext.getDate
-import hr.ferit.helenaborzan.pregnancyhelper.ui.theme.LightPink
 
 
 @Composable
@@ -76,27 +75,25 @@ fun BarChart(dates: List<Timestamp>, results: List<String>, categories: List<Str
 
             // Draw bars
             results.forEachIndexed { index, result ->
-                val barHeight = when (result) {
-                    categories[0] -> yAxisLabelPositions[0] - xAxisY
-                    categories[1] -> yAxisLabelPositions[1] - xAxisY
-                    categories[2] -> yAxisLabelPositions[2] - xAxisY
-                    else -> 0f
+                val categoryIndex = categories.indexOf(result)
+                if (categoryIndex != -1) {
+                    val barHeight = xAxisY - yAxisLabelPositions[categoryIndex]
+                    val barX = if (results.size == 1) {
+                        // If there's only one bar, center it on the x-axis
+                        xAxisCenter - barWidth / 2
+                    } else {
+                        // Otherwise, use the adjusted calculation from before
+                        startX + (index + 0.5f) * (barWidth + paddingBetweenBars) - barWidth / 2
+                    }
+                    drawRect(
+                        barColor,
+                        topLeft = Offset(barX, xAxisY - barHeight),
+                        size = Size(barWidth, barHeight),
+                    )
                 }
-                val barX = if (results.size == 1) {
-                    // If there's only one bar, center it on the x-axis
-                    xAxisCenter - barWidth / 2
-                } else {
-                    // Otherwise, use the adjusted calculation from before
-                    startX + (index + 0.5f) * (barWidth + paddingBetweenBars) - barWidth / 2
-                }
-                drawRect(
-                    barColor,
-                    topLeft = Offset(barX, xAxisY),
-                    size = Size(barWidth, barHeight),
-                )
             }
 
-// Draw x-axis labels (dates)
+            // Draw x-axis labels (dates)
             dates.forEachIndexed { index, date ->
                 val labelX = if (dates.size == 1) {
                     // If there's only one date, center it on the x-axis

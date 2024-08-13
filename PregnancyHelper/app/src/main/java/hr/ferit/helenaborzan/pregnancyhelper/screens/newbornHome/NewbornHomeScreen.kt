@@ -539,19 +539,13 @@ fun QuestionnaireSection(
                                 stringResource(id = R.string.emptyQuestionnaireResults)
                         )
                     }
-                        if (questionnaireResults.size > 1) {
-                            Icon(
-                                painter = if (!showAllResults)
-                                    painterResource(id = R.drawable.baseline_more_horiz_24)
-                                else
-                                    painterResource(id = R.drawable.baseline_expand_less_24),
-                                contentDescription = stringResource(id = R.string.moreIconDescription),
-                                modifier = Modifier
-                                    .weight(0.1f)
-                                    .clickable {
-                                        showAllResults = !showAllResults
-                                    }
-                            )
+                        if (questionnaireResults.isNotEmpty()) {
+                           Text(
+                               text = stringResource(id = R.string.seeAll),
+                               style = TextStyle(color = DarkGray, textDecoration = TextDecoration.Underline, fontSize = 14.sp),
+                               modifier = Modifier.padding(vertical = 4.dp)
+                                   .clickable { navController.navigate(Screen.NewbornQuestionnaireResultsScreen.route) }
+                           )
                         }
                 }
                 if(questionnaireResults.isNotEmpty()) {
@@ -573,27 +567,8 @@ fun QuestionnaireSection(
                     }
                 }
             }
-            if (showAllResults){
-                ShowAllQuestionnaireResults(questionnaireResult = questionnaireResults)
-            }
         }
         Spacer(modifier = Modifier.height(12.dp))
-        Row (modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text = stringResource(id = R.string.seeAllResults),
-                style = TextStyle(color = DarkGray, fontSize = 14.sp),
-                modifier = Modifier.clickable { navController.navigate(Screen.NewbornQuestionnaireResultsScreen.route) }
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_navigate_next_24),
-                contentDescription = null,
-                tint = DarkGray,
-                modifier = Modifier.clickable { navController.navigate(Screen.NewbornQuestionnaireResultsScreen.route) }
-            )
-        }
     }
 }
 

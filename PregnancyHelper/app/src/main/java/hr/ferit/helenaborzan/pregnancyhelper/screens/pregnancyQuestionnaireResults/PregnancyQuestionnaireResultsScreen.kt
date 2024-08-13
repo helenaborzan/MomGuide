@@ -60,13 +60,13 @@ fun PregnancyQuestionnaireResultsScreen(
     val selectedChartType by viewModel.selectedChartType.collectAsState()
     val pregnancyInfo by viewModel.pregnancyInfo.collectAsState(initial = emptyList())
     val depressionQuestionnaireResults = remember(pregnancyInfo) {
-        pregnancyInfo.flatMap { it.depressionQuestionnaireResults }
+        pregnancyInfo.flatMap { it.depressionQuestionnaireResults.reversed() }
     }
     val anxietyQuestionnaireResults = remember(pregnancyInfo) {
-        pregnancyInfo.flatMap { it.anxietyQuestionnaireResults }
+        pregnancyInfo.flatMap { it.anxietyQuestionnaireResults.reversed() }
     }
     val stressQuestionnaireResults = remember(pregnancyInfo) {
-        pregnancyInfo.flatMap { it.stressQuestionnaireResults }
+        pregnancyInfo.flatMap { it.stressQuestionnaireResults.reversed() }
     }
 
     Column (modifier = Modifier
@@ -154,8 +154,8 @@ fun DepressionResults(depressionResults : List<QuestionnaireResult>, viewModel: 
         )
     }
     else {
-        val dates = depressionResults.mapNotNull { it.date }
-        val results = viewModel.getDepressionResultsLabels(depressionResults)
+        val dates = depressionResults.reversed().mapNotNull { it.date }
+        val results = viewModel.getDepressionResultsLabels(depressionResults.reversed())
         val categories = listOf<String>("Negative", "Borderline", "Positive")
         BarChart(dates = dates, results = results, categories = categories, barColor = LightBlue)
         Spacer(modifier = Modifier.height(24.dp))
@@ -179,8 +179,8 @@ fun AnxietyResults(anxietyResults : List<QuestionnaireResult>, viewModel: Pregna
         )
     }
     else {
-        val dates = anxietyResults.mapNotNull { it.date }
-        val results = viewModel.getAnxietyResultsLabels(anxietyResults)
+        val dates = anxietyResults.reversed().mapNotNull { it.date }
+        val results = viewModel.getAnxietyResultsLabels(anxietyResults.reversed())
         val categories = listOf<String>("Negative", "Borderline", "Positive")
         BarChart(dates = dates, results = results, categories = categories, barColor = LightRed)
         Spacer(modifier = Modifier.height(24.dp))
@@ -203,8 +203,8 @@ fun StressResults(stressResults : List<QuestionnaireResult>, viewModel: Pregnanc
         )
     }
     else {
-        val dates = stressResults.mapNotNull { it.date }
-        val results = viewModel.getStressResultsLabels(stressResults)
+        val dates = stressResults.reversed().mapNotNull { it.date }
+        val results = viewModel.getStressResultsLabels(stressResults.reversed())
         val categories = listOf<String>("Low", "Moderate", "High")
         BarChart(dates = dates, results = results, categories = categories, barColor = LightYellow)
         Spacer(modifier = Modifier.height(24.dp))

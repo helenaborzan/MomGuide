@@ -54,7 +54,7 @@ fun NewbornQuestionnaireResultsScreen(
     val newbornInfo by viewModel.newbornInfo.collectAsState(initial = emptyList())
 
     val questionnaireResults = remember(newbornInfo) {
-        newbornInfo.flatMap { it.questionnaireResults }
+        newbornInfo.flatMap { it.questionnaireResults.reversed() }
     }
 
     Column (modifier = Modifier
@@ -94,8 +94,8 @@ fun QuestionnaireResults(questionnaireResults : List<QuestionnaireResult>, viewM
         )
     }
     else {
-        val dates = questionnaireResults.mapNotNull { it.date }
-        val results = viewModel.getPPDResultsLabels(questionnaireResults)
+        val dates = questionnaireResults.reversed().mapNotNull { it.date }
+        val results = viewModel.getPPDResultsLabels(questionnaireResults.reversed())
         val categories = listOf<String>("Negative", "Positive")
         PPDBarChart(dates = dates, results = results, categories = categories, barColor = LightPink)
         Spacer(modifier = Modifier.height(24.dp))
